@@ -17,8 +17,6 @@ module.exports = mkrAddress => ({
 
 const handlers = {
   async Transfer(services, info) {
-    logger.warn(info);
-
     const sql = `INSERT INTO mkr.transfer_event
     (sender,receiver,amount,log_index,tx_id,block_id) 
     VALUES(\${sender}, \${receiver}, \${value}, \${log_index}, \${tx_id}, \${block_id});`;
