@@ -3,17 +3,17 @@ const { getLogger } = require("spock-etl/lib/core/utils/logger");
 const BigNumber = require("bignumber.js").BigNumber;
 
 // @ts-ignore
-const abi = require("./mkr_abi.json");
+const abi = require("../abis/mkr_abi.json");
 
 const logger = getLogger("MKR");
 
-module.exports = {
+module.exports = mkrAddress => ({
   name: "MKR_Transformer",
-  dependencies: ["raw_log_0x9f8f72aa9304c8b593d555f12ef6589cc3a579a2_extractor"],
+  dependencies: [`raw_log_${mkrAddress}_extractor`],
   transform: async (services, logs) => {
     await handleEvents(services, abi, logs[0], handlers);
   },
-};
+});
 
 const handlers = {
   async Transfer(services, info) {
