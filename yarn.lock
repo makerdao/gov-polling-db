@@ -1863,10 +1863,10 @@ split@^1.0.0:
   dependencies:
     through "2"
 
-spock-etl@^0.0.3:
-  version "0.0.3"
-  resolved "https://registry.yarnpkg.com/spock-etl/-/spock-etl-0.0.3.tgz#6144f1ce7c212bf942dda2d34056887fcb1a0a2c"
-  integrity sha512-GeKLV1Eg0eaTJD6MmGWHMjdhblyBhqNzalrEeDzZb53Pz15AFXIcvUFG4kCITMqKnJCt74QZ7jDFrxzNF2ozYg==
+spock-etl@^0.0.5:
+  version "0.0.5"
+  resolved "https://registry.yarnpkg.com/spock-etl/-/spock-etl-0.0.5.tgz#3f95076696c9c517dba1d7da60ae7898a7c83316"
+  integrity sha512-jJBN9oFjAzkl5JLc7AjI4Xo05Q/1nxaJIfG4pYlwgzS0sSL7/vDns0YU358w2R/pGyESV2xJO6IsluJTrEidPA==
   dependencies:
     "@google-cloud/bigquery" "^3.0.0"
     "@types/helmet" "^0.0.43"
