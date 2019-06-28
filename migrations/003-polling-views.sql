@@ -24,3 +24,20 @@ RETURNS TABLE (
 	) t
 	GROUP BY t.option_id;
 $$ LANGUAGE sql STABLE STRICT;
+
+CREATE OR REPLACE FUNCTION api.active_polls()
+RETURNS TABLE (
+  poll_id INTEGER,
+  start_block INTEGER,
+  end_block INTEGER,
+  multi_hash character varying(66),
+  creator character varying(66)
+) AS $$
+	SELECT polling.poll_created_event.poll_id, polling.poll_created_event.start_block, polling.poll_created_event.end_block, polling.poll_created_event.multi_hash, polling.poll_created_event.creator FROM polling.poll_created_event
+	RIGHT JOIN (
+	SELECT poll_id, creator FROM polling.poll_created_event WHERE creator = '0xeda95d1bdb60f901986f43459151b6d1c734b8a2'
+	  EXCEPT
+	SELECT poll_id, creator FROM polling.poll_withdrawn_event WHERE creator = '0xeda95d1bdb60f901986f43459151b6d1c734b8a2'
+	) AS withWithdrawn
+	ON polling.poll_created_event.poll_id = withWithdrawn.poll_id;
+$$ LANGUAGE sql STABLE STRICT;

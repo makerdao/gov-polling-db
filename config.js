@@ -16,7 +16,7 @@ const DSCHIEF_KOVAN_ADDRESS = "0xbbffc76e94b34f72d96d054b31f6424249c1337d";
 const VOTE_PROXY_FACTORY_KOVAN_ADDRESS = "0x3e08741a68c2d964d172793cd0ad14292f658cd8";
 
 const kovan = {
-  startingBlock: 8695460,
+  startingBlock: 11681032,
   extractors: [
     ...makeRawLogExtractors([
       VOTING_CONTRACT_KOVAN_ADDRESS,

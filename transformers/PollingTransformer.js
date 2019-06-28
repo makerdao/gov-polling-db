@@ -34,6 +34,21 @@ const handlers = {
     });
   },
 
+  async PollWithdrawn(services, info) {
+    const sql = `INSERT INTO polling.poll_withdrawn_event
+    (creator,poll_id,log_index,tx_id,block_id) 
+    VALUES(\${creator}, \${poll_id}, \${log_index}, \${tx_id}, \${block_id});`;
+
+    await services.tx.none(sql, {
+      creator: info.event.args.creator,
+      poll_id: info.event.args.pollId,
+
+      log_index: info.log.log_index,
+      tx_id: info.log.tx_id,
+      block_id: info.log.block_id,
+    });
+  },
+
   async Voted(services, info) {
     const sql = `INSERT INTO polling.voted_event
     (voter,poll_id,option_id,log_index,tx_id,block_id) 
