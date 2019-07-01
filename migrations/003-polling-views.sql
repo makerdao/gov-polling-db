@@ -39,5 +39,6 @@ RETURNS TABLE (
 	LEFT JOIN polling.poll_withdrawn_event AS W
 	ON C.poll_id = W.poll_id AND C.creator = W.creator
 	WHERE C.creator IN ('0xeda95d1bdb60f901986f43459151b6d1c734b8a2', '0x14341f81dF14cA86E1420eC9e6Abd343Fb1c5bfC') /*dummy addresses - to be replaced by environment variable?*/
-	AND (C.block_created < W.block_withdrawn OR W.block_withdrawn IS NULL);
+	AND (C.block_created < W.block_withdrawn OR W.block_withdrawn IS NULL)
+	ORDER BY C.end_block;
 $$ LANGUAGE sql STABLE STRICT;
