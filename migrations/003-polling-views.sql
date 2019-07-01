@@ -27,17 +27,17 @@ $$ LANGUAGE sql STABLE STRICT;
 
 CREATE OR REPLACE FUNCTION api.active_polls()
 RETURNS TABLE (
+  creator character varying(66),
   poll_id INTEGER,
+  block_created INTEGER,
   start_block INTEGER,
   end_block INTEGER,
-  multi_hash character varying(66),
-  creator character varying(66)
+  multi_hash character varying(66)
 ) AS $$
-	SELECT polling.poll_created_event.poll_id, polling.poll_created_event.start_block, polling.poll_created_event.end_block, polling.poll_created_event.multi_hash, polling.poll_created_event.creator FROM polling.poll_created_event
-	RIGHT JOIN (
-	SELECT poll_id, creator FROM polling.poll_created_event WHERE creator = '0xeda95d1bdb60f901986f43459151b6d1c734b8a2'
-	  EXCEPT
-	SELECT poll_id, creator FROM polling.poll_withdrawn_event WHERE creator = '0xeda95d1bdb60f901986f43459151b6d1c734b8a2'
-	) AS withWithdrawn
-	ON polling.poll_created_event.poll_id = withWithdrawn.poll_id;
+	SELECT C.creator, C.poll_id, C.block_created, C.start_block, C.end_block, C.multi_hash
+	FROM polling.poll_created_event AS C
+	LEFT JOIN polling.poll_withdrawn_event AS W
+	ON C.poll_id = W.poll_id AND C.creator = W.creator
+	WHERE C.creator IN ('0xeda95d1bdb60f901986f43459151b6d1c734b8a2', '0x14341f81dF14cA86E1420eC9e6Abd343Fb1c5bfC') /*dummy addresses - to be replaced by environment variable?*/
+	AND (C.block_created < W.block_withdrawn OR W.block_withdrawn IS NULL);
 $$ LANGUAGE sql STABLE STRICT;
