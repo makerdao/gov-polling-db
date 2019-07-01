@@ -25,6 +25,14 @@ RETURNS TABLE (
 	GROUP BY t.option_id;
 $$ LANGUAGE sql STABLE STRICT;
 
+CREATE OR REPLACE FUNCTION api.unique_voters(arg_poll_id INTEGER)
+RETURNS TABLE (
+  unique_voters BIGINT
+) AS $$
+	SELECT COUNT(DISTINCT voter) FROM polling.voted_event
+	WHERE poll_id = arg_poll_id;
+$$ LANGUAGE sql STABLE STRICT;
+
 CREATE OR REPLACE FUNCTION api.active_polls()
 RETURNS TABLE (
   creator character varying(66),
