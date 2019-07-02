@@ -7,6 +7,10 @@ const abi = require("../abis/polling_emitter.json");
 
 const logger = getLogger("Polling");
 
+const authorizedCreators = process.env.AUTHORIZED_CREATORS
+  ? process.env.AUTHORIZED_CREATORS.split(',').map(creator => creator.toLowerCase())
+  : [];
+
 module.exports = {
   name: "Polling_Transformer",
   dependencies: ["raw_log_0x500536350bb32b05210bcb412a720a0e7c8a36bc_extractor"],
@@ -17,12 +21,15 @@ module.exports = {
 
 const handlers = {
   async PollCreated(services, info) {
+    const creator = info.event.args.creator;
+    if (authorizedCreators.length > 0 && !authorizedCreators.inludes(creator.toLowerCase())) return;
+
     const sql = `INSERT INTO polling.poll_created_event
     (creator,poll_id,start_block,end_block,multi_hash,log_index,tx_id,block_id) 
     VALUES(\${creator}, \${poll_id}, \${start_block}, \${end_block}, \${multi_hash}, \${log_index}, \${tx_id}, \${block_id});`;
 
     await services.tx.none(sql, {
-      creator: info.event.args.creator,
+      creator,
       poll_id: info.event.args.pollId,
       start_block: info.event.args.startBlock,
       end_block: info.event.args.endBlock,
