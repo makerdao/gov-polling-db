@@ -7,10 +7,11 @@
   "scripts": {
     "start-etl": "node -r ./loadenv.js ./node_modules/spock-etl/lib/core/runner.js etl ./config.js",
     "start-sync": "node -r ./loadenv.js ./node_modules/spock-etl/lib/core/runner.js sync ./config.js",
-    "migrate": "node -r ./loadenv.js ./node_modules/spock-etl/lib/core/runner.js migrate ./config.js"
+    "migrate": "node -r ./loadenv.js ./node_modules/spock-etl/lib/core/runner.js migrate ./config.js",
+    "start-api": "node -r ./loadenv.js ./node_modules/spock-etl/lib/core/runner.js api ./config.js"
   },
   "dependencies": {
     "dotenv-flow": "^2.0.0",
-    "spock-etl": "^0.0.3"
+    "spock-etl": "^0.0.5"
   }
 }

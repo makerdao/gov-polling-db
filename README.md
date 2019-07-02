@@ -9,4 +9,5 @@ docker-compose up # starts a database
 yarn               # installs deps (just once)
 yarn migrate       # migrate database schema
 yarn start-etl     # starts ETL
+yarn start-api     # starts GraphQL API
 ```
