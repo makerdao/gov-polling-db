@@ -1,4 +1,5 @@
 const { handleEvents } = require("spock-etl/lib/core/transformers/common");
+const { getExtractorName } = require("spock-etl/lib/core/extractors/instances/rawEventDataExtractor");
 const { getLogger } = require("spock-etl/lib/core/utils/logger");
 const BigNumber = require("bignumber.js").BigNumber;
 
@@ -7,14 +8,14 @@ const abi = require("../abis/polling_emitter.json");
 
 const logger = getLogger("Polling");
 
-module.exports = {
+module.exports = (address) => ({
   name: "Polling_Transformer",
-  dependencies: ["raw_log_0x150e1acaa2260dbf7d915c8eee0cdc895973a7c0_extractor"],
+  dependencies: [getExtractorName(address)],
   transform: async (services, logs) => {
     console.log("logs in transform", logs);
     await handleEvents(services, abi, logs[0], handlers);
   },
-};
+});
 
 const handlers = {
   async PollCreated(services, info) {

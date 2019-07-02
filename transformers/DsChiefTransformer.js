@@ -1,13 +1,13 @@
+const { getExtractorName } = require("spock-etl/lib/core/extractors/instances/rawEventDataExtractor");
+const { handleDsNoteEvents } = require("spock-etl/lib/core/transformers/common");
 // @ts-ignore
 const dsChiefAbi = require("../abis/ds_chief.json");
-
-const { handleDsNoteEvents } = require("spock-etl/lib/core/transformers/common");
 const { getTxByIdOrDie, getBlockByIdOrDie } = require("spock-etl/lib/core/extractors/common");
 const BigNumber = require("bignumber.js").BigNumber;
 
 module.exports = address => ({
   name: "DsChiefTransformer",
-  dependencies: [`raw_log_${address}_extractor`],
+  dependencies: [getExtractorName(address)],
   transform: async (services, logs) => {
     await handleDsNoteEvents(services, dsChiefAbi, logs[0], handlers);
   },
