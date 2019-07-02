@@ -1,3 +1,4 @@
+const { getExtractorName } = require("spock-etl/lib/core/extractors/instances/rawEventDataExtractor");
 const { handleEvents } = require("spock-etl/lib/core/transformers/common");
 const { getLogger } = require("spock-etl/lib/core/utils/logger");
 const BigNumber = require("bignumber.js").BigNumber;
@@ -9,7 +10,7 @@ const logger = getLogger("MKR");
 
 module.exports = mkrAddress => ({
   name: "MKR_Transformer",
-  dependencies: [`raw_log_${mkrAddress}_extractor`],
+  dependencies: [getExtractorName(mkrAddress)],
   transform: async (services, logs) => {
     await handleEvents(services, abi, logs[0], handlers);
   },
