@@ -17,9 +17,9 @@ RETURNS TABLE (
   	SELECT t.option_id, SUM(t.balance) FROM (
 		SELECT distinct ON (v.voter) * FROM polling.voted_event v 
 		JOIN polling.poll_created_event c ON c.poll_id=v.poll_id
-		JOIN mkr.holders_on_block(c.end_time) t ON v.voter = t.address 
+		JOIN mkr.holders_on_block(c.end_date) t ON v.voter = t.address 
 		JOIN vulcan2x.block b ON v.block_id = b.id
-		WHERE c.poll_id = arg_poll_id AND b.number >= c.start_time AND b.number <= c.end_time
+		WHERE c.poll_id = arg_poll_id AND b.number >= c.start_date AND b.number <= c.end_date
 		ORDER BY v.voter, v.block_id DESC
 	) t
 	GROUP BY t.option_id;
@@ -38,15 +38,15 @@ RETURNS TABLE (
   creator character varying(66),
   poll_id INTEGER,
   block_created INTEGER,
-  start_time INTEGER,
-  end_time INTEGER,
+  start_date INTEGER,
+  end_date INTEGER,
   multi_hash character varying(66)
 ) AS $$
-	SELECT C.creator, C.poll_id, C.block_created, C.start_time, C.end_time, C.multi_hash
+	SELECT C.creator, C.poll_id, C.block_created, C.start_date, C.end_date, C.multi_hash
 	FROM polling.poll_created_event AS C
 	LEFT JOIN polling.poll_withdrawn_event AS W
 	ON C.poll_id = W.poll_id AND C.creator = W.creator
 	WHERE C.creator IN ('0xeda95d1bdb60f901986f43459151b6d1c734b8a2', '0x14341f81dF14cA86E1420eC9e6Abd343Fb1c5bfC') /*dummy addresses - to be replaced by environment variable?*/
 	AND (C.block_created < W.block_withdrawn OR W.block_withdrawn IS NULL)
-	ORDER BY C.end_time;
+	ORDER BY C.end_date;
 $$ LANGUAGE sql STABLE STRICT;

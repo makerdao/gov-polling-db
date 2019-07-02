@@ -5,8 +5,8 @@ CREATE TABLE polling.poll_created_event (
   creator         character varying(66) not null,
   poll_id         integer not null,
   block_created   integer not null,
-  start_time     integer not null,
-  end_time       integer not null,
+  start_date     integer not null,
+  end_date       integer not null,
   multi_hash      character varying not null,
   
   log_index  integer not null,
