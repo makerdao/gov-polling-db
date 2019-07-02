@@ -9,8 +9,9 @@ const logger = getLogger("Polling");
 
 module.exports = {
   name: "Polling_Transformer",
-  dependencies: ["raw_log_0x500536350bb32b05210bcb412a720a0e7c8a36bc_extractor"],
+  dependencies: ["raw_log_0x150e1acaa2260dbf7d915c8eee0cdc895973a7c_extractor"],
   transform: async (services, logs) => {
+    console.log("logs in transform", logs);
     await handleEvents(services, abi, logs[0], handlers);
   },
 };
@@ -18,14 +19,15 @@ module.exports = {
 const handlers = {
   async PollCreated(services, info) {
     const sql = `INSERT INTO polling.poll_created_event
-    (creator,poll_id,start_block,end_block,multi_hash,log_index,tx_id,block_id) 
-    VALUES(\${creator}, \${poll_id}, \${start_block}, \${end_block}, \${multi_hash}, \${log_index}, \${tx_id}, \${block_id});`;
-
+    (creator,poll_id,start_date,end_date,multi_hash,log_index,tx_id,block_id) 
+    VALUES(\${creator}, \${block_created}, \${poll_id}, \${start_date}, \${end_date}, \${multi_hash}, \${log_index}, \${tx_id}, \${block_id});`;
+    console.log('INFO!!!!', info);
     await services.tx.none(sql, {
       creator: info.event.args.creator,
+      block_created: info.event.args.blockCreated,
       poll_id: info.event.args.pollId,
-      start_block: info.event.args.startBlock,
-      end_block: info.event.args.endBlock,
+      start_date: info.event.args.startDate,
+      end_date: info.event.args.endDate,
       multi_hash: info.event.args.multiHash,
 
       log_index: info.log.log_index,
@@ -37,10 +39,10 @@ const handlers = {
   async PollWithdrawn(services, info) {
     const sql = `INSERT INTO polling.poll_withdrawn_event
     (creator,poll_id,log_index,tx_id,block_id) 
-    VALUES(\${creator}, \${poll_id}, \${log_index}, \${tx_id}, \${block_id});`;
-
+    VALUES(\${creator}, \${block_withdrawn}, \${poll_id}, \${log_index}, \${tx_id}, \${block_id});`;
     await services.tx.none(sql, {
       creator: info.event.args.creator,
+      block_withdrawn: info.event.args.blockWithdrawn,
       poll_id: info.event.args.pollId,
 
       log_index: info.log.log_index,

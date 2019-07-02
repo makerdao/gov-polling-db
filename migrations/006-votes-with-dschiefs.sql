@@ -21,11 +21,11 @@ RETURNS TABLE (
   	SELECT t.option_id, SUM(COALESCE(mkr_balance, 0) + COALESCE(l_a_balance, 0) + COALESCE(l_h_balance, 0)) FROM (
 		SELECT distinct ON (v.voter) v.voter, v.option_id, t.balance as mkr_balance, l_a.balance as l_a_balance, l_h.balance as l_h_balance FROM polling.voted_event v 
 		JOIN polling.poll_created_event c ON c.poll_id=v.poll_id
-		JOIN mkr.holders_on_block(c.end_block) t ON v.voter = t.address 
-		LEFT JOIN dschief.balance_on_block(c.end_block) l_a ON v.voter = l_a.address
-		LEFT JOIN dschief.balance_on_block(c.end_block) l_h ON v.voter = l_h.hot
+		JOIN mkr.holders_on_block(c.end_time) t ON v.voter = t.address 
+		LEFT JOIN dschief.balance_on_block(c.end_time) l_a ON v.voter = l_a.address
+		LEFT JOIN dschief.balance_on_block(c.end_time) l_h ON v.voter = l_h.hot
 		JOIN vulcan2x.block b ON v.block_id = b.id
-		WHERE c.poll_id = arg_poll_id AND b.number >= c.start_block AND b.number <= c.end_block
+		WHERE c.poll_id = arg_poll_id AND b.number >= c.start_time AND b.number <= c.end_time
 		ORDER BY v.voter, v.block_id DESC
 	) t
 	GROUP BY t.option_id;
