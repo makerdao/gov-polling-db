@@ -8,6 +8,10 @@ const abi = require("../abis/polling_emitter.json");
 
 const logger = getLogger("Polling");
 
+const authorizedCreators = process.env.AUTHORIZED_CREATORS
+  ? process.env.AUTHORIZED_CREATORS.split(',').map(creator => creator.toLowerCase())
+  : [];
+
 module.exports = (address) => ({
   name: "Polling_Transformer",
   dependencies: [getExtractorName(address)],
@@ -19,12 +23,15 @@ module.exports = (address) => ({
 
 const handlers = {
   async PollCreated(services, info) {
+    const creator = info.event.args.creator;
+    if (authorizedCreators.length > 0 && !authorizedCreators.includes(creator.toLowerCase())) return;
+
     const sql = `INSERT INTO polling.poll_created_event
     (creator,block_created,poll_id,start_date,end_date,multi_hash,log_index,tx_id,block_id) 
     VALUES(\${creator}, \${block_created}, \${poll_id}, \${start_date}, \${end_date}, \${multi_hash}, \${log_index}, \${tx_id}, \${block_id});`;
     console.log('INFO!!!!', info);
     await services.tx.none(sql, {
-      creator: info.event.args.creator,
+      creator,
       block_created: info.event.args.blockCreated,
       poll_id: info.event.args.pollId,
       start_date: info.event.args.startDate,
