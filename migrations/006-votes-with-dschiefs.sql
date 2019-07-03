@@ -13,6 +13,32 @@ RETURNS TABLE (
 	GROUP BY l.immediate_caller, p.hot, p.cold
 $$ LANGUAGE sql STABLE STRICT;
 
+CREATE OR REPLACE FUNCTION api.associated_proxy_address(arg_address CHAR)
+RETURNS TABLE (
+  hot character varying(66),
+  cold character varying(66)
+) AS $$
+SELECT hot, cold
+	FROM dschief.vote_proxy_created_event
+	WHERE cold = arg_address OR hot = arg_address
+	ORDER BY block_id DESC
+	LIMIT 1;
+$$ LANGUAGE sql STABLE STRICT;
+
+CREATE OR REPLACE FUNCTION api.current_vote(arg_address CHAR, arg_poll_id INTEGER)
+RETURNS TABLE (
+	option_id INTEGER,
+	block_id INTEGER
+) AS $$
+SELECT option_id, block_id FROM polling.voted_event
+		WHERE voter = (SELECT hot FROM api.associated_proxy_address(arg_address))
+		OR voter = (SELECT cold FROM api.associated_proxy_address(arg_address))
+		OR voter = arg_address
+		AND poll_id = arg_poll_id
+ORDER BY block_id DESC
+LIMIT 1;
+$$ LANGUAGE sql STABLE STRICT;
+
 CREATE OR REPLACE FUNCTION polling.votes(arg_poll_id INTEGER)
 RETURNS TABLE (
   option_id INTEGER,
