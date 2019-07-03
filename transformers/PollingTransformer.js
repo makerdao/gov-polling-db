@@ -22,7 +22,7 @@ module.exports = {
 const handlers = {
   async PollCreated(services, info) {
     const creator = info.event.args.creator;
-    if (authorizedCreators.length > 0 && !authorizedCreators.inludes(creator.toLowerCase())) return;
+    if (authorizedCreators.length > 0 && !authorizedCreators.includes(creator.toLowerCase())) return;
 
     const sql = `INSERT INTO polling.poll_created_event
     (creator,poll_id,start_block,end_block,multi_hash,log_index,tx_id,block_id) 
