@@ -8,6 +8,14 @@ RETURNS TABLE (
 	LEFT JOIN (SELECT sender as address, SUM(-t.amount) FROM mkr.transfer_event t JOIN vulcan2x.block b ON b.id = t.block_id WHERE b.number <= arg_block_number GROUP BY t.sender) SUBS ON (SUMS.address = SUBS.address);
 $$ LANGUAGE sql STABLE STRICT;
 
+CREATE OR REPLACE FUNCTION api.mkr_balance_on_block(arg_address CHAR, arg_block_number INTEGER)
+RETURNS TABLE (
+	address character varying(66),
+	balance decimal(78,18)
+) AS $$
+	SELECT * FROM dschief.balance_on_block(arg_block_number)
+	WHERE address = arg_address;
+$$ LANGUAGE sql STABLE STRICT;
 
 CREATE OR REPLACE FUNCTION api.votes(arg_poll_id INTEGER)
 RETURNS TABLE (

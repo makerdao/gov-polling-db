@@ -13,14 +13,26 @@ RETURNS TABLE (
 	GROUP BY l.immediate_caller, p.hot, p.cold
 $$ LANGUAGE sql STABLE STRICT;
 
-CREATE OR REPLACE FUNCTION api.associated_proxy_address(arg_address CHAR)
+CREATE OR REPLACE FUNCTION api.balance_on_block(arg_address CHAR, arg_block_number INTEGER)
+RETURNS TABLE (
+  address character varying(66),
+  hot     character varying(66),
+  cold    character varying(66),
+  balance decimal(78,18)
+) AS $$
+	SELECT * FROM dschief.balance_on_block(arg_block_number)
+	WHERE address = arg_address;
+$$ LANGUAGE sql STABLE STRICT;
+
+CREATE OR REPLACE FUNCTION api.associated_proxy_addresses(arg_address CHAR)
 RETURNS TABLE (
   hot character varying(66),
-  cold character varying(66)
+  cold character varying(66),
+  proxy character varying(66)
 ) AS $$
-SELECT hot, cold
+SELECT hot, cold, vote_proxy
 	FROM dschief.vote_proxy_created_event
-	WHERE cold = arg_address OR hot = arg_address
+	WHERE cold = arg_address OR hot = arg_address OR vote_proxy = arg_address
 	ORDER BY block_id DESC
 	LIMIT 1;
 $$ LANGUAGE sql STABLE STRICT;

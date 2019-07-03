@@ -45,4 +45,4 @@ const mainnet = {
   },
 };
 
-module.exports.default = kovan;
+module.exports.default = mainnet;
