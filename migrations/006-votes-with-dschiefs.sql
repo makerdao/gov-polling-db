@@ -42,11 +42,10 @@ RETURNS TABLE (
 	option_id INTEGER,
 	block_id INTEGER
 ) AS $$
-SELECT option_id, block_id FROM polling.voted_event
+SELECT option_id, block_id FROM api.valid_votes(arg_poll_id)
 		WHERE voter = (SELECT hot FROM api.associated_proxy_address(arg_address))
 		OR voter = (SELECT cold FROM api.associated_proxy_address(arg_address))
 		OR voter = arg_address
-		AND poll_id = arg_poll_id
 ORDER BY block_id DESC
 LIMIT 1;
 $$ LANGUAGE sql STABLE STRICT;

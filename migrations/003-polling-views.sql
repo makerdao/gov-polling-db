@@ -29,6 +29,7 @@ RETURNS TABLE (
 	JOIN polling.poll_created_event c ON c.poll_id=v.poll_id
 	JOIN vulcan2x.block b ON v.block_id = b.id
 	WHERE v.poll_id = 1 AND b.timestamp >= to_timestamp(c.start_date) AND b.timestamp <= to_timestamp(c.end_date)
+	AND v.poll_id = arg_poll_id;
 $$ LANGUAGE sql STABLE STRICT;
 
 CREATE OR REPLACE FUNCTION api.unique_voters(arg_poll_id INTEGER)
