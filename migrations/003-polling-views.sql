@@ -17,14 +17,25 @@ RETURNS TABLE (
 	WHERE address = arg_address;
 $$ LANGUAGE sql STABLE STRICT;
 
+CREATE OR REPLACE FUNCTION api.valid_votes(arg_poll_id INTEGER)
+RETURNS TABLE (
+  voter character,
+  option_id integer,
+  log_index integer,
+  tx_id integer,
+  block_id integer
+) AS $$
+	SELECT voter, option_id, v.log_index, v.tx_id, v.block_id FROM polling.voted_event v
+	JOIN polling.poll_created_event c ON c.poll_id=v.poll_id
+	JOIN vulcan2x.block b ON v.block_id = b.id
+	WHERE v.poll_id = 1 AND b.timestamp >= to_timestamp(c.start_date) AND b.timestamp <= to_timestamp(c.end_date)
+$$ LANGUAGE sql STABLE STRICT;
+
 CREATE OR REPLACE FUNCTION api.unique_voters(arg_poll_id INTEGER)
 RETURNS TABLE (
   unique_voters BIGINT
 ) AS $$
-	SELECT COUNT(DISTINCT voter) FROM polling.voted_event v
-	JOIN polling.poll_created_event c ON c.poll_id=v.poll_id
-	JOIN vulcan2x.block b ON v.block_id = b.id
-	WHERE v.poll_id = 1 AND b.timestamp >= to_timestamp(c.start_date) AND b.timestamp <= to_timestamp(c.end_date)
+	SELECT COUNT(DISTINCT voter) FROM api.valid_votes(arg_poll_id);
 $$ LANGUAGE sql STABLE STRICT;
 
 
