@@ -17,29 +17,16 @@ RETURNS TABLE (
 	WHERE address = arg_address;
 $$ LANGUAGE sql STABLE STRICT;
 
-CREATE OR REPLACE FUNCTION api.votes(arg_poll_id INTEGER)
-RETURNS TABLE (
-  option_id INTEGER,
-  balance decimal(78,18)
-) AS $$
-  	SELECT t.option_id, SUM(t.balance) FROM (
-		SELECT distinct ON (v.voter) * FROM polling.voted_event v 
-		JOIN polling.poll_created_event c ON c.poll_id=v.poll_id
-		JOIN mkr.holders_on_block(c.end_date) t ON v.voter = t.address 
-		JOIN vulcan2x.block b ON v.block_id = b.id
-		WHERE c.poll_id = arg_poll_id AND b.number >= c.start_date AND b.number <= c.end_date
-		ORDER BY v.voter, v.block_id DESC
-	) t
-	GROUP BY t.option_id;
-$$ LANGUAGE sql STABLE STRICT;
-
 CREATE OR REPLACE FUNCTION api.unique_voters(arg_poll_id INTEGER)
 RETURNS TABLE (
   unique_voters BIGINT
 ) AS $$
-	SELECT COUNT(DISTINCT voter) FROM polling.voted_event
-	WHERE poll_id = arg_poll_id;
+	SELECT COUNT(DISTINCT voter) FROM polling.voted_event v
+	JOIN polling.poll_created_event c ON c.poll_id=v.poll_id
+	JOIN vulcan2x.block b ON v.block_id = b.id
+	WHERE v.poll_id = 1 AND b.timestamp >= to_timestamp(c.start_date) AND b.timestamp <= to_timestamp(c.end_date)
 $$ LANGUAGE sql STABLE STRICT;
+
 
 CREATE OR REPLACE FUNCTION api.active_polls()
 RETURNS TABLE (
