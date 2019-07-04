@@ -51,6 +51,23 @@ ORDER BY block_id DESC
 LIMIT 1;
 $$ LANGUAGE sql STABLE STRICT;
 
+CREATE OR REPLACE FUNCTION api.total_mkr_weight(arg_address CHAR, arg_block_number INTEGER)
+RETURNS TABLE (
+  hot character varying(66),
+  cold character varying(66),
+  proxy character varying(66),
+  total_weight decimal(78,18)
+) AS $$
+SELECT hot, cold, proxy, COALESCE(b1,0)+COALESCE(b2,0)+COALESCE(c1,0)+COALESCE(c2,0)+COALESCE(c3,0) as total_weight
+FROM api.associated_proxy_addresses('0xcold2')
+LEFT JOIN (SELECT address, balance as b1 FROM mkr.holders_on_block(arg_block_number)) mkr_b on hot = mkr_b.address /*mkr balance in hot*/
+LEFT JOIN (SELECT address, balance as b2 FROM mkr.holders_on_block(arg_block_number)) mkr_b1 on cold = mkr_b1.address /*mkr balance in cold*/
+LEFT JOIN (SELECT address, balance as c1 FROM dschief.balance_on_block(arg_block_number)) ch_b1 on cold = ch_b1.address /*chief balance for cold*/
+LEFT JOIN (SELECT address, balance as c2 FROM dschief.balance_on_block(arg_block_number)) ch_b2 on hot = ch_b2.address /*chief balance for hot*/
+LEFT JOIN (SELECT address, balance as c3 FROM dschief.balance_on_block(arg_block_number)) ch_b3 on proxy = ch_b3.address /*chief balance for proxy*/
+WHERE hot = arg_address OR cold = arg_address;
+$$ LANGUAGE sql STABLE STRICT;
+
 CREATE OR REPLACE FUNCTION polling.votes(arg_poll_id INTEGER)
 RETURNS TABLE (
   option_id INTEGER,
