@@ -67,6 +67,17 @@ LEFT JOIN (SELECT address, balance as c3 FROM dschief.balance_on_block(arg_block
 WHERE hot = arg_address OR cold = arg_address;
 $$ LANGUAGE sql STABLE STRICT;
 
+CREATE OR REPLACE FUNCTION api.vote_option_mkr_weights(arg_poll_id INTEGER, arg_block_number INTEGER)
+RETURNS TABLE (
+	option_id INTEGER,
+	mkr_support NUMERIC
+) AS $$
+SELECT option_id, SUM(COALESCE(t1.total_weight, 0) + COALESCE(t2.total_weight, 0)) as mkr_support FROM api.valid_votes(arg_poll_id) v
+LEFT JOIN api.total_mkr_weight_all_addresses(arg_block_number) t1 ON v.voter = t1.hot
+LEFT JOIN api.total_mkr_weight_all_addresses(arg_block_number) t2 ON v.voter = t2.cold
+GROUP BY option_id;
+$$ LANGUAGE sql STABLE STRICT;
+
 CREATE OR REPLACE FUNCTION polling.votes(arg_poll_id INTEGER)
 RETURNS TABLE (
   option_id INTEGER,
