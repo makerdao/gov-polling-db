@@ -24,19 +24,6 @@ RETURNS TABLE (
 	WHERE address = arg_address;
 $$ LANGUAGE sql STABLE STRICT;
 
-CREATE OR REPLACE FUNCTION api.associated_proxy_addresses(arg_address CHAR)
-RETURNS TABLE (
-  hot character varying(66),
-  cold character varying(66),
-  proxy character varying(66)
-) AS $$
-SELECT hot, cold, vote_proxy
-	FROM dschief.vote_proxy_created_event
-	WHERE cold = arg_address OR hot = arg_address OR vote_proxy = arg_address
-	ORDER BY block_id DESC
-	LIMIT 1;
-$$ LANGUAGE sql STABLE STRICT;
-
 CREATE OR REPLACE FUNCTION api.current_vote(arg_address CHAR, arg_poll_id INTEGER)
 RETURNS TABLE (
 	option_id INTEGER,
@@ -50,7 +37,20 @@ ORDER BY block_id DESC
 LIMIT 1;
 $$ LANGUAGE sql STABLE STRICT;
 
-CREATE OR REPLACE FUNCTION api.total_mkr_weight(arg_address CHAR, arg_block_number INTEGER)
+CREATE OR REPLACE FUNCTION api.all_active_vote_proxies(arg_block_number INTEGER)
+RETURNS TABLE (
+  hot character varying(66),
+  cold character varying(66),
+  proxy character varying(66),
+  proxy_mkr_weight decimal(78,18)
+) AS $$
+SELECT cold, hot, vote_proxy, proxy_mkr_weight
+FROM dschief.vote_proxy_created_event
+LEFT JOIN (SELECT address, balance as proxy_mkr_weight FROM dschief.balance_on_block(arg_block_number)) chief_table on vote_proxy = chief_table.address
+WHERE proxy_mkr_weight > 0;
+$$ LANGUAGE sql STABLE STRICT;
+
+CREATE OR REPLACE FUNCTION api.total_mkr_weight_all_proxies(arg_block_number INTEGER)
 RETURNS TABLE (
   hot character varying(66),
   cold character varying(66),
@@ -58,14 +58,38 @@ RETURNS TABLE (
   total_weight decimal(78,18)
 ) AS $$
 SELECT hot, cold, proxy, COALESCE(b1,0)+COALESCE(b2,0)+COALESCE(c1,0)+COALESCE(c2,0)+COALESCE(c3,0) as total_weight
-FROM api.associated_proxy_addresses('0xcold2')
+FROM api.all_active_vote_proxies(arg_block_number)
 LEFT JOIN (SELECT address, balance as b1 FROM mkr.holders_on_block(arg_block_number)) mkr_b on hot = mkr_b.address /*mkr balance in hot*/
 LEFT JOIN (SELECT address, balance as b2 FROM mkr.holders_on_block(arg_block_number)) mkr_b1 on cold = mkr_b1.address /*mkr balance in cold*/
 LEFT JOIN (SELECT address, balance as c1 FROM dschief.balance_on_block(arg_block_number)) ch_b1 on cold = ch_b1.address /*chief balance for cold*/
 LEFT JOIN (SELECT address, balance as c2 FROM dschief.balance_on_block(arg_block_number)) ch_b2 on hot = ch_b2.address /*chief balance for hot*/
-LEFT JOIN (SELECT address, balance as c3 FROM dschief.balance_on_block(arg_block_number)) ch_b3 on proxy = ch_b3.address /*chief balance for proxy*/
-WHERE hot = arg_address OR cold = arg_address;
+LEFT JOIN (SELECT address, balance as c3 FROM dschief.balance_on_block(arg_block_number)) ch_b3 on proxy = ch_b3.address; /*chief balance for proxy*/
 $$ LANGUAGE sql STABLE STRICT;
+
+CREATE OR REPLACE FUNCTION api.combined_chief_and_mkr_balances(arg_block_number INTEGER)
+RETURNS TABLE (
+  address character varying(66),
+  mkr_and_chief_balance decimal(78,18)
+) AS $$
+	SELECT m.address, COALESCE(m.balance,0) + COALESCE(d.balance,0) as mkr_and_chief_balance
+	FROM mkr.holders_on_block(arg_block_number) m
+	FULL OUTER JOIN dschief.balance_on_block(arg_block_number) d
+	ON m.address = d.address;
+$$ LANGUAGE sql STABLE STRICT;
+
+CREATE OR REPLACE FUNCTION api.total_mkr_weight_proxy_and_no_proxy(arg_block_number INTEGER)
+RETURNS TABLE (
+  address character varying(66),
+  weight decimal(78,18)
+) AS $$
+SELECT COALESCE(a1.address, a2.address) address, COALESCE(total_weight, a1.mkr_and_chief_balance, a2.mkr_and_chief_balance) weight
+FROM api.total_mkr_weight_all_proxies(arg_block_number) p
+FULL OUTER JOIN api.combined_chief_and_mkr_balances(arg_block_number) a1
+ON p.cold = a1.address
+FULL OUTER JOIN api.combined_chief_and_mkr_balances(arg_block_number) a2
+ON p.hot = a2.address;
+$$ LANGUAGE sql STABLE STRICT;
+
 
 CREATE OR REPLACE FUNCTION api.vote_option_mkr_weights(arg_poll_id INTEGER, arg_block_number INTEGER)
 RETURNS TABLE (
@@ -77,6 +101,7 @@ LEFT JOIN api.total_mkr_weight_all_addresses(arg_block_number) t1 ON v.voter = t
 LEFT JOIN api.total_mkr_weight_all_addresses(arg_block_number) t2 ON v.voter = t2.cold
 GROUP BY option_id;
 $$ LANGUAGE sql STABLE STRICT;
+
 
 CREATE OR REPLACE FUNCTION polling.votes(arg_poll_id INTEGER)
 RETURNS TABLE (
