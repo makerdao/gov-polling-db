@@ -21,6 +21,8 @@ RETURNS TABLE (
 	WHERE address = arg_address;
 $$ LANGUAGE sql STABLE STRICT;
 
+
+--This query would be called by getOptionVotingFor(pollId, address) in the sdk
 CREATE OR REPLACE FUNCTION api.current_vote(arg_address CHAR, arg_poll_id INTEGER)
 RETURNS TABLE (
 	option_id INTEGER,
@@ -93,14 +95,13 @@ RIGHT JOIN api.combined_chief_and_mkr_balances(9999999) a
 ON p.address = a.address;
 $$ LANGUAGE sql STABLE STRICT;
 
+--this function would be called by getMkrWeight(address) in the sdk
 CREATE OR REPLACE FUNCTION api.total_mkr_weight_proxy_and_no_proxy_by_address(arg_address CHARACTER, arg_block_number INTEGER)
 RETURNS TABLE (
   address character varying(66),
   weight decimal(78,18)
 ) AS $$
-SELECT a.address, COALESCE(p.total_weight,a.mkr_and_chief_balance) as weight FROM api.hot_or_cold_weight(9999999) p
-RIGHT JOIN api.combined_chief_and_mkr_balances(9999999) a
-ON p.address = a.address
+SELECT * FROM api.total_mkr_weight_proxy_and_no_proxy(arg_block_number INTEGER)
 WHERE p.address = arg_address;
 $$ LANGUAGE sql STABLE STRICT;
 
@@ -119,6 +120,7 @@ RETURNS TABLE (
 	ON voter = hot OR voter = cold;
 $$ LANGUAGE sql STABLE STRICT;
 
+-- this function would be called by getMkrAmtVoted(pollId, blockNumber)
 CREATE OR REPLACE FUNCTION api.vote_option_mkr_weights(arg_poll_id INTEGER, arg_block_number INTEGER)
 RETURNS TABLE (
 	option_id INTEGER,
