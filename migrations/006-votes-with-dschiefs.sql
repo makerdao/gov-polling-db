@@ -1,16 +1,13 @@
 CREATE OR REPLACE FUNCTION dschief.balance_on_block(arg_block_number INTEGER)
 RETURNS TABLE (
   address character varying(66),
-  hot     character varying(66),
-  cold    character varying(66),
   balance decimal(78,18)
 ) AS $$
-  	SELECT l.immediate_caller as address, p.hot, p.cold, SUM(l.lock) as balance
+  	SELECT l.immediate_caller as address, SUM(l.lock) as balance
 	FROM dschief.lock l 
-	LEFT JOIN dschief.vote_proxy_created_event p ON p.vote_proxy = l.immediate_caller
 	JOIN vulcan2x.block b ON b.id = l.block_id
 	WHERE b.number <= arg_block_number
-	GROUP BY l.immediate_caller, p.hot, p.cold
+	GROUP BY l.immediate_caller
 $$ LANGUAGE sql STABLE STRICT;
 
 CREATE OR REPLACE FUNCTION api.balance_on_block(arg_address CHAR, arg_block_number INTEGER)
@@ -44,7 +41,7 @@ RETURNS TABLE (
   proxy character varying(66),
   proxy_mkr_weight decimal(78,18)
 ) AS $$
-SELECT cold, hot, vote_proxy, proxy_mkr_weight
+SELECT hot, cold, vote_proxy, proxy_mkr_weight
 FROM dschief.vote_proxy_created_event
 LEFT JOIN (SELECT address, balance as proxy_mkr_weight FROM dschief.balance_on_block(arg_block_number)) chief_table on vote_proxy = chief_table.address
 WHERE proxy_mkr_weight > 0;
@@ -77,46 +74,62 @@ RETURNS TABLE (
 	ON m.address = d.address;
 $$ LANGUAGE sql STABLE STRICT;
 
+CREATE OR REPLACE FUNCTION api.hot_or_cold_weight(arg_block_number INTEGER)
+RETURNS TABLE (
+	address character,
+	total_weight decimal(78,18)
+) AS $$
+	SELECT * FROM (SELECT hot as address, total_weight FROM api.total_mkr_weight_all_proxies(arg_block_number)) h
+	UNION (SELECT cold, total_weight FROM api.total_mkr_weight_all_proxies(arg_block_number));
+$$ LANGUAGE sql STABLE STRICT;
+
 CREATE OR REPLACE FUNCTION api.total_mkr_weight_proxy_and_no_proxy(arg_block_number INTEGER)
 RETURNS TABLE (
   address character varying(66),
   weight decimal(78,18)
 ) AS $$
-SELECT COALESCE(a1.address, a2.address) address, COALESCE(total_weight, a1.mkr_and_chief_balance, a2.mkr_and_chief_balance) weight
-FROM api.total_mkr_weight_all_proxies(arg_block_number) p
-FULL OUTER JOIN api.combined_chief_and_mkr_balances(arg_block_number) a1
-ON p.cold = a1.address
-FULL OUTER JOIN api.combined_chief_and_mkr_balances(arg_block_number) a2
-ON p.hot = a2.address;
+SELECT a.address, COALESCE(p.total_weight,a.mkr_and_chief_balance) as weight FROM api.hot_or_cold_weight(9999999) p
+RIGHT JOIN api.combined_chief_and_mkr_balances(9999999) a
+ON p.address = a.address;
 $$ LANGUAGE sql STABLE STRICT;
 
+CREATE OR REPLACE FUNCTION api.total_mkr_weight_proxy_and_no_proxy_by_address(arg_address CHARACTER, arg_block_number INTEGER)
+RETURNS TABLE (
+  address character varying(66),
+  weight decimal(78,18)
+) AS $$
+SELECT a.address, COALESCE(p.total_weight,a.mkr_and_chief_balance) as weight FROM api.hot_or_cold_weight(9999999) p
+RIGHT JOIN api.combined_chief_and_mkr_balances(9999999) a
+ON p.address = a.address
+WHERE p.address = arg_address;
+$$ LANGUAGE sql STABLE STRICT;
+
+
+CREATE OR REPLACE FUNCTION api.votes_with_proxy(arg_poll_id INTEGER, arg_block_number INTEGER)
+RETURNS TABLE (
+	voter character,
+	option_id integer,
+	block_id integer,
+	proxy_otherwise_voter character,
+	hot character,
+	cold character
+) AS $$
+	SELECT voter, option_id, block_id, COALESCE(proxy, voter) as proxy_otherwise_voter, hot, cold FROM api.valid_votes(arg_poll_id)
+	LEFT JOIN api.all_active_vote_proxies(arg_block_number)
+	ON voter = hot OR voter = cold;
+$$ LANGUAGE sql STABLE STRICT;
 
 CREATE OR REPLACE FUNCTION api.vote_option_mkr_weights(arg_poll_id INTEGER, arg_block_number INTEGER)
 RETURNS TABLE (
 	option_id INTEGER,
 	mkr_support NUMERIC
 ) AS $$
-SELECT option_id, SUM(COALESCE(t1.total_weight, 0) + COALESCE(t2.total_weight, 0)) as mkr_support FROM api.valid_votes(arg_poll_id) v
-LEFT JOIN api.total_mkr_weight_all_addresses(arg_block_number) t1 ON v.voter = t1.hot
-LEFT JOIN api.total_mkr_weight_all_addresses(arg_block_number) t2 ON v.voter = t2.cold
+SELECT option_id, SUM(weight) total_weight FROM (SELECT * FROM api.votes_with_proxy(arg_poll_id,arg_block_number)
+WHERE (proxy_otherwise_voter, block_id) IN (
+select proxy_otherwise_voter, max(block_id) as block_id
+from api.valid_votes(arg_poll_id)
+group by proxy_otherwise_voter)) v
+LEFT JOIN api.total_mkr_weight_proxy_and_no_proxy(arg_block_number)
+ON voter = address
 GROUP BY option_id;
-$$ LANGUAGE sql STABLE STRICT;
-
-
-CREATE OR REPLACE FUNCTION polling.votes(arg_poll_id INTEGER)
-RETURNS TABLE (
-  option_id INTEGER,
-  balance decimal(78,18)
-) AS $$
-  	SELECT t.option_id, SUM(COALESCE(mkr_balance, 0) + COALESCE(l_a_balance, 0) + COALESCE(l_h_balance, 0)) FROM (
-		SELECT distinct ON (v.voter) v.voter, v.option_id, t.balance as mkr_balance, l_a.balance as l_a_balance, l_h.balance as l_h_balance FROM polling.voted_event v 
-		JOIN polling.poll_created_event c ON c.poll_id=v.poll_id
-		JOIN mkr.holders_on_block(c.end_date) t ON v.voter = t.address 
-		LEFT JOIN dschief.balance_on_block(c.end_date) l_a ON v.voter = l_a.address
-		LEFT JOIN dschief.balance_on_block(c.end_date) l_h ON v.voter = l_h.hot
-		JOIN vulcan2x.block b ON v.block_id = b.id
-		WHERE c.poll_id = arg_poll_id AND b.number >= c.start_date AND b.number <= c.end_date
-		ORDER BY v.voter, v.block_id DESC
-	) t
-	GROUP BY t.option_id;
 $$ LANGUAGE sql STABLE STRICT;
