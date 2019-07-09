@@ -54,6 +54,6 @@ RETURNS TABLE (
 	FROM polling.poll_created_event AS C
 	LEFT JOIN polling.poll_withdrawn_event AS W
 	ON C.poll_id = W.poll_id AND C.creator = W.creator
-	AND (C.block_created < W.block_withdrawn OR W.block_withdrawn IS NULL)
+	WHERE W.block_withdrawn IS NULL
 	ORDER BY C.end_date;
 $$ LANGUAGE sql STABLE STRICT;
