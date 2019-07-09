@@ -16,7 +16,6 @@ module.exports = (address) => ({
   name: "Polling_Transformer",
   dependencies: [getExtractorName(address)],
   transform: async (services, logs) => {
-    console.log("logs in transform", logs);
     await handleEvents(services, abi, logs[0], handlers);
   },
 });
@@ -29,7 +28,6 @@ const handlers = {
     const sql = `INSERT INTO polling.poll_created_event
     (creator,block_created,poll_id,start_date,end_date,multi_hash,log_index,tx_id,block_id) 
     VALUES(\${creator}, \${block_created}, \${poll_id}, \${start_date}, \${end_date}, \${multi_hash}, \${log_index}, \${tx_id}, \${block_id});`;
-    console.log('INFO!!!!', info);
     await services.tx.none(sql, {
       creator,
       block_created: info.event.args.blockCreated,
@@ -45,11 +43,14 @@ const handlers = {
   },
 
   async PollWithdrawn(services, info) {
+    const creator = info.event.args.creator;
+    if (authorizedCreators.length > 0 && !authorizedCreators.includes(creator.toLowerCase())) return;
+
     const sql = `INSERT INTO polling.poll_withdrawn_event
     (creator,block_withdrawn,poll_id,log_index,tx_id,block_id) 
     VALUES(\${creator}, \${block_withdrawn}, \${poll_id}, \${log_index}, \${tx_id}, \${block_id});`;
     await services.tx.none(sql, {
-      creator: info.event.args.creator,
+      creator,
       block_withdrawn: info.event.args.blockWithdrawn,
       poll_id: info.event.args.pollId,
 
