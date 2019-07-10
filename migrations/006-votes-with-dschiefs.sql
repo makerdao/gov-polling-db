@@ -79,8 +79,8 @@ RETURNS TABLE (
   address character varying(66),
   weight decimal(78,18)
 ) AS $$
-SELECT a.address, COALESCE(p.total_weight,a.mkr_and_chief_balance) as weight FROM api.hot_or_cold_weight(9999999) p
-RIGHT JOIN api.combined_chief_and_mkr_balances(9999999) a
+SELECT a.address, COALESCE(p.total_weight,a.mkr_and_chief_balance) as weight FROM api.hot_or_cold_weight(arg_block_number) p
+RIGHT JOIN api.combined_chief_and_mkr_balances(arg_block_number) a
 ON p.address = a.address;
 $$ LANGUAGE sql STABLE STRICT;
 
@@ -109,18 +109,30 @@ RETURNS TABLE (
 	ON voter = hot OR voter = cold;
 $$ LANGUAGE sql STABLE STRICT;
 
+CREATE OR REPLACE FUNCTION dschief.most_recent_vote_only(arg_poll_id INTEGER, arg_block_number INTEGER)
+RETURNS TABLE (
+  voter character,
+  option_id integer,
+  block_id integer,
+  proxy_otherwise_voter character,
+  hot character,
+  cold character
+) AS $$
+SELECT * FROM dschief.votes_with_proxy(arg_poll_id,arg_block_number)
+WHERE (proxy_otherwise_voter, block_id) IN (
+select proxy_otherwise_voter, MAX(block_id) as block_id
+from dschief.votes_with_proxy(arg_poll_id,arg_block_number)
+group by proxy_otherwise_voter);
+$$ LANGUAGE sql STABLE STRICT;
+
 -- this function would be called by getMkrAmtVoted(pollId, blockNumber)
 CREATE OR REPLACE FUNCTION api.vote_option_mkr_weights(arg_poll_id INTEGER, arg_block_number INTEGER)
 RETURNS TABLE (
 	option_id INTEGER,
 	mkr_support NUMERIC
 ) AS $$
-SELECT option_id, SUM(weight) total_weight FROM (SELECT * FROM dschief.votes_with_proxy(arg_poll_id,arg_block_number)
-WHERE (proxy_otherwise_voter, block_id) IN (
-select proxy_otherwise_voter, max(block_id) as block_id
-from api.valid_votes(arg_poll_id)
-group by proxy_otherwise_voter)) v
-LEFT JOIN dschief.total_mkr_weight_proxy_and_no_proxy(arg_block_number)
+SELECT option_id, SUM(weight) total_weight FROM dschief.most_recent_vote_only(1, 9999999) v
+LEFT JOIN dschief.total_mkr_weight_proxy_and_no_proxy(9999999)
 ON voter = address
 GROUP BY option_id;
 $$ LANGUAGE sql STABLE STRICT;
