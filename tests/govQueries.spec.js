@@ -13,11 +13,21 @@ const insertLock = (t, values) => { //todo, import this from dsChiefTransformers
   return t.none(
     `
 INSERT INTO dschief.lock(contract_address, from_address, immediate_caller, lock, timestamp, log_index, tx_id, block_id) VALUES (\${contractAddress}, \${fromAddress}, \${immediateCaller}, \${lock}, \${timestamp}, \${logIndex}, \${txId}, \${blockId})`,
-    values,
+    values
   );
 };
 
-test('can query db', async () => {
+const insertPollCreated = (t, values) => {
+  return t.none(
+    `
+INSERT INTO polling.poll_created_event
+    (creator,block_created,poll_id,start_date,end_date,multi_hash,log_index,tx_id,block_id) 
+    VALUES(\${creator}, \${block_created}, \${poll_id}, \${start_date}, \${end_date}, \${multi_hash}, \${log_index}, \${tx_id}, \${block_id});`,
+    values
+  );
+};
+
+test('can get poll created', async () => {
   /*await insertLock(db,{
       fromAddress: '0xfrom',
       immediateCaller: '0xcaller',
@@ -30,5 +40,5 @@ test('can query db', async () => {
     });*/
   const l = await db.any('SELECT * FROM dschief.lock');
   console.log('l', l);
-  expect(!!l).toBe(true);
+  //expect(l.includes()).toBe(true);
 });
