@@ -1,11 +1,11 @@
 require('dotenv').config();
 const pgp = require('pg-promise')();
 const cn = {
-    host: process.env.VL_DB_HOST,
-    port: process.env.VL_DB_PORT,
-    database: process.env.VL_DB_DATABASE,
-    user: process.env.VL_DB_USER,
-    password: process.env.VL_DB_PASSWORD
+  host: process.env.VL_DB_HOST,
+  port: process.env.VL_DB_PORT,
+  database: process.env.VL_DB_DATABASE,
+  user: process.env.VL_DB_USER,
+  password: process.env.VL_DB_PASSWORD
 };
 const db = pgp(cn);
 
@@ -25,23 +25,23 @@ const TransactionCount = new Counter();
 const BlockCount = new Counter();
 const PollCount = new Counter();
 
-async function insertBlockAndTransaction(){
-  await insertBlock(db,{
-      number: BlockCount.next(),
-      hash: '0x'+BlockCount.current(),
-      timestamp: new Date(BlockCount.current()*1000).toISOString() //for simplicity the timestamp is blockNumber of seconds after Unix time started
-    });
-  await insertTransaction(db,{
-      id: TransactionCount.next(),
-      hash: '0x'+TransactionCount.current(),
-      to_address: '0x731c6f8c754fa404cfcc2ed8035ef79262f65702',
-      from_address: '0x00daa9a2d88bed5a29a6ca93e0b7d860cd1d403f',
-      block_id: BlockCount.current(),
-      nonce: 1,
-      value: 0,
-      gas_limit: 3000000,
-      gas_price: 1000000000,
-      data: 0xc0406226
+async function insertBlockAndTransaction() {
+  await insertBlock(db, {
+    number: BlockCount.next(),
+    hash: '0x' + BlockCount.current(),
+    timestamp: new Date(BlockCount.current() * 1000).toISOString() //for simplicity the timestamp is blockNumber of seconds after Unix time started
+  });
+  await insertTransaction(db, {
+    id: TransactionCount.next(),
+    hash: '0x' + TransactionCount.current(),
+    to_address: '0x731c6f8c754fa404cfcc2ed8035ef79262f65702',
+    from_address: '0x00daa9a2d88bed5a29a6ca93e0b7d860cd1d403f',
+    block_id: BlockCount.current(),
+    nonce: 1,
+    value: 0,
+    gas_limit: 3000000,
+    gas_price: 1000000000,
+    data: 0xc0406226
   });
 }
 
@@ -87,7 +87,7 @@ const insertPollCreated = (t, values) => {
 
 test('can add an active poll', async () => {
   await insertBlockAndTransaction();
-  await insertPollCreated(db,{
+  await insertPollCreated(db, {
     creator: '0xcreator',
     block_created: BlockCount.current(),
     poll_id: PollCount.next(),
@@ -106,13 +106,13 @@ test('can add a valid vote', async () => {
   const active_polls = await db.any('SELECT * FROM api.active_polls()');
   const firstPoll = active_polls[0];
   await insertBlockAndTransaction();
-  await insertVote(db,{
+  await insertVote(db, {
     voter: '0xvoter1',
     poll_id: firstPoll.poll_id,
     option_id: 1,
     log_index: BlockCount.current(),
     tx_id: TransactionCount.current(),
-    block_id: firstPoll.start_date+1
+    block_id: firstPoll.start_date + 1
   });
   const v = await db.any('SELECT * FROM polling.valid_votes(1)');
   expect(!!v[0]).toBe(true);
