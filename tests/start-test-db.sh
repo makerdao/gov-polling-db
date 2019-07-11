@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
 
 docker-compose down && docker-compose up &
-sleep 10s
+sleep 12s
 yarn migrate
