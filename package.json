@@ -9,7 +9,8 @@
     "start-sync": "node -r ./loadenv.js ./node_modules/spock-etl/lib/core/runner.js sync ./config.js",
     "migrate": "node -r ./loadenv.js ./node_modules/spock-etl/lib/core/runner.js migrate ./config.js",
     "start-api": "node -r ./loadenv.js ./node_modules/spock-etl/lib/core/runner.js api ./config.js",
-    "test": "jest"
+    "test": "jest",
+    "test:db": "./tests/start-test-db.sh"
   },
   "dependencies": {
     "dotenv-flow": "^2.0.0",
