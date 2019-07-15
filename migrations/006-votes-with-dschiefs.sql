@@ -129,10 +129,12 @@ $$ LANGUAGE sql STABLE STRICT;
 CREATE OR REPLACE FUNCTION api.vote_option_mkr_weights(arg_poll_id INTEGER, arg_block_number INTEGER)
 RETURNS TABLE (
 	option_id INTEGER,
-	mkr_support NUMERIC
+	mkr_support NUMERIC,
+	block_timestamp TIMESTAMP WITH TIME ZONE
 ) AS $$
-SELECT option_id, SUM(weight) total_weight FROM dschief.most_recent_vote_only(arg_poll_id, arg_block_number) v
+SELECT option_id, total_weight, b.timestamp FROM (SELECT option_id, SUM(weight) total_weight FROM dschief.most_recent_vote_only(arg_poll_id, arg_block_number) v
 LEFT JOIN dschief.total_mkr_weight_proxy_and_no_proxy(arg_block_number)
 ON voter = address
-GROUP BY option_id;
+GROUP BY option_id) m
+LEFT JOIN vulcan2x.block b ON b.number = arg_block_number;
 $$ LANGUAGE sql STABLE STRICT;
