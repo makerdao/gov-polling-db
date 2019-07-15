@@ -1,5 +1,6 @@
 require('dotenv').config();
 const pgp = require('pg-promise')();
+const { request } = require('graphql-request');
 const cn = {
   host: process.env.VL_DB_HOST,
   port: process.env.VL_DB_PORT,
@@ -85,22 +86,57 @@ const insertPollCreated = (t, values) => {
   );
 };
 
-test('can add an active poll', async () => {
-  await insertBlockAndTransaction();
-  await insertPollCreated(db, {
-    creator: '0xcreator',
-    block_created: BlockCount.current(),
-    poll_id: PollCount.next(),
-    start_date: 0,
-    end_date: 3,
-    multi_hash: 'MuLtIhAsH',
-    log_index: BlockCount.current(),
-    tx_id: TransactionCount.current(),
-    block_id: BlockCount.current()
-  });
-  const p = await db.any('SELECT * FROM api.active_polls()');
-  expect(!!p[0]).toBe(true);
+afterAll(() => {
+  db.$pool.end();
 });
+
+describe('active poll', () => {
+  const POLL_CREATOR = "0xcreator";
+  const POLL_START_DATE = 0;
+  const POLL_END_DATE = 3;
+  const POLL_MULTI_HASH = "MuLtIhAsH";
+
+  test('can add an active poll', async () => {
+    await insertBlockAndTransaction();
+    await insertPollCreated(db, {
+      creator: POLL_CREATOR,
+      block_created: BlockCount.current(),
+      poll_id: PollCount.next(),
+      start_date: POLL_START_DATE,
+      end_date: POLL_END_DATE,
+      multi_hash: POLL_MULTI_HASH,
+      log_index: BlockCount.current(),
+      tx_id: TransactionCount.current(),
+      block_id: BlockCount.current()
+    });
+    const p = await db.any('SELECT * FROM api.active_polls()');
+    expect(!!p[0]).toBe(true);
+  });
+
+  test('can get an active poll via graphql', async () => {
+    const query = `{
+      activePolls(first: 1) {
+        nodes {
+          creator
+          pollId
+          blockCreated
+          startDate
+          endDate
+          multiHash
+        }
+      }
+    }`
+
+    const { activePolls } = await request('http://localhost:3001/v1', query);
+    expect(activePolls).toBeDefined();
+    const poll = activePolls.nodes[0];
+    expect(poll).toBeDefined();
+    expect(poll.creator).toBe(POLL_CREATOR);
+    expect(poll.multiHash).toBe(POLL_MULTI_HASH);
+  });
+})
+
+
 
 test('can add a valid vote', async () => {
   const active_polls = await db.any('SELECT * FROM api.active_polls()');
@@ -135,3 +171,4 @@ test('can add a valid vote', async () => {
 //   const l = await db.any('SELECT * FROM dschief.lock');
 //   expect(!!l[0]).toBe(true);
 // });
+
