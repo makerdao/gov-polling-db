@@ -86,6 +86,10 @@ const insertPollCreated = (t, values) => {
   );
 };
 
+afterAll(() => {
+  db.$pool.end();
+});
+
 describe('active poll', () => {
   const POLL_CREATOR = "0xcreator";
   const POLL_START_DATE = 0;
