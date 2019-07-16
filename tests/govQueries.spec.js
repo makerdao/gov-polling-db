@@ -154,21 +154,22 @@ test('can add a valid vote', async () => {
   expect(!!v[0]).toBe(true);
 });
 
-// test('can get a lock entry', async () => {
-//   try{
-//     await insertBlockAndTransaction();
-//     await insertLock(db,{
-//         fromAddress: '0xfrom',
-//         immediateCaller: '0xcaller',
-//         lock: 3,
-//         contractAddress: '0xaddress',
-//         txId: transactionCount,
-//         blockId: blockCount,
-//         logIndex: 3,
-//         timestamp: '2017-11-25 18:24:17+00',
-//       });
-//   }catch(e){console.log(e);}
-//   const l = await db.any('SELECT * FROM dschief.lock');
-//   expect(!!l[0]).toBe(true);
-// });
+
+
+
+test('can get a lock entry', async () => {
+  await insertBlockAndTransaction();
+  await insertLock(db, {
+    fromAddress: '0xfrom',
+    immediateCaller: '0xcaller',
+    lock: "3",
+    contractAddress: '0xaddress',
+    txId: TransactionCount.current(),
+    blockId: BlockCount.current(),
+    logIndex: "3",
+    timestamp: '2017-11-25 18:24:17+00',
+  });
+  const l = await db.any('SELECT * FROM dschief.lock');
+  expect(!!l[0]).toBe(true);
+});
 
