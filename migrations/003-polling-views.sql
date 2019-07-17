@@ -36,9 +36,10 @@ RETURNS TABLE (
   block_created INTEGER,
   start_date INTEGER,
   end_date INTEGER,
-  multi_hash character varying(66)
+  multi_hash character varying(66),
+  url character varying(255)
 ) AS $$
-	SELECT C.creator, C.poll_id, C.block_created, C.start_date, C.end_date, C.multi_hash
+	SELECT C.creator, C.poll_id, C.block_created, C.start_date, C.end_date, C.multi_hash, C.url
 	FROM polling.poll_created_event AS C
 	LEFT JOIN polling.poll_withdrawn_event AS W
 	ON C.poll_id = W.poll_id AND C.creator = W.creator

@@ -8,6 +8,7 @@ CREATE TABLE polling.poll_created_event (
   start_date     integer not null,
   end_date       integer not null,
   multi_hash      character varying not null,
+  url             character varying not null,
   
   log_index  integer not null,
   tx_id      integer not null REFERENCES vulcan2x.transaction(id) ON DELETE CASCADE,
