@@ -38,6 +38,11 @@ const kovan = {
   migrations: {
     mkr: "./migrations",
   },
+  api: {
+    whitelisting: {
+      enabled: false,
+    },
+  },
 };
 
 const mainnet = {
@@ -58,6 +63,11 @@ const mainnet = {
   ],
   migrations: {
     mkr: "./migrations",
+  },
+  api: {
+    whitelisting: {
+      enabled: false,
+    },
   },
 };
 
