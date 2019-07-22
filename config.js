@@ -51,7 +51,7 @@ const mainnet = {
     ...makeRawLogExtractors([
       VOTING_CONTRACT_ADDRESS,
       MKR_ADDRESS,
-      DSCHIEF_KOVAN_ADDRESS,
+      DSCHIEF_ADDRESS,
       VOTE_PROXY_FACTORY_ADDRESS
     ])
   ],
