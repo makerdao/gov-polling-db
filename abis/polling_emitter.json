@@ -11,19 +11,9 @@
   {
     "constant": false,
     "inputs": [
-      { "name": "startBlock", "type": "uint256" },
-      { "name": "endBlock", "type": "uint256" },
-      { "name": "multiHash", "type": "string" }
+      { "name": "pollId", "type": "uint256" },
+      { "name": "optionId", "type": "uint256" }
     ],
-    "name": "createPoll",
-    "outputs": [],
-    "payable": false,
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "constant": false,
-    "inputs": [{ "name": "pollId", "type": "uint256" }, { "name": "optionId", "type": "uint256" }],
     "name": "vote",
     "outputs": [],
     "payable": false,
@@ -40,13 +30,29 @@
     "type": "function"
   },
   {
+    "constant": false,
+    "inputs": [
+      { "name": "startDate", "type": "uint256" },
+      { "name": "endDate", "type": "uint256" },
+      { "name": "multiHash", "type": "string" },
+      { "name": "url", "type": "string" }
+    ],
+    "name": "createPoll",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
     "anonymous": false,
     "inputs": [
       { "indexed": true, "name": "creator", "type": "address" },
-      { "indexed": false, "name": "pollId", "type": "uint256" },
-      { "indexed": false, "name": "startBlock", "type": "uint256" },
-      { "indexed": false, "name": "endBlock", "type": "uint256" },
-      { "indexed": false, "name": "multiHash", "type": "string" }
+      { "indexed": false, "name": "blockCreated", "type": "uint256" },
+      { "indexed": true, "name": "pollId", "type": "uint256" },
+      { "indexed": false, "name": "startDate", "type": "uint256" },
+      { "indexed": false, "name": "endDate", "type": "uint256" },
+      { "indexed": false, "name": "multiHash", "type": "string" },
+      { "indexed": false, "name": "url", "type": "string" }
     ],
     "name": "PollCreated",
     "type": "event"
@@ -55,8 +61,8 @@
     "anonymous": false,
     "inputs": [
       { "indexed": true, "name": "creator", "type": "address" },
-      { "indexed": false, "name": "pollId", "type": "uint256" },
-      { "indexed": false, "name": "blockNumber", "type": "uint256" }
+      { "indexed": false, "name": "blockWithdrawn", "type": "uint256" },
+      { "indexed": false, "name": "pollId", "type": "uint256" }
     ],
     "name": "PollWithdrawn",
     "type": "event"

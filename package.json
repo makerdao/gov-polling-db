@@ -8,10 +8,17 @@
     "start-etl": "node -r ./loadenv.js ./node_modules/spock-etl/lib/core/runner.js etl ./config.js",
     "start-sync": "node -r ./loadenv.js ./node_modules/spock-etl/lib/core/runner.js sync ./config.js",
     "migrate": "node -r ./loadenv.js ./node_modules/spock-etl/lib/core/runner.js migrate ./config.js",
-    "start-api": "node -r ./loadenv.js ./node_modules/spock-etl/lib/core/runner.js api ./config.js"
+    "start-api": "node -r ./loadenv.js ./node_modules/spock-etl/lib/core/runner.js api ./config.js",
+    "test": "jest",
+    "test:ci": "./tests/run-tests.sh"
   },
   "dependencies": {
     "dotenv-flow": "^2.0.0",
-    "spock-etl": "^0.0.5"
+    "spock-etl": "^0.0.12"
+  },
+  "devDependencies": {
+    "graphql-request": "^1.8.2",
+    "jest": "^24.8.0",
+    "pg-promise": "^8.7.2"
   }
 }

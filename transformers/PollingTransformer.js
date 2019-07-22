@@ -1,43 +1,75 @@
-const { handleEvents } = require("spock-etl/lib/core/transformers/common");
-const { getLogger } = require("spock-etl/lib/core/utils/logger");
-const BigNumber = require("bignumber.js").BigNumber;
+const { handleEvents } = require('spock-etl/lib/core/transformers/common');
+const {
+  getExtractorName
+} = require('spock-etl/lib/core/extractors/instances/rawEventDataExtractor');
+const { getLogger } = require('spock-etl/lib/core/utils/logger');
+const BigNumber = require('bignumber.js').BigNumber;
 
 // @ts-ignore
-const abi = require("../abis/polling_emitter.json");
+const abi = require('../abis/polling_emitter.json');
 
-const logger = getLogger("Polling");
+const logger = getLogger('Polling');
 
 const authorizedCreators = process.env.AUTHORIZED_CREATORS
-  ? process.env.AUTHORIZED_CREATORS.split(',').map(creator => creator.toLowerCase())
+  ? process.env.AUTHORIZED_CREATORS.split(',').map(creator =>
+      creator.toLowerCase()
+    )
   : [];
 
-module.exports = {
-  name: "Polling_Transformer",
-  dependencies: ["raw_log_0x500536350bb32b05210bcb412a720a0e7c8a36bc_extractor"],
+module.exports = address => ({
+  name: 'Polling_Transformer',
+  dependencies: [getExtractorName(address)],
   transform: async (services, logs) => {
     await handleEvents(services, abi, logs[0], handlers);
-  },
-};
+  }
+});
 
 const handlers = {
   async PollCreated(services, info) {
     const creator = info.event.args.creator;
-    if (authorizedCreators.length > 0 && !authorizedCreators.includes(creator.toLowerCase())) return;
+    if (
+      authorizedCreators.length > 0 &&
+      !authorizedCreators.includes(creator.toLowerCase())
+    )
+      return;
 
     const sql = `INSERT INTO polling.poll_created_event
-    (creator,poll_id,start_block,end_block,multi_hash,log_index,tx_id,block_id) 
-    VALUES(\${creator}, \${poll_id}, \${start_block}, \${end_block}, \${multi_hash}, \${log_index}, \${tx_id}, \${block_id});`;
-
+    (creator,block_created,poll_id,start_date,end_date,multi_hash,url,log_index,tx_id,block_id) 
+    VALUES(\${creator}, \${block_created}, \${poll_id}, \${start_date}, \${end_date}, \${multi_hash}, \${url}, \${log_index}, \${tx_id}, \${block_id});`;
     await services.tx.none(sql, {
       creator,
+      block_created: info.event.args.blockCreated,
       poll_id: info.event.args.pollId,
-      start_block: info.event.args.startBlock,
-      end_block: info.event.args.endBlock,
+      start_date: info.event.args.startDate,
+      end_date: info.event.args.endDate,
       multi_hash: info.event.args.multiHash,
+      url: info.event.args.url,
 
       log_index: info.log.log_index,
       tx_id: info.log.tx_id,
-      block_id: info.log.block_id,
+      block_id: info.log.block_id
+    });
+  },
+
+  async PollWithdrawn(services, info) {
+    const creator = info.event.args.creator;
+    if (
+      authorizedCreators.length > 0 &&
+      !authorizedCreators.includes(creator.toLowerCase())
+    )
+      return;
+
+    const sql = `INSERT INTO polling.poll_withdrawn_event
+    (creator,block_withdrawn,poll_id,log_index,tx_id,block_id) 
+    VALUES(\${creator}, \${block_withdrawn}, \${poll_id}, \${log_index}, \${tx_id}, \${block_id});`;
+    await services.tx.none(sql, {
+      creator,
+      block_withdrawn: info.event.args.blockWithdrawn,
+      poll_id: info.event.args.pollId,
+
+      log_index: info.log.log_index,
+      tx_id: info.log.tx_id,
+      block_id: info.log.block_id
     });
   },
 
@@ -53,7 +85,7 @@ const handlers = {
 
       log_index: info.log.log_index,
       tx_id: info.log.tx_id,
-      block_id: info.log.block_id,
+      block_id: info.log.block_id
     });
-  },
+  }
 };

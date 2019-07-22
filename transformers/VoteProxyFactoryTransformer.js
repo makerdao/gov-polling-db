@@ -1,3 +1,5 @@
+const { getExtractorName } = require("spock-etl/lib/core/extractors/instances/rawEventDataExtractor");
+
 const { handleEvents } = require("spock-etl/lib/core/transformers/common");
 
 // @ts-ignore
@@ -5,7 +7,7 @@ const abi = require("../abis/vote_proxy_factory.json");
 
 module.exports = voteProxyFactoryAddress => ({
   name: "Vote_proxy_factory_transformer",
-  dependencies: [`raw_log_${voteProxyFactoryAddress}_extractor`],
+  dependencies: [getExtractorName(voteProxyFactoryAddress)],
   transform: async (services, logs) => {
     await handleEvents(services, abi, logs[0], handlers);
   },
