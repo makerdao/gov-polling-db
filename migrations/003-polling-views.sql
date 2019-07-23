@@ -25,7 +25,7 @@ CREATE OR REPLACE FUNCTION api.unique_voters(arg_poll_id INTEGER)
 RETURNS TABLE (
   unique_voters BIGINT
 ) AS $$
-	SELECT COUNT(DISTINCT voter) FROM polling.valid_votes(arg_poll_id);
+	SELECT COUNT(DISTINCT voter) FROM polling.valid_votes(arg_poll_id) WHERE option_id != 0;
 $$ LANGUAGE sql STABLE STRICT;
 
 -- this function would be called by getAllWhitelistedPolls() in the sdk
