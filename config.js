@@ -71,4 +71,4 @@ const mainnet = {
   },
 };
 
-module.exports.default = mainnet;
+module.exports.default = process.env.VL_CHAIN_NAME === 'mainnet' ? mainnet : kovan;
