@@ -125,6 +125,7 @@ describe('active poll', () => {
           startDate
           endDate
           multiHash
+          url
         }
       }
     }`
