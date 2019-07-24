@@ -12,17 +12,20 @@ cache:
   - node_modules
 before_install:
 - npm i -g yarn@latest
+- sudo apt-get update
+- sudo apt-get -y install python3-pip
+- sudo pip3 install awscli
 install:
 - yarn install
 script:
 - yarn test:ci
 deploy:
 - provider: script
-  script: ".travis/deploy.sh prod"
+  script: "bash ./.travis/deploy.sh prod $PROD_REGION"
   on:
     branch: master
 - provider: script
-  script: ".travis/deploy.sh staging"
+  script: "bash ./.travis/deploy.sh staging $STAGING_REGION"
   on:
     branch: staging
 env:
