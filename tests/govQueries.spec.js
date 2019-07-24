@@ -80,8 +80,8 @@ const insertVote = (t, values) => {
 
 const insertPollCreated = (t, values) => {
   return t.none(`INSERT INTO polling.poll_created_event
-    (creator,block_created,poll_id,start_date,end_date,multi_hash,log_index,tx_id,block_id) 
-    VALUES(\${creator}, \${block_created}, \${poll_id}, \${start_date}, \${end_date}, \${multi_hash}, \${log_index}, \${tx_id}, \${block_id});`,
+    (creator,block_created,poll_id,start_date,end_date,multi_hash,url,log_index,tx_id,block_id) 
+    VALUES(\${creator}, \${block_created}, \${poll_id}, \${start_date}, \${end_date}, \${multi_hash}, \${url}, \${log_index}, \${tx_id}, \${block_id});`,
     values
   );
 };
@@ -95,6 +95,7 @@ describe('active poll', () => {
   const POLL_START_DATE = 0;
   const POLL_END_DATE = 3;
   const POLL_MULTI_HASH = "MuLtIhAsH";
+  const POLL_URL = "https://makerdao.com";
 
   test('can add an active poll', async () => {
     await insertBlockAndTransaction();
@@ -104,6 +105,7 @@ describe('active poll', () => {
       poll_id: PollCount.next(),
       start_date: POLL_START_DATE,
       end_date: POLL_END_DATE,
+      url: POLL_URL,
       multi_hash: POLL_MULTI_HASH,
       log_index: BlockCount.current(),
       tx_id: TransactionCount.current(),
@@ -133,6 +135,7 @@ describe('active poll', () => {
     expect(poll).toBeDefined();
     expect(poll.creator).toBe(POLL_CREATOR);
     expect(poll.multiHash).toBe(POLL_MULTI_HASH);
+    expect(poll.url).toBe(POLL_URL);
   });
 })
 
