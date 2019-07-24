@@ -11,23 +11,12 @@ function message() {
 }
 
 ENVIRONMENT=$1
+REGION=$2
 
 if [ -z "$ENVIRONMENT" ]; then
     echo 'You must specifiy an envionrment (bash deploy.sh <ENVIRONMENT>).'
     echo 'Allowed values are "staging" or "prod"'
     exit 1
-fi
-
-##
-
-if [ $TRAVIS_BRANCH == staging ];then
-   export $REGION=$STAGING_REGION
-elif [ $TRAVIS_BRANCH == master ]
-then
-   export $REGION=$PROD_REGION
-else
-   echo "We only deploy on staging or master branches"
-   exit 0
 fi
 
 
@@ -46,5 +35,5 @@ docker push "${ECR_REPO}:latest"
 message DEPLOYING SERVICE
 aws ecs update-service --cluster govpoll-cluster-$ENVIRONMENT --service govpoll-etl-service-$ENVIRONMENT --desired-count 0 --region $REGION
 sleep 30
-aws ecs update-service --cluster govpoll-cluster-$ENVIRONMEN --service govpoll-etl-service-$ENVIRONMENT --force-new-deployment --desired-count 1 --endpoint https://ecs.$REGION.amazonaws.com --region $REGION
-aws ecs update-service --cluster govpoll-cluster-$ENVIRONMEN --service govpoll-api-service-$ENVIRONMENT --force-new-deployment --endpoint https://ecs.$REGION.amazonaws.com --region  $REGION
+aws ecs update-service --cluster govpoll-cluster-$ENVIRONMENT --service govpoll-etl-service-$ENVIRONMENT --force-new-deployment --desired-count 1 --endpoint https://ecs.$REGION.amazonaws.com --region $REGION
+aws ecs update-service --cluster govpoll-cluster-$ENVIRONMENT --service govpoll-api-service-$ENVIRONMENT --force-new-deployment --endpoint https://ecs.$REGION.amazonaws.com --region  $REGION
