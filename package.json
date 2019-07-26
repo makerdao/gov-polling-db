@@ -6,7 +6,7 @@
   "private": true,
   "scripts": {
     "start-etl": "node -r ./loadenv.js ./node_modules/spock-etl/lib/core/runner.js etl ./config.js",
-    "start-sync": "echo 'sync is not needed anymore'",
+    "start-sync": "yarn migrate",
     "migrate": "node -r ./loadenv.js ./node_modules/spock-etl/lib/core/runner.js migrate ./config.js",
     "start-api": "node -r ./loadenv.js ./node_modules/spock-etl/lib/core/runner.js api ./config.js",
     "test": "jest",
