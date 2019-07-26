@@ -1,8 +1,8 @@
-const { getExtractorName } = require("spock-etl/lib/core/extractors/instances/rawEventDataExtractor");
-const { handleDsNoteEvents } = require("spock-etl/lib/core/transformers/common");
+const { getExtractorName } = require("spock-etl/lib/core/processors/extractors/instances/rawEventDataExtractor");
+const { handleDsNoteEvents } = require("spock-etl/lib/core/processors/transformers/common");
 // @ts-ignore
 const dsChiefAbi = require("../abis/ds_chief.json");
-const { getTxByIdOrDie, getBlockByIdOrDie } = require("spock-etl/lib/core/extractors/common");
+const { getTxByIdOrDie } = require("spock-etl/lib/core/processors/extractors/common");
 const BigNumber = require("bignumber.js").BigNumber;
 
 module.exports = address => ({
