@@ -15,7 +15,6 @@ module.exports = address => ({
 
 const handlers = {
   "free(uint256)": async (services, { log, note }) => {
-    const block = await getBlockByIdOrDie(services, log.block_id);
     const tx = await getTxByIdOrDie(services, log.tx_id);
 
     await insertLock(services, {
@@ -28,12 +27,10 @@ const handlers = {
       contractAddress: log.address,
       txId: log.tx_id,
       blockId: log.block_id,
-      logIndex: log.log_index,
-      timestamp: block.timestamp,
+      logIndex: log.log_index
     });
   },
   "lock(uint256)": async (services, { log, note }) => {
-    const block = await getBlockByIdOrDie(services, log.block_id);
     const tx = await getTxByIdOrDie(services, log.tx_id);
 
     await insertLock(services, {
@@ -43,8 +40,7 @@ const handlers = {
       contractAddress: log.address,
       txId: log.tx_id,
       blockId: log.block_id,
-      logIndex: log.log_index,
-      timestamp: block.timestamp,
+      logIndex: log.log_index
     });
   },
 };
@@ -52,7 +48,7 @@ const handlers = {
 const insertLock = (s, values) => {
   return s.tx.none(
     `
-INSERT INTO dschief.lock(contract_address, from_address, immediate_caller, lock, timestamp, log_index, tx_id, block_id) VALUES (\${contractAddress}, \${fromAddress}, \${immediateCaller}, \${lock}, \${timestamp}, \${logIndex}, \${txId}, \${blockId})`,
+INSERT INTO dschief.lock(contract_address, from_address, immediate_caller, lock, log_index, tx_id, block_id) VALUES (\${contractAddress}, \${fromAddress}, \${immediateCaller}, \${lock}, \${logIndex}, \${txId}, \${blockId})`,
     values,
   );
 };
