@@ -3790,6 +3790,11 @@ parse-json@^4.0.0:
     error-ex "^1.3.1"
     json-parse-better-errors "^1.0.1"
 
+parse-ms@^2.1.0:
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/parse-ms/-/parse-ms-2.1.0.tgz#348565a753d4391fa524029956b172cb7753097d"
+  integrity sha512-kHt7kzLoS9VBZfUsiKjv43mr91ea+U05EyKkEtqp7vNbHxmaVuEqN7XxeEVnGrMtYOAxGrDElSi96K7EgO1zCA==
+
 parse5@4.0.0:
   version "4.0.0"
   resolved "https://registry.yarnpkg.com/parse5/-/parse5-4.0.0.tgz#6d78656e3da8d78b4ec0b906f7c08ef1dfe3f608"
@@ -4147,6 +4152,13 @@ pretty-format@^24.8.0:
     ansi-regex "^4.0.0"
     ansi-styles "^3.2.0"
     react-is "^16.8.4"
+
+pretty-ms@^5.0.0:
+  version "5.0.0"
+  resolved "https://registry.yarnpkg.com/pretty-ms/-/pretty-ms-5.0.0.tgz#6133a8f55804b208e4728f6aa7bf01085e951e24"
+  integrity sha512-94VRYjL9k33RzfKiGokPBPpsmloBYSf5Ri+Pq19zlsEcUKFob+admeXr5eFDRuPjFmEOcjJvPGdillYOJyvZ7Q==
+  dependencies:
+    parse-ms "^2.1.0"
 
 process-nextick-args@~2.0.0:
   version "2.0.1"
@@ -4716,10 +4728,10 @@ split@^1.0.0:
   dependencies:
     through "2"
 
-spock-etl@^0.0.17:
-  version "0.0.17"
-  resolved "https://registry.yarnpkg.com/spock-etl/-/spock-etl-0.0.17.tgz#e92cf68ed3d21854f37a21f84969583877c1de51"
-  integrity sha512-J75cgmyLON5ZZzj+36l3L2ex1xSzV6T7m0enpBR3h5g57zlRjb8iNBM2xab1qMOZ7d6YcyUH4GPcbZErWtg7pw==
+spock-etl@^0.0.18:
+  version "0.0.18"
+  resolved "https://registry.yarnpkg.com/spock-etl/-/spock-etl-0.0.18.tgz#e1a044b4b499bbdc6526abe462aa04b11794f03d"
+  integrity sha512-9cXW/DeA4wciRU3HlSAgKyw995YQlaLDyT6cAGjeTH3wJn4hyHCR8FOCgzFxkR+8AfAPWuQbcEKalKHArIn+ig==
   dependencies:
     "@google-cloud/bigquery" "^3.0.0"
     "@types/helmet" "^0.0.43"
@@ -4739,6 +4751,7 @@ spock-etl@^0.0.17:
     postgraphile "^4.3.3"
     postgraphile-plugin-connection-filter "^1.0.0-rc.2"
     postgres-migrations-oasis "^3.0.2"
+    pretty-ms "^5.0.0"
     promise-retry "^1.1.1"
 
 sql-template-strings@^2.2.2:
