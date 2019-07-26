@@ -1,7 +1,7 @@
-const { handleEvents } = require('spock-etl/lib/core/transformers/common');
+const { handleEvents } = require('spock-etl/lib/core/processors/transformers/common');
 const {
   getExtractorName
-} = require('spock-etl/lib/core/extractors/instances/rawEventDataExtractor');
+} = require('spock-etl/lib/core/processors/extractors/instances/rawEventDataExtractor');
 const { getLogger } = require('spock-etl/lib/core/utils/logger');
 const BigNumber = require('bignumber.js').BigNumber;
 

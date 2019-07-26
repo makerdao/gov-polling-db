@@ -1,6 +1,6 @@
 const {
   makeRawLogExtractors,
-} = require("spock-etl/lib/core/extractors/instances/rawEventDataExtractor");
+} = require("spock-etl/lib/core/processors/extractors/instances/rawEventDataExtractor");
 
 const mkrTransformer = require("./transformers/MkrTransformer");
 const pollingTransformer = require("./transformers/PollingTransformer");
@@ -52,8 +52,8 @@ const mainnet = {
       VOTING_CONTRACT_ADDRESS,
       MKR_ADDRESS,
       DSCHIEF_ADDRESS,
-      VOTE_PROXY_FACTORY_ADDRESS
-    ])
+      VOTE_PROXY_FACTORY_ADDRESS,
+    ]),
   ],
   transformers: [
     pollingTransformer(VOTING_CONTRACT_ADDRESS),
@@ -71,4 +71,13 @@ const mainnet = {
   },
 };
 
-module.exports.default = process.env.VL_CHAIN_NAME === 'mainnet' ? mainnet : kovan;
+let config;
+if (process.env.VL_CHAIN_NAME === "mainnet") {
+  console.log("Using mainnet config");
+  config = mainnet;
+} else {
+  console.log("Using kovan config");
+  config = kovan;
+}
+
+module.exports.default = config;

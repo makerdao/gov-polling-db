@@ -5,8 +5,8 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "start-etl": "yarn start-sync && node -r ./loadenv.js ./node_modules/spock-etl/lib/core/runner.js etl ./config.js",
-    "start-sync": "node -r ./loadenv.js ./node_modules/spock-etl/lib/core/runner.js sync ./config.js",
+    "start-etl": "node -r ./loadenv.js ./node_modules/spock-etl/lib/core/runner.js etl ./config.js",
+    "start-sync": "echo 'sync is not needed anymore'",
     "migrate": "node -r ./loadenv.js ./node_modules/spock-etl/lib/core/runner.js migrate ./config.js",
     "start-api": "node -r ./loadenv.js ./node_modules/spock-etl/lib/core/runner.js api ./config.js",
     "test": "jest",
@@ -14,7 +14,7 @@
   },
   "dependencies": {
     "dotenv-flow": "^2.0.0",
-    "spock-etl": "^0.0.16"
+    "spock-etl": "^0.0.17"
   },
   "devDependencies": {
     "graphql-request": "^1.8.2",

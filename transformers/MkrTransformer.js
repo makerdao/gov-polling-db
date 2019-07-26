@@ -1,5 +1,5 @@
-const { getExtractorName } = require("spock-etl/lib/core/extractors/instances/rawEventDataExtractor");
-const { handleEvents } = require("spock-etl/lib/core/transformers/common");
+const { getExtractorName } = require("spock-etl/lib/core/processors/extractors//instances/rawEventDataExtractor");
+const { handleEvents } = require("spock-etl/lib/core/processors/transformers/common");
 const { getLogger } = require("spock-etl/lib/core/utils/logger");
 const BigNumber = require("bignumber.js").BigNumber;
 
