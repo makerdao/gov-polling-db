@@ -65,7 +65,7 @@ const insertBlock = (t, values) => {
 };
 
 const insertLock = (t, values) => {
-  return t.none(`INSERT INTO dschief.lock(contract_address, from_address, immediate_caller, lock, timestamp, log_index, tx_id, block_id) VALUES (\${contractAddress}, \${fromAddress}, \${immediateCaller}, \${lock}, \${timestamp}, \${logIndex}, \${txId}, \${blockId})`,
+  return t.none(`INSERT INTO dschief.lock(contract_address, from_address, immediate_caller, lock, log_index, tx_id, block_id) VALUES (\${contractAddress}, \${fromAddress}, \${immediateCaller}, \${lock}, \${logIndex}, \${txId}, \${blockId})`,
     values
   );
 };
@@ -171,7 +171,6 @@ test('can get a lock entry', async () => {
     txId: TransactionCount.current(),
     blockId: BlockCount.current(),
     logIndex: "3",
-    timestamp: '2017-11-25 18:24:17+00',
   });
   const l = await db.any('SELECT * FROM dschief.lock');
   expect(!!l[0]).toBe(true);

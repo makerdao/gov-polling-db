@@ -6,7 +6,6 @@ CREATE TABLE dschief.lock (
   immediate_caller    character varying(66) not null,
   lock       decimal(78,18) not null,
   contract_address    character varying(66) not null,
-  timestamp  timestamptz not null,
   
   log_index  integer not null,
   tx_id      integer not null REFERENCES vulcan2x.transaction(id) ON DELETE CASCADE,
