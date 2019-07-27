@@ -1,6 +1,6 @@
-const { getExtractorName } = require("spock-etl/lib/core/extractors/instances/rawEventDataExtractor");
+const { getExtractorName } = require("spock-etl/lib/core/processors/extractors/instances/rawEventDataExtractor");
 
-const { handleEvents } = require("spock-etl/lib/core/transformers/common");
+const { handleEvents } = require("spock-etl/lib/core/processors/transformers/common");
 
 // @ts-ignore
 const abi = require("../abis/vote_proxy_factory.json");

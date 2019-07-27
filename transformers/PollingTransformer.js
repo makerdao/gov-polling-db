@@ -1,37 +1,39 @@
-const { handleEvents } = require('spock-etl/lib/core/transformers/common');
+const { handleEvents } = require("spock-etl/lib/core/processors/transformers/common");
 const {
-  getExtractorName
-} = require('spock-etl/lib/core/extractors/instances/rawEventDataExtractor');
-const { getLogger } = require('spock-etl/lib/core/utils/logger');
-const BigNumber = require('bignumber.js').BigNumber;
+  getExtractorName,
+} = require("spock-etl/lib/core/processors/extractors/instances/rawEventDataExtractor");
+const { getLogger } = require("spock-etl/lib/core/utils/logger");
+const BigNumber = require("bignumber.js").BigNumber;
 
 // @ts-ignore
-const abi = require('../abis/polling_emitter.json');
+const abi = require("../abis/polling_emitter.json");
 
-const logger = getLogger('Polling');
+const logger = getLogger("Polling");
 
 const authorizedCreators = process.env.AUTHORIZED_CREATORS
-  ? process.env.AUTHORIZED_CREATORS.split(',').map(creator =>
-      creator.toLowerCase()
-    )
+  ? process.env.AUTHORIZED_CREATORS.split(",").map(creator => creator.toLowerCase())
   : [];
 
 module.exports = address => ({
-  name: 'Polling_Transformer',
+  name: "Polling_Transformer",
   dependencies: [getExtractorName(address)],
   transform: async (services, logs) => {
     await handleEvents(services, abi, logs[0], handlers);
-  }
+  },
 });
 
 const handlers = {
   async PollCreated(services, info) {
     const creator = info.event.args.creator;
-    if (
-      authorizedCreators.length > 0 &&
-      !authorizedCreators.includes(creator.toLowerCase())
-    )
+    if (authorizedCreators.length > 0 && !authorizedCreators.includes(creator.toLowerCase()))
       return;
+
+    if (
+      !isValidPostgresIntegerValue(info.event.args.startDate) ||
+      !isValidPostgresIntegerValue(info.event.args.endDate)
+    ) {
+      return;
+    }
 
     const sql = `INSERT INTO polling.poll_created_event
     (creator,block_created,poll_id,start_date,end_date,multi_hash,url,log_index,tx_id,block_id) 
@@ -47,16 +49,13 @@ const handlers = {
 
       log_index: info.log.log_index,
       tx_id: info.log.tx_id,
-      block_id: info.log.block_id
+      block_id: info.log.block_id,
     });
   },
 
   async PollWithdrawn(services, info) {
     const creator = info.event.args.creator;
-    if (
-      authorizedCreators.length > 0 &&
-      !authorizedCreators.includes(creator.toLowerCase())
-    )
+    if (authorizedCreators.length > 0 && !authorizedCreators.includes(creator.toLowerCase()))
       return;
 
     const sql = `INSERT INTO polling.poll_withdrawn_event
@@ -69,7 +68,7 @@ const handlers = {
 
       log_index: info.log.log_index,
       tx_id: info.log.tx_id,
-      block_id: info.log.block_id
+      block_id: info.log.block_id,
     });
   },
 
@@ -85,7 +84,14 @@ const handlers = {
 
       log_index: info.log.log_index,
       tx_id: info.log.tx_id,
-      block_id: info.log.block_id
+      block_id: info.log.block_id,
     });
-  }
+  },
 };
+
+function isValidPostgresIntegerValue(_input) {
+  const maxInt = new BigNumber("2147483647");
+  const input = new BigNumber(_input);
+
+  return input.lt(maxInt);
+}
