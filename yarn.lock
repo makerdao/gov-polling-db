@@ -1193,6 +1193,11 @@ content-type@~1.0.4:
   resolved "https://registry.yarnpkg.com/content-type/-/content-type-1.0.4.tgz#e138cc75e040c727b1966fe5e5f8c9aee256fe3b"
   integrity sha512-hIP3EEPs8tB9AT1L+NUqtwOAps4mk2Zob89MWXMHjHWg9milF/j4osnnQLXBCBFBk/tvIG/tUc9mOUJiPBhPXA==
 
+convert-hrtime@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/convert-hrtime/-/convert-hrtime-3.0.0.tgz#62c7593f5809ca10be8da858a6d2f702bcda00aa"
+  integrity sha512-7V+KqSvMiHp8yWDuwfww06XleMWVVB9b9tURBx+G7UTADuo5hYPuowKloz4OzOqbPezxgo+fdQ1522WzPG4OeA==
+
 convert-source-map@^1.1.0, convert-source-map@^1.4.0:
   version "1.6.0"
   resolved "https://registry.yarnpkg.com/convert-source-map/-/convert-source-map-1.6.0.tgz#51b537a8c43e0f04dec1993bffcdd504e758ac20"
@@ -4728,10 +4733,10 @@ split@^1.0.0:
   dependencies:
     through "2"
 
-spock-etl@^0.0.18:
-  version "0.0.18"
-  resolved "https://registry.yarnpkg.com/spock-etl/-/spock-etl-0.0.18.tgz#e1a044b4b499bbdc6526abe462aa04b11794f03d"
-  integrity sha512-9cXW/DeA4wciRU3HlSAgKyw995YQlaLDyT6cAGjeTH3wJn4hyHCR8FOCgzFxkR+8AfAPWuQbcEKalKHArIn+ig==
+spock-etl@^0.0.22:
+  version "0.0.22"
+  resolved "https://registry.yarnpkg.com/spock-etl/-/spock-etl-0.0.22.tgz#276fa27ade199ee9abe8844763f7961eaab76104"
+  integrity sha512-mQgUqgLVPAgFrPrHKrstkcLbiMtJTmZCBaO7quyVHRdMhuPagmiJLh+LBepQpRhAfP4eUQGBEvN8jAa8XOST4g==
   dependencies:
     "@google-cloud/bigquery" "^3.0.0"
     "@types/helmet" "^0.0.43"
@@ -4741,6 +4746,7 @@ spock-etl@^0.0.18:
     body-parser "^1.18.3"
     compression "^1.7.4"
     consola "^2.7.1"
+    convert-hrtime "^3.0.0"
     ejs "^2.6.1"
     ethers "^4.0.25"
     express "^4.16.4"
