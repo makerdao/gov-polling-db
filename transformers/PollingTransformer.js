@@ -25,8 +25,12 @@ module.exports = address => ({
 const handlers = {
   async PollCreated(services, info) {
     const creator = info.event.args.creator;
-    if (authorizedCreators.length > 0 && !authorizedCreators.includes(creator.toLowerCase()))
+    if (authorizedCreators.length > 0 && !authorizedCreators.includes(creator.toLowerCase())) {
+      logger.info(
+        `Ignoring PollCreated event because ${info.event.args.creator} is not in the whitelist ${authorizedCreators}`,
+      );
       return;
+    }
 
     if (
       !isValidPositivePostgresIntegerValue(info.event.args.startDate) ||
