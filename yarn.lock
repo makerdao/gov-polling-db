@@ -705,11 +705,6 @@ anymatch@^2.0.0:
     micromatch "^3.1.4"
     normalize-path "^2.1.1"
 
-apicache@^1.4.0:
-  version "1.4.0"
-  resolved "https://registry.yarnpkg.com/apicache/-/apicache-1.4.0.tgz#3835fbe18717caca3a44cb6272d49b52cac30d3a"
-  integrity sha512-pX/Sf9q9HNzAC5F+hPgxt8v3eQVZkXL/+8HpAnrDJXFmma80F2aHAAeWTql3BsG87lc3T6A7CFPNWMTl97L/7Q==
-
 aproba@^1.0.3:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/aproba/-/aproba-1.2.0.tgz#6802e6264efd18c790a1b0d517f0f2627bf2c94a"
@@ -4555,13 +4550,6 @@ send@0.17.1:
     range-parser "~1.2.1"
     statuses "~1.5.0"
 
-serialize-error@^4.1.0:
-  version "4.1.0"
-  resolved "https://registry.yarnpkg.com/serialize-error/-/serialize-error-4.1.0.tgz#63e1e33ede20bcd89d9f0528ea4c15fbf0f2b78a"
-  integrity sha512-5j9GgyGsP9vV9Uj1S0lDCvlsd+gc2LEPVK7HHHte7IyPwOD4lVQFeaX143gx3U5AnoCi+wbcb3mvaxVysjpxEw==
-  dependencies:
-    type-fest "^0.3.0"
-
 serve-static@1.14.1:
   version "1.14.1"
   resolved "https://registry.yarnpkg.com/serve-static/-/serve-static-1.14.1.tgz#666e636dc4f010f7ef29970a88a674320898b2f9"
@@ -4745,16 +4733,15 @@ split@^1.0.0:
   dependencies:
     through "2"
 
-spock-etl@0.0.29:
-  version "0.0.29"
-  resolved "https://registry.yarnpkg.com/spock-etl/-/spock-etl-0.0.29.tgz#aee4c30dbdb3bbd49c9d6dbcb3f73a24ce29ab89"
-  integrity sha512-9Yvwxv4SU7I0uc16C0U6aqtJ1AiClQsYjC2mP/YNnBfiMq0PlrRSvm2MzQBTbQWV4ODwTQOb9HCTC3yV6pPB8g==
+spock-etl@^0.0.25:
+  version "0.0.25"
+  resolved "https://registry.yarnpkg.com/spock-etl/-/spock-etl-0.0.25.tgz#9bf6c2f1628e33570c19e68a05286a38e90e074a"
+  integrity sha512-1wl1Zj6+uL56iRtGsKx5mCzjwfrmHHIL7sypHLAtZnmhECjJOVp1C2Nmalo+yJu/juOWI4g8lQV6BjVksl+LLQ==
   dependencies:
     "@google-cloud/bigquery" "^3.0.0"
     "@types/helmet" "^0.0.43"
     "@types/node-cleanup" "^2.1.0"
     abi-decoder "^1.2.0"
-    apicache "^1.4.0"
     bignumber.js "^8.0.2"
     body-parser "^1.18.3"
     compression "^1.7.4"
@@ -4772,8 +4759,6 @@ spock-etl@0.0.29:
     postgres-migrations-oasis "^3.0.2"
     pretty-ms "^5.0.0"
     promise-retry "^1.1.1"
-    serialize-error "^4.1.0"
-    sql-template-strings "^2.2.2"
 
 sql-template-strings@^2.2.2:
   version "2.2.2"
@@ -5097,11 +5082,6 @@ type-check@~0.3.2:
   integrity sha1-WITKtRLPHTVeP7eE8wgEsrUg23I=
   dependencies:
     prelude-ls "~1.1.2"
-
-type-fest@^0.3.0:
-  version "0.3.1"
-  resolved "https://registry.yarnpkg.com/type-fest/-/type-fest-0.3.1.tgz#63d00d204e059474fe5e1b7c011112bbd1dc29e1"
-  integrity sha512-cUGJnCdr4STbePCgqNFbpVNCepa+kAVohJs1sLhxzdH+gnEoOd8VhbYa7pD3zZYGiURWM2xzEII3fQcRizDkYQ==
 
 type-is@~1.6.17, type-is@~1.6.18:
   version "1.6.18"

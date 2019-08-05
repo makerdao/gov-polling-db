@@ -68,10 +68,6 @@ const mainnet = {
     whitelisting: {
       enabled: false,
     },
-    responseCaching: {
-      enabled: true,
-      duration: "15 seconds"
-    }
   },
 };
 
