@@ -14,7 +14,7 @@
   },
   "dependencies": {
     "dotenv-flow": "^2.0.0",
-    "spock-etl": "^0.0.25"
+    "spock-etl": "0.0.32"
   },
   "devDependencies": {
     "graphql-request": "^1.8.2",
