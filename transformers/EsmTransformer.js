@@ -34,7 +34,7 @@ const handlers = {
 const insertJoin = (s, values) => {
   return s.tx.none(
     `
-INSERT INTO esm.joinMkr(contract_address, from_address, immediate_caller, joinAmount, log_index, tx_id, block_id) VALUES (\${contractAddress}, \${fromAddress}, \${immediateCaller}, \${joinAmount}, \${logIndex}, \${txId}, \${blockId})`,
+INSERT INTO esm.mkr_joins(contract_address, from_address, immediate_caller, join_amount, log_index, tx_id, block_id) VALUES (\${contractAddress}, \${fromAddress}, \${immediateCaller}, \${joinAmount}, \${logIndex}, \${txId}, \${blockId})`,
     values,
   );
 };
