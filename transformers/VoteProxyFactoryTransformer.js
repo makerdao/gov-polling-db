@@ -20,9 +20,9 @@ const handlers = {
     VALUES(\${cold}, \${hot}, \${vote_proxy}, \${log_index}, \${tx_id}, \${block_id});`;
 
     await services.tx.none(sql, {
-      cold: info.event.args.cold,
-      hot: info.event.args.hot,
-      vote_proxy: info.event.args.voteProxy,
+      cold: info.event.params.cold.toLowerCase(),
+      hot: info.event.params.hot.toLowerCase(),
+      vote_proxy: info.event.params.voteProxy.toLowerCase(),
 
       log_index: info.log.log_index,
       tx_id: info.log.tx_id,
