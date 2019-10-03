@@ -1,4 +1,6 @@
-const { getExtractorName } = require("spock-etl/lib/core/processors/extractors//instances/rawEventDataExtractor");
+const {
+  getExtractorName,
+} = require("spock-etl/lib/core/processors/extractors//instances/rawEventDataExtractor");
 const { handleEvents } = require("spock-etl/lib/core/processors/transformers/common");
 const { getLogger } = require("spock-etl/lib/core/utils/logger");
 const BigNumber = require("bignumber.js").BigNumber;
@@ -23,8 +25,8 @@ const handlers = {
     VALUES(\${sender}, \${receiver}, \${value}, \${log_index}, \${tx_id}, \${block_id});`;
 
     await services.tx.none(sql, {
-      sender: info.event.params.from,
-      receiver: info.event.params.to,
+      sender: info.event.params.from.toLowerCase(),
+      receiver: info.event.params.to.toLowerCase(),
       value: new BigNumber(info.event.params.value).div(new BigNumber("1e18")).toString(),
 
       log_index: info.log.log_index,

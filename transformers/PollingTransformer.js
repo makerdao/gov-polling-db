@@ -24,10 +24,10 @@ module.exports = address => ({
 
 const handlers = {
   async PollCreated(services, info) {
-    const creator = info.event.params.creator;
+    const creator = info.event.params.creator.toLowerCase();
     if (authorizedCreators.length > 0 && !authorizedCreators.includes(creator.toLowerCase())) {
       logger.info(
-        `Ignoring PollCreated event because ${info.event.params.creator} is not in the whitelist ${authorizedCreators}`,
+        `Ignoring PollCreated event because ${creator} is not in the whitelist ${authorizedCreators}`,
       );
       return;
     }
@@ -39,7 +39,7 @@ const handlers = {
       !isValidPositivePostgresIntegerValue(info.event.params.pollId)
     ) {
       logger.warn(
-        `Ignoring PollCreated event from ${info.event.params.creator} because of failing validation.`,
+        `Ignoring PollCreated event from ${creator} because of failing validation.`,
       );
       return;
     }
@@ -49,10 +49,10 @@ const handlers = {
     VALUES(\${creator}, \${block_created}, \${poll_id}, \${start_date}, \${end_date}, \${multi_hash}, \${url}, \${log_index}, \${tx_id}, \${block_id});`;
     await services.tx.none(sql, {
       creator,
-      block_created: info.event.params.blockCreated,
-      poll_id: info.event.params.pollId,
-      start_date: info.event.params.startDate,
-      end_date: info.event.params.endDate,
+      block_created: info.event.params.blockCreated.toNumber(),
+      poll_id: info.event.params.pollId.toNumber(),
+      start_date: info.event.params.startDate.toNumber(),
+      end_date: info.event.params.endDate.toNumber(),
       multi_hash: info.event.params.multiHash,
       url: info.event.params.url,
 
@@ -63,8 +63,8 @@ const handlers = {
   },
 
   async PollWithdrawn(services, info) {
-    const creator = info.event.params.creator;
-    if (authorizedCreators.length > 0 && !authorizedCreators.includes(creator.toLowerCase()))
+    const creator = info.event.params.creator.toLowerCase();
+    if (authorizedCreators.length > 0 && !authorizedCreators.includes(creator))
       return;
 
     if (
@@ -73,7 +73,7 @@ const handlers = {
     ) {
       logger.warn(
         // prettier-ignore
-        `Ignoring PollWithdrawn event from ${info.event.params.creator} because of failing validation.`,
+        `Ignoring PollWithdrawn event from ${creator} because of failing validation.`,
       );
       return;
     }
@@ -83,8 +83,8 @@ const handlers = {
     VALUES(\${creator}, \${block_withdrawn}, \${poll_id}, \${log_index}, \${tx_id}, \${block_id});`;
     await services.tx.none(sql, {
       creator,
-      block_withdrawn: info.event.params.blockWithdrawn,
-      poll_id: info.event.params.pollId,
+      block_withdrawn: info.event.params.blockWithdrawn.toNumber(),
+      poll_id: info.event.params.pollId.toNumber(),
 
       log_index: info.log.log_index,
       tx_id: info.log.tx_id,
@@ -98,7 +98,7 @@ const handlers = {
       !isValidPositivePostgresIntegerValue(info.event.params.optionId)
     ) {
       logger.warn(
-        `Ignoring Voted event from ${info.event.params.voter} because of failing validation.`,
+        `Ignoring Voted event from ${info.event.params.voter.toLowerCase()} because of failing validation.`,
       );
       return;
     }
@@ -108,9 +108,9 @@ const handlers = {
     VALUES(\${voter}, \${poll_id}, \${option_id}, \${log_index}, \${tx_id}, \${block_id});`;
 
     await services.tx.none(sql, {
-      voter: info.event.params.voter,
-      poll_id: info.event.params.pollId,
-      option_id: info.event.params.optionId,
+      voter: info.event.params.voter.toLowerCase(),
+      poll_id: info.event.params.pollId.toNumber(),
+      option_id: info.event.params.optionId.toNumber(),
 
       log_index: info.log.log_index,
       tx_id: info.log.tx_id,
