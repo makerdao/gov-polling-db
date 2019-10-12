@@ -1,4 +1,6 @@
-const { getExtractorName } = require("spock-etl/lib/core/processors/extractors/instances/rawEventDataExtractor");
+const {
+  getExtractorName,
+} = require("spock-etl/lib/core/processors/extractors/instances/rawEventDataExtractor");
 const { handleDsNoteEvents } = require("spock-etl/lib/core/processors/transformers/common");
 // @ts-ignore
 const dsChiefAbi = require("../abis/ds_chief.json");
@@ -40,7 +42,7 @@ const handlers = {
       contractAddress: log.address,
       txId: log.tx_id,
       blockId: log.block_id,
-      logIndex: log.log_index
+      logIndex: log.log_index,
     });
   },
 };
