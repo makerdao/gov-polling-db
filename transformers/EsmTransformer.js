@@ -9,7 +9,7 @@ module.exports = address => ({
   name: "ESMTransformer",
   dependencies: [getExtractorName(address)],
   transform: async (services, logs) => {
-    await handleDsNoteEvents(services, ESMAbi, logs[0], handlers);
+    await handleDsNoteEvents(services, ESMAbi, logs[0], handlers, 2);
   },
 });
 
