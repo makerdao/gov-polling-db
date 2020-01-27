@@ -48,7 +48,7 @@ const kovan = {
       enabled: false,
     },
     responseCaching: {
-      enabled: true,
+      enabled: false,
       duration: "15 seconds"
     },
   },
@@ -80,7 +80,7 @@ const mainnet = {
       enabled: false,
     },
     responseCaching: {
-      enabled: true,
+      enabled: false,
       duration: "15 seconds"
     },
   },
