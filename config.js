@@ -23,7 +23,7 @@ const VOTE_PROXY_FACTORY_KOVAN_ADDRESS = "0x3e08741a68c2d964d172793cd0ad14292f65
 const ESM_ADDRESS_KOVAN = "0x0c376764f585828ffb52471c1c35f855e312a06c";
 
 const kovan = {
-  startingBlock: 5216304,
+  startingBlock: 18134450,
   extractors: [
     ...makeRawLogExtractors([
       VOTING_CONTRACT_KOVAN_ADDRESS,

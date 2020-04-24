@@ -94,8 +94,7 @@ const handlers = {
 
   async Voted(services, info) {
     if (
-      !isValidPositivePostgresIntegerValue(info.event.params.pollId) ||
-      !isValidPositivePostgresIntegerValue(info.event.params.optionId)
+      !isValidPositivePostgresIntegerValue(info.event.params.pollId)
     ) {
       logger.warn(
         `Ignoring Voted event from ${info.event.params.voter.toLowerCase()} because of failing validation.`,
@@ -103,14 +102,20 @@ const handlers = {
       return;
     }
 
-    const sql = `INSERT INTO polling.voted_event
-    (voter,poll_id,option_id,log_index,tx_id,block_id) 
-    VALUES(\${voter}, \${poll_id}, \${option_id}, \${log_index}, \${tx_id}, \${block_id});`;
+    let optionIdInt = null;
+    if(info.event.params.optionId && isValidPositivePostgresIntegerValue(info.event.params.optionId)){
+      optionIdInt = info.event.params.optionId.toNumber();
+    }
 
+    const sql = `INSERT INTO polling.voted_event
+    (voter,poll_id,option_id,option_id_raw,log_index,tx_id,block_id) 
+    VALUES(\${voter}, \${poll_id}, \${option_id}, \${option_id_raw}, \${log_index}, \${tx_id}, \${block_id});`;
+    console.log('info.event.params.optionId', info.event.params.optionId);
     await services.tx.none(sql, {
       voter: info.event.params.voter.toLowerCase(),
       poll_id: info.event.params.pollId.toNumber(),
-      option_id: info.event.params.optionId.toNumber(),
+      option_id: optionIdInt,
+      option_id_raw: info.event.params.optionId.toString(),
 
       log_index: info.log.log_index,
       tx_id: info.log.tx_id,
