@@ -110,7 +110,6 @@ const handlers = {
     const sql = `INSERT INTO polling.voted_event
     (voter,poll_id,option_id,option_id_raw,log_index,tx_id,block_id) 
     VALUES(\${voter}, \${poll_id}, \${option_id}, \${option_id_raw}, \${log_index}, \${tx_id}, \${block_id});`;
-    console.log('info.event.params.optionId', info.event.params.optionId);
     await services.tx.none(sql, {
       voter: info.event.params.voter.toLowerCase(),
       poll_id: info.event.params.pollId.toNumber(),
