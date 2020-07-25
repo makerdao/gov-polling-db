@@ -15,7 +15,7 @@ const authorizedCreators = process.env.AUTHORIZED_CREATORS
   : [];
 
 module.exports = address => ({
-  name: "Polling_Transformer",
+  name: `Polling_Transformer_${address}`,
   dependencies: [getExtractorName(address)],
   transform: async (services, logs) => {
     await handleEvents(services, abi, logs[0], handlers);
