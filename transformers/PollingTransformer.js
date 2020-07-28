@@ -30,6 +30,14 @@ module.exports.default = address => ({
 
 const handlers = {
   async PollCreated(services, info) {
+    if (info.event.address.toLowerCase() !== module.exports.VOTING_CONTRACT_KOVAN_ADDRESS.toLowerCase() &&
+      info.event.address.toLowerCase() !== module.exports.VOTING_CONTRACT_ADDRESS.toLowerCase()) {
+            logger.info(
+        `Ignoring PollCreated event because ${info.event.address} is not the primary voting contract`,
+      );
+      return;
+    };
+
     const creator = info.event.params.creator.toLowerCase();
     if (authorizedCreators.length > 0 && !authorizedCreators.includes(creator.toLowerCase())) {
       logger.info(
@@ -69,6 +77,14 @@ const handlers = {
   },
 
   async PollWithdrawn(services, info) {
+    if (info.event.address.toLowerCase() !== module.exports.VOTING_CONTRACT_KOVAN_ADDRESS.toLowerCase() &&
+      info.event.address.toLowerCase() !== module.exports.VOTING_CONTRACT_ADDRESS.toLowerCase()) {
+            logger.info(
+        `Ignoring PollWithdrawn event because ${info.event.address} is not the primary voting contract`,
+      );
+      return;
+    };
+
     const creator = info.event.params.creator.toLowerCase();
     if (authorizedCreators.length > 0 && !authorizedCreators.includes(creator))
       return;
