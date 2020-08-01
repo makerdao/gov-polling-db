@@ -14,8 +14,14 @@ const authorizedCreators = process.env.AUTHORIZED_CREATORS
   ? process.env.AUTHORIZED_CREATORS.split(",").map(creator => creator.toLowerCase())
   : [];
 
-module.exports = address => ({
-  name: "Polling_Transformer",
+module.exports.VOTING_CONTRACT_KOVAN_ADDRESS = '0x518a0702701BF98b5242E73b2368ae07562BEEA3';
+module.exports.VOTING_CONTRACT_ADDRESS = '0xF9be8F0945acDdeeDaA64DFCA5Fe9629D0CF8E5D';
+
+module.exports.default = address => ({
+  name: address === module.exports.VOTING_CONTRACT_ADDRESS ||
+    address === module.exports.VOTING_CONTRACT_KOVAN_ADDRESS
+    ? `Polling_Transformer`
+    : `Polling_Transformer_${address}`,
   dependencies: [getExtractorName(address)],
   transform: async (services, logs) => {
     await handleEvents(services, abi, logs[0], handlers);
@@ -24,6 +30,14 @@ module.exports = address => ({
 
 const handlers = {
   async PollCreated(services, info) {
+    if (info.event.address.toLowerCase() !== module.exports.VOTING_CONTRACT_KOVAN_ADDRESS.toLowerCase() &&
+      info.event.address.toLowerCase() !== module.exports.VOTING_CONTRACT_ADDRESS.toLowerCase()) {
+            logger.info(
+        `Ignoring PollCreated event because ${info.event.address} is not the primary voting contract`,
+      );
+      return;
+    };
+
     const creator = info.event.params.creator.toLowerCase();
     if (authorizedCreators.length > 0 && !authorizedCreators.includes(creator.toLowerCase())) {
       logger.info(
@@ -63,6 +77,14 @@ const handlers = {
   },
 
   async PollWithdrawn(services, info) {
+    if (info.event.address.toLowerCase() !== module.exports.VOTING_CONTRACT_KOVAN_ADDRESS.toLowerCase() &&
+      info.event.address.toLowerCase() !== module.exports.VOTING_CONTRACT_ADDRESS.toLowerCase()) {
+            logger.info(
+        `Ignoring PollWithdrawn event because ${info.event.address} is not the primary voting contract`,
+      );
+      return;
+    };
+
     const creator = info.event.params.creator.toLowerCase();
     if (authorizedCreators.length > 0 && !authorizedCreators.includes(creator))
       return;
