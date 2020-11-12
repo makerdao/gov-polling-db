@@ -3,6 +3,7 @@ const {
 } = require("spock-etl/lib/core/processors/extractors/instances/rawEventDataExtractor");
 
 const mkrTransformer = require("./transformers/MkrTransformer");
+const mkrBalanceTransformer = require("./transformers/MkrBalanceTransformer");
 const pollingTransformerImport = require("./transformers/PollingTransformer");
 const pollingTransformer = pollingTransformerImport.default;
 const dsChiefTransformer = require("./transformers/DsChiefTransformer");
@@ -41,6 +42,7 @@ const kovan = {
     pollingTransformer(VOTING_CONTRACT_KOVAN_ADDRESS),
     pollingTransformer(SECOND_VOTING_CONTRACT_KOVAN_ADDRESS),
     mkrTransformer(MKR_KOVAN_ADDRESS),
+    mkrBalanceTransformer(MKR_KOVAN_ADDRESS),
     dsChiefTransformer(DSCHIEF_KOVAN_ADDRESS),
     voteProxyFactoryTransformer(VOTE_PROXY_FACTORY_KOVAN_ADDRESS),
     esmTransformer(ESM_ADDRESS_KOVAN)
@@ -75,6 +77,7 @@ const mainnet = {
     pollingTransformer(VOTING_CONTRACT_ADDRESS),
     pollingTransformer(SECOND_VOTING_CONTRACT_ADDRESS),
     mkrTransformer(MKR_ADDRESS),
+    mkrBalanceTransformer(MKR_ADDRESS),
     dsChiefTransformer(DSCHIEF_ADDRESS),
     voteProxyFactoryTransformer(VOTE_PROXY_FACTORY_ADDRESS),
     esmTransformer(ESM_ADDRESS)
