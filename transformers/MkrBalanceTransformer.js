@@ -24,7 +24,7 @@ async function processRow(db, { from, to, value, tx_id, block_id }) {
       $(amount)::${amountColumnType} + coalesce((
         select amount from mkr.balances
         where address = $(receiver)
-        order by block_id desc limit 1
+        order by id desc limit 1
       ), 0), 
       $(tx_id), 
       $(block_id)
@@ -35,7 +35,7 @@ async function processRow(db, { from, to, value, tx_id, block_id }) {
       -1 * $(amount)::${amountColumnType} + coalesce((
         select amount from mkr.balances
         where address = $(sender)
-        order by block_id desc limit 1
+        order by id desc limit 1
       ), 0), 
       $(tx_id), 
       $(block_id)
