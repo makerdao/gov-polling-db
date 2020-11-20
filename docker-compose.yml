@@ -3,6 +3,7 @@ services:
   postgres:
     image: postgres:10.6
     container_name: postgres-vulcan2x
+    command: ["postgres", "-c", "log_min_duration_statement=1000"]
     environment:
       - POSTGRES_USER=user
       - POSTGRES_PASSWORD=password

@@ -10,7 +10,8 @@
     "migrate": "node -r ./loadenv.js ./node_modules/spock-etl/lib/core/runner.js migrate ./config.js",
     "start-api": "node -r ./loadenv.js ./node_modules/spock-etl/lib/core/runner.js api ./config.js",
     "test": "jest",
-    "test:ci": "./tests/run-tests.sh"
+    "test:ci": "./tests/run-tests.sh",
+    "repl": "node --experimental-repl-await -r ./loadenv.js ./repl"
   },
   "dependencies": {
     "dotenv-flow": "^2.0.0",
