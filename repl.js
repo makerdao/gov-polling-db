@@ -13,7 +13,8 @@ async function main(connection) {
     Object.assign(r.context, {
       services,
       config,
-      mbt: config.transformers.find(x => x.name === 'MKR_BalanceTransformer')
+      mbt: config.transformers.find(x => x.name === 'MKR_BalanceTransformer'),
+      cbt: config.transformers.find(x => x.name === 'ChiefBalanceTransformer'),
     });
   
     r.on('exit', () => process.exit());
