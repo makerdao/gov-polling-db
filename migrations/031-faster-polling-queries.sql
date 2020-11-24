@@ -9,7 +9,7 @@ returns decimal(78,18) as $$
 declare
   wallet_amount decimal(78,18);
   chief_amount decimal(78,18);
-  proxy%rowtype;
+  proxy dschief.vote_proxy_created_event%rowtype;
   proxy_wallet_amount decimal(78,18);
   proxy_chief_amount decimal(78,18);
   linked_wallet_amount decimal(78,18);
@@ -24,7 +24,7 @@ begin
   and ba.block_id <= weight_at_block.block_id
   order by ba.id desc limit 1;
 
-  select vote_proxy, hot into proxy_result
+  select * into proxy
   from dschief.vote_proxy_created_event vpc
   where (hot = weight_at_block.address or cold = weight_at_block.address)
   and vpc.block_id <= weight_at_block.block_id
@@ -44,7 +44,7 @@ begin
     select amount into linked_wallet_amount from mkr.balances ba
     where ba.address = (
       case when proxy.cold = weight_at_block.address
-      then proxy.hot else proxy.cold)
+      then proxy.hot else proxy.cold end)
     and ba.block_id <= weight_at_block.block_id
     order by ba.id desc limit 1;
   end if;
@@ -52,7 +52,7 @@ begin
   return coalesce(wallet_amount, 0) + 
     coalesce(chief_amount, 0) + 
     coalesce(proxy_wallet_amount, 0) + 
-    coalesce(proxy_chief_amount, 0) + ;
+    coalesce(proxy_chief_amount, 0) + 
     coalesce(linked_wallet_amount, 0);
 end;
 $$ language plpgsql stable strict;
