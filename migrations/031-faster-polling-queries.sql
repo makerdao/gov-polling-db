@@ -89,7 +89,7 @@ returns table (
   amount decimal(78,18)
 ) as $$
   select * from polling.votes(poll_id, (
-    select id from vulcan2x.block where extract(epoch from timestamp) <= unixtime
-    order by id desc limit 1
+    select id from vulcan2x.block where timestamp <= to_timestamp(unixtime)
+    order by timestamp desc limit 1
   )) 
 $$ language sql stable strict;
