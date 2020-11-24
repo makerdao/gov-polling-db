@@ -10,7 +10,6 @@ declare
   wallet_amount decimal(78,18);
   chief_amount decimal(78,18);
   proxy dschief.vote_proxy_created_event%rowtype;
-  proxy_wallet_amount decimal(78,18);
   proxy_chief_amount decimal(78,18);
   linked_wallet_amount decimal(78,18);
 begin
@@ -31,11 +30,6 @@ begin
   order by vpc.id desc limit 1;
 
   if proxy is not null then
-    select amount into proxy_wallet_amount from mkr.balances ba
-    where ba.address = proxy.vote_proxy
-    and ba.block_id <= voter_weight.block_id
-    order by ba.id desc limit 1;
-
     select amount into proxy_chief_amount from dschief.balances ba
     where ba.address = proxy.vote_proxy
     and ba.block_id <= voter_weight.block_id
@@ -51,7 +45,6 @@ begin
 
   return coalesce(wallet_amount, 0) + 
     coalesce(chief_amount, 0) + 
-    coalesce(proxy_wallet_amount, 0) + 
     coalesce(proxy_chief_amount, 0) + 
     coalesce(linked_wallet_amount, 0);
 end;
