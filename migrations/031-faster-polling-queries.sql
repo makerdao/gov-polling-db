@@ -66,7 +66,7 @@ returns table (
   select 
     voter, 
     option_id, 
-    polling.weight_at_block(voter, votes.block_id)
+    polling.voter_weight(voter, votes.block_id)
   from polling.valid_votes(votes.poll_id) vv
   where vv.block_id <= votes.block_id
 $$ language sql stable strict;
