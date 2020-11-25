@@ -1,7 +1,4 @@
 create index poll_id_index on polling.voted_event (poll_id);
-create index sender_index on mkr.transfer_event (sender);
-create index receiver_index on mkr.transfer_event (receiver);
-create index block_id_index on mkr.transfer_event (block_id);
 create index timestamp_index on vulcan2x.block (timestamp);
 
 create or replace function polling.voter_weight(address character(66), block_id integer)
