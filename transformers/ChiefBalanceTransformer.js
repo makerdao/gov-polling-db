@@ -57,8 +57,8 @@ const handlers = {
   ) => processRow(services.tx, { caller, wad, tx_id, block_id }),
 };
 
-module.exports = (mkrAddress) => ({
-  name: "ChiefBalanceTransformer",
+module.exports = (mkrAddress, nameSuffix = '') => ({
+  name: `ChiefBalanceTransformer${nameSuffix}`,
   dependencies: [getExtractorName(mkrAddress)],
   transform: async (services, logs) => {
     await handleDsNoteEvents(services, dsChiefAbi, logs[0], handlers);
