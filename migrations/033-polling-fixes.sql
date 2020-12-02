@@ -3,7 +3,7 @@ create index vote_proxy_created_event_vote_proxy_idx on dschief.vote_proxy_creat
 
 -- this function only works with addresses that are proxies or unlinked addresses,
 -- NOT hot or cold wallet addresses.
-create or replace function polling.reverse_voter_weight(address character(66), block_id integer)
+create or replace function polling.reverse_voter_weight(address character(42), block_id integer)
 returns decimal(78,18) as $$
 declare
   wallet_amount decimal(78,18);
@@ -51,8 +51,8 @@ $$ language plpgsql stable strict;
 
 -- if the input is a hot or cold wallet, return the proxy address.
 -- used to treat votes from hot & cold wallet for the same proxy as duplicates.
-create or replace function polling.unique_voter_address(address character(66))
-returns character(66) as $$
+create or replace function polling.unique_voter_address(address character(42))
+returns character(42) as $$
   select coalesce(
     (
       select vote_proxy from dschief.vote_proxy_created_event 
@@ -65,7 +65,7 @@ $$ language sql stable strict;
 
 CREATE OR REPLACE FUNCTION polling.unique_votes(arg_poll_id INTEGER)
 RETURNS TABLE (
-  voter character(66), -- if vote was sent by a hot or cold wallet, this is a proxy address
+  voter character(42), -- if vote was sent by a hot or cold wallet, this is a proxy address
   option_id integer,
   option_id_raw character,
   block_id integer
@@ -97,7 +97,7 @@ $$ LANGUAGE sql STABLE STRICT;
 drop function if exists polling.votes; -- must drop because return value changed
 create function polling.votes(poll_id integer, block_id integer)
 returns table (
-  voter character(66), -- if vote was sent by a hot or cold wallet, this is a proxy address
+  voter character(42), -- if vote was sent by a hot or cold wallet, this is a proxy address
   option_id integer,
   option_id_raw character,
   amount decimal(78,18)
@@ -114,7 +114,7 @@ $$ language sql stable strict;
 drop function if exists polling.votes_at_block; -- must drop because return value changed
 create function polling.votes_at_block(poll_id integer, block_number integer)
 returns table (
-  voter character(66), -- if vote was sent by a hot or cold wallet, this is a proxy address
+  voter character(42), -- if vote was sent by a hot or cold wallet, this is a proxy address
   option_id integer,
   option_id_raw character,
   amount decimal(78,18)
@@ -127,7 +127,7 @@ $$ language sql stable strict;
 drop function if exists polling.votes_at_time; -- must drop because return value changed
 create function polling.votes_at_time(poll_id integer, unixtime integer)
 returns table (
-  voter character(66), -- if vote was sent by a hot or cold wallet, this is a proxy address
+  voter character(42), -- if vote was sent by a hot or cold wallet, this is a proxy address
   option_id integer,
   option_id_raw character,
   amount decimal(78,18)
