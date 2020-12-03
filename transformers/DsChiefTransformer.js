@@ -7,8 +7,8 @@ const dsChiefAbi = require("../abis/ds_chief.json");
 const { getTxByIdOrDie } = require("spock-etl/lib/core/processors/extractors/common");
 const BigNumber = require("bignumber.js").BigNumber;
 
-module.exports = address => ({
-  name: "DsChiefTransformer",
+module.exports = (address, nameSuffix = '') => ({
+  name: `DsChiefTransformer${nameSuffix}`,
   dependencies: [getExtractorName(address)],
   transform: async (services, logs) => {
     await handleDsNoteEvents(services, dsChiefAbi, logs[0], handlers);
