@@ -28,7 +28,7 @@ const handlers = {
       blockId: log.block_id,
       logIndex: log.log_index
     });
-  }
+  },
 };
 
 const insertJoin = (s, values) => {
