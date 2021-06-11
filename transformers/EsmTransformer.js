@@ -1,5 +1,6 @@
 const { getExtractorName } = require("spock-etl/lib/core/processors/extractors/instances/rawEventDataExtractor");
-const { handleDsNoteEvents } = require("spock-etl/lib/core/processors/transformers/common");
+// const { handleDsNoteEvents } = require("spock-etl/lib/core/processors/transformers/common");
+const { handleEvents } = require("spock-etl/lib/core/processors/transformers/common");
 // @ts-ignore
 const ESMAbi = require("../abis/esm_abi.json");
 const { getTxByIdOrDie } = require("spock-etl/lib/core/processors/extractors/common");
@@ -9,26 +10,49 @@ module.exports = address => ({
   name: "ESMTransformer",
   dependencies: [getExtractorName(address)],
   transform: async (services, logs) => {
-    await handleDsNoteEvents(services, ESMAbi, logs[0], handlers, 2);
+    await handleEvents(services, ESMAbi, logs[0], handlers);
   },
 });
 
 const handlers = {
-  "join(uint256)": async (services, { log, note }) => {
+  Join: async (
+    services,
+    {
+      event,
+      log,
+    }
+  ) => {
     const tx = await getTxByIdOrDie(services, log.tx_id);
 
     await insertJoin(services, {
-      fromAddress: tx.from_address,
-      immediateCaller: note.caller,
-      joinAmount: new BigNumber(note.params.wad)
+      fromAddress: event.params.usr,
+      // where to get this?
+      immediateCaller: event.params.usr,
+      joinAmount: new BigNumber(event.params.wad)
         .div(new BigNumber("1e18"))
         .toString(),
-      contractAddress: log.address,
+      contractAddress: event.address,
       txId: log.tx_id,
       blockId: log.block_id,
       logIndex: log.log_index
     });
   },
+  // "join(uint256)": async (services, { log, note }) => {
+  //   console.log('ESM Handler')
+  //   const tx = await getTxByIdOrDie(services, log.tx_id);
+
+  //   await insertJoin(services, {
+  //     fromAddress: tx.from_address,
+  //     immediateCaller: note.caller,
+  //     joinAmount: new BigNumber(note.params.wad)
+  //       .div(new BigNumber("1e18"))
+  //       .toString(),
+  //     contractAddress: log.address,
+  //     txId: log.tx_id,
+  //     blockId: log.block_id,
+  //     logIndex: log.log_index
+  //   });
+  // },
 };
 
 const insertJoin = (s, values) => {
