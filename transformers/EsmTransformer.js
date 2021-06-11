@@ -1,5 +1,4 @@
 const { getExtractorName } = require("spock-etl/lib/core/processors/extractors/instances/rawEventDataExtractor");
-// const { handleDsNoteEvents } = require("spock-etl/lib/core/processors/transformers/common");
 const { handleEvents } = require("spock-etl/lib/core/processors/transformers/common");
 // @ts-ignore
 const ESMAbi = require("../abis/esm_abi.json");
