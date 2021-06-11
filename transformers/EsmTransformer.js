@@ -25,8 +25,7 @@ const handlers = {
     const tx = await getTxByIdOrDie(services, log.tx_id);
 
     await insertJoin(services, {
-      fromAddress: event.params.usr,
-      // where to get this?
+      fromAddress: tx.from_address,
       immediateCaller: event.params.usr,
       joinAmount: new BigNumber(event.params.wad)
         .div(new BigNumber("1e18"))
@@ -36,23 +35,7 @@ const handlers = {
       blockId: log.block_id,
       logIndex: log.log_index
     });
-  },
-  // "join(uint256)": async (services, { log, note }) => {
-  //   console.log('ESM Handler')
-  //   const tx = await getTxByIdOrDie(services, log.tx_id);
-
-  //   await insertJoin(services, {
-  //     fromAddress: tx.from_address,
-  //     immediateCaller: note.caller,
-  //     joinAmount: new BigNumber(note.params.wad)
-  //       .div(new BigNumber("1e18"))
-  //       .toString(),
-  //     contractAddress: log.address,
-  //     txId: log.tx_id,
-  //     blockId: log.block_id,
-  //     logIndex: log.log_index
-  //   });
-  // },
+  }
 };
 
 const insertJoin = (s, values) => {
