@@ -14,13 +14,7 @@ module.exports = address => ({
 });
 
 const handlers = {
-  Join: async (
-    services,
-    {
-      event,
-      log,
-    }
-  ) => {
+  Join: async (services, { event, log }) => {
     const tx = await getTxByIdOrDie(services, log.tx_id);
 
     await insertJoin(services, {
