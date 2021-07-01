@@ -35,7 +35,7 @@ const VOTE_DELEGATE_FACTORY_KOVAN_ADDRESS = "0x08671b967898B888dBa958Bb0be8EA168
 
 
 const kovan = {
-  startingBlock: 25798622,
+  startingBlock: 25798600,
   extractors: [
     ...makeRawLogExtractors([
       VOTING_CONTRACT_KOVAN_ADDRESS,
