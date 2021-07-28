@@ -10,6 +10,7 @@ const pollingTransformer = pollingTransformerImport.default;
 const dsChiefTransformer = require("./transformers/DsChiefTransformer");
 const voteProxyFactoryTransformer = require("./transformers/VoteProxyFactoryTransformer");
 const esmTransformer = require("./transformers/EsmTransformer");
+const voteDelegateFactoryTransformer = require("./transformers/VoteDelegateFactoryTransformer");
 
 //mainnet
 const MKR_ADDRESS = "0x9f8f72aa9304c8b593d555f12ef6589cc3a579a2";
@@ -20,6 +21,7 @@ const VOTE_PROXY_FACTORY_ADDRESS = "0x868ba9aeacA5B73c7C27F3B01588bf4F1339F2bC";
 const ESM_ADDRESS = "0x29CfBd381043D00a98fD9904a431015Fef07af2f";
 const DSCHIEF_12_ADDRESS = "0x0a3f6849f78076aefaDf113F5BED87720274dDC0";
 const VOTE_PROXY_FACTORY_12_ADDRESS = "0x6FCD258af181B3221073A96dD90D1f7AE7eEc408";
+const VOTE_DELEGATE_FACTORY_ADDRESS = "0xD897F108670903D1d6070fcf818f9db3615AF272";
 
 //kovan
 const MKR_KOVAN_ADDRESS = "0xaaf64bfcc32d0f15873a02163e7e500671a4ffcd";
@@ -30,6 +32,7 @@ const VOTE_PROXY_FACTORY_KOVAN_ADDRESS = "0x3e08741a68c2d964d172793cd0ad14292f65
 const ESM_ADDRESS_KOVAN = "0xD5D728446275B0A12E4a4038527974b92353B4a9";
 const DSCHIEF_12_KOVAN_ADDRESS = '0x27E0c9567729Ea6e3241DE74B3dE499b7ddd3fe6';
 const VOTE_PROXY_FACTORY_12_KOVAN_ADDRESS = "0x1400798AA746457E467A1eb9b3F3f72C25314429";
+const VOTE_DELEGATE_FACTORY_KOVAN_ADDRESS = "0x1740F3bD55b1900C816A0071F8972C201566e3a3";
 
 
 const kovan = {
@@ -44,6 +47,7 @@ const kovan = {
       DSCHIEF_12_KOVAN_ADDRESS,
       VOTE_PROXY_FACTORY_12_KOVAN_ADDRESS,
       ESM_ADDRESS_KOVAN,
+      VOTE_DELEGATE_FACTORY_KOVAN_ADDRESS,
     ]),
   ],
   transformers: [
@@ -57,7 +61,8 @@ const kovan = {
     dsChiefTransformer(DSCHIEF_12_KOVAN_ADDRESS, '_v1.2'),
     chiefBalanceTransformer(DSCHIEF_12_KOVAN_ADDRESS, '_v1.2'),
     voteProxyFactoryTransformer(VOTE_PROXY_FACTORY_12_KOVAN_ADDRESS, '_v1.2'),
-    esmTransformer(ESM_ADDRESS_KOVAN)
+    esmTransformer(ESM_ADDRESS_KOVAN),
+    voteDelegateFactoryTransformer(VOTE_DELEGATE_FACTORY_KOVAN_ADDRESS),
   ],
   migrations: {
     mkr: "./migrations",
@@ -68,7 +73,7 @@ const kovan = {
     },
     responseCaching: {
       enabled: false,
-      duration: "15 seconds"
+      duration: "15 seconds",
     },
   },
 };
@@ -85,6 +90,7 @@ const mainnet = {
       DSCHIEF_12_ADDRESS,
       VOTE_PROXY_FACTORY_12_ADDRESS,
       ESM_ADDRESS,
+      VOTE_DELEGATE_FACTORY_ADDRESS,
     ]),
   ],
   transformers: [
@@ -98,7 +104,8 @@ const mainnet = {
     dsChiefTransformer(DSCHIEF_12_ADDRESS, '_v1.2'),
     chiefBalanceTransformer(DSCHIEF_12_ADDRESS, '_v1.2'),
     voteProxyFactoryTransformer(VOTE_PROXY_FACTORY_12_ADDRESS, '_v1.2'),
-    esmTransformer(ESM_ADDRESS)
+    esmTransformer(ESM_ADDRESS),
+    voteDelegateFactoryTransformer(VOTE_DELEGATE_FACTORY_ADDRESS),
   ],
   migrations: {
     mkr: "./migrations",
