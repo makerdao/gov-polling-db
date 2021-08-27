@@ -1,4 +1,6 @@
---Replaces 025-all-current-votes. Adds block timestamp as a field to return from this query
+DROP FUNCTION IF EXISTS api.all_current_votes(CHAR);
+
+--Replaces 025-all-current-votes. Adds block timestamp as a field to return from this query.
 CREATE OR REPLACE FUNCTION api.all_current_votes(arg_address CHAR)
 RETURNS TABLE (
 	poll_id integer,
