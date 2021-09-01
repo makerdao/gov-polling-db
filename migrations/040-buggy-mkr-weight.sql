@@ -10,32 +10,32 @@ declare
   cold_wallet_amount decimal(78,18);
 begin
   select amount into wallet_amount from mkr.balances ba
-  where ba.address = reverse_voter_weight.address
-  and ba.block_id <= reverse_voter_weight.block_id
+  where ba.address = buggy_reverse_voter_weight.address
+  and ba.block_id <= buggy_reverse_voter_weight.block_id
   order by ba.id desc limit 1;
 
   select amount into chief_amount from dschief.balances ba
-  where ba.address = reverse_voter_weight.address
-  and ba.block_id <= reverse_voter_weight.block_id
+  where ba.address = buggy_reverse_voter_weight.address
+  and ba.block_id <= buggy_reverse_voter_weight.block_id
   order by ba.id desc limit 1;
 
   -- if address is a proxy, add balances for hot & cold wallets
 
   select * into proxy
   from dschief.vote_proxy_created_event vpc
-  where vote_proxy = reverse_voter_weight.address
-  and vpc.block_id <= reverse_voter_weight.block_id
+  where vote_proxy = buggy_reverse_voter_weight.address
+  and vpc.block_id <= buggy_reverse_voter_weight.block_id
   order by vpc.id desc limit 1;
 
   if proxy is not null then
     select amount into hot_wallet_amount from mkr.balances ba
     where ba.address = proxy.hot
-    and ba.block_id <= reverse_voter_weight.block_id
+    and ba.block_id <= buggy_reverse_voter_weight.block_id
     order by ba.id desc limit 1;
 
     select amount into cold_wallet_amount from mkr.balances ba
     where ba.address = proxy.cold
-    and ba.block_id <= reverse_voter_weight.block_id
+    and ba.block_id <= buggy_reverse_voter_weight.block_id
     order by ba.id desc limit 1;
   end if;
 
@@ -57,9 +57,9 @@ returns table (
     voter,
     option_id, 
     option_id_raw,
-    polling.buggy_reverse_voter_weight(voter, votes.block_id)
-  from polling.unique_votes(votes.poll_id) vv
-  where vv.block_id <= votes.block_id
+    polling.buggy_reverse_voter_weight(voter, buggy_votes.block_id)
+  from polling.unique_votes(buggy_votes.poll_id) vv
+  where vv.block_id <= buggy_votes.block_id
 $$ language sql stable strict;
 
 CREATE OR REPLACE FUNCTION polling.buggy_votes_at_time(poll_id integer, unixtime integer)
