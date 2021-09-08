@@ -1,7 +1,7 @@
 on:
   push:
     branches:
-      - TO-1433-cicd
+      - staging
 
 name: Deploy to AWS Staging
 
