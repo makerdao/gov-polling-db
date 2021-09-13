@@ -1,7 +1,7 @@
 on:
   push:
     branches:
-      - TO-1433-cicd-prod
+      - master
 
 name: Deploy to AWS Prod
 
