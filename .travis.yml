@@ -26,8 +26,7 @@ deploy:
     branch: master
 - provider: script
   script: >-
-    bash ./.travis/deploy.sh staging $STAGING_REGION &&
-    bash ./.travis/deploy.sh qa $STAGING_REGION
+    bash ./.travis/deploy.sh staging $STAGING_REGION
   on:
     branch: staging
 env:
