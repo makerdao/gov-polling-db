@@ -1,7 +1,7 @@
 on:
   push:
     branches:
-      - staging
+      - update-cicd-in-master
 
 name: Deploy to AWS Staging
 
@@ -59,25 +59,25 @@ jobs:
 
       # ETL mainnet
     - name: Update ${{ env.MAINNET_ETL_SERVICE_NAME }} ECS service with latest Docker image
-      id: service-update-etl
+      id: service-update-etl-mainnet
       run: |
         aws ecs update-service --cluster $MAINNET_CLUSTER_NAME  --service ${{ env.MAINNET_ETL_SERVICE_NAME }} --force-new-deployment --region $AWS_REGION
 
       # API mainnet
     - name: Update ${{ env.MAINNET_API_SERVICE_NAME }} ECS service with latest Docker image
-      id: service-update-api
+      id: service-update-api-mainnet
       run: |
         aws ecs update-service --cluster $MAINNET_CLUSTER_NAME  --service ${{ env.MAINNET_API_SERVICE_NAME }} --force-new-deployment --region $AWS_REGION
 
       # ETL goerli
     - name: Update ${{ env.GOERLI_ETL_SERVICE_NAME }} ECS service with latest Docker image
-      id: service-update-etl
+      id: service-update-etl-goerli
       run: |
         aws ecs update-service --cluster $GOERLI_CLUSTER_NAME  --service ${{ env.GOERLI_ETL_SERVICE_NAME }} --force-new-deployment --region $AWS_REGION
 
       # API goerli
     - name: Update ${{ env.GOERLI_API_SERVICE_NAME }} ECS service with latest Docker image
-      id: service-update-api
+      id: service-update-api-goerli
       run: |
         aws ecs update-service --cluster $GOERLI_CLUSTER_NAME  --service ${{ env.GOERLI_API_SERVICE_NAME }} --force-new-deployment --region $AWS_REGION
 
