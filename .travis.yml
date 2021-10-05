@@ -21,10 +21,6 @@ script:
 - yarn test:ci
 deploy:
 - provider: script
-  script: "bash ./.travis/deploy.sh prod $PROD_REGION"
-  on:
-    branch: master
-- provider: script
   script: >-
     bash ./.travis/deploy.sh staging $STAGING_REGION
   on:
