@@ -93,4 +93,3 @@ jobs:
       with:
         ecs-cluster: ${{ env.GOERLI_CLUSTER_NAME }}
         ecs-services: '["${{ env.GOERLI_ETL_SERVICE_NAME }}", "${{ env.GOERLI_API_SERVICE_NAME }}"]'
-

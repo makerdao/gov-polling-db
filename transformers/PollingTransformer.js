@@ -1,27 +1,38 @@
-const { handleEvents } = require("spock-etl/lib/core/processors/transformers/common");
+const {
+  handleEvents,
+} = require('spock-etl/lib/core/processors/transformers/common');
 const {
   getExtractorName,
-} = require("spock-etl/lib/core/processors/extractors/instances/rawEventDataExtractor");
-const { getLogger } = require("spock-etl/lib/core/utils/logger");
-const BigNumber = require("bignumber.js").BigNumber;
+} = require('spock-etl/lib/core/processors/extractors/instances/rawEventDataExtractor');
+const { getLogger } = require('spock-etl/lib/core/utils/logger');
+const BigNumber = require('bignumber.js').BigNumber;
 
 // @ts-ignore
-const abi = require("../abis/polling_emitter.json");
+const abi = require('../abis/polling_emitter.json');
 
-const logger = getLogger("Polling");
+const logger = getLogger('Polling');
 
 const authorizedCreators = process.env.AUTHORIZED_CREATORS
-  ? process.env.AUTHORIZED_CREATORS.split(",").map(creator => creator.toLowerCase())
+  ? process.env.AUTHORIZED_CREATORS.split(',').map((creator) =>
+      creator.toLowerCase(),
+    )
   : [];
 
-module.exports.VOTING_CONTRACT_KOVAN_ADDRESS = '0x518a0702701BF98b5242E73b2368ae07562BEEA3';
-module.exports.VOTING_CONTRACT_ADDRESS = '0xF9be8F0945acDdeeDaA64DFCA5Fe9629D0CF8E5D';
+// TODO
+module.exports.VOTING_CONTRACT_GOERLI_ADDRESS =
+  '0xdbE5d00b2D8C13a77Fb03Ee50C87317dbC1B15fb';
+module.exports.VOTING_CONTRACT_KOVAN_ADDRESS =
+  '0x518a0702701BF98b5242E73b2368ae07562BEEA3';
+module.exports.VOTING_CONTRACT_ADDRESS =
+  '0xF9be8F0945acDdeeDaA64DFCA5Fe9629D0CF8E5D';
 
-module.exports.default = address => ({
-  name: address === module.exports.VOTING_CONTRACT_ADDRESS ||
-    address === module.exports.VOTING_CONTRACT_KOVAN_ADDRESS
-    ? `Polling_Transformer`
-    : `Polling_Transformer_${address}`,
+module.exports.default = (address) => ({
+  name:
+    address === module.exports.VOTING_CONTRACT_ADDRESS ||
+    address === module.exports.VOTING_CONTRACT_KOVAN_ADDRESS ||
+    address === module.exports.VOTING_CONTRACT_GOERLI_ADDRESS
+      ? `Polling_Transformer`
+      : `Polling_Transformer_${address}`,
   dependencies: [getExtractorName(address)],
   transform: async (services, logs) => {
     await handleEvents(services, abi, logs[0], handlers);
@@ -30,16 +41,26 @@ module.exports.default = address => ({
 
 const handlers = {
   async PollCreated(services, info) {
-    if (info.event.address.toLowerCase() !== module.exports.VOTING_CONTRACT_KOVAN_ADDRESS.toLowerCase() &&
-      info.event.address.toLowerCase() !== module.exports.VOTING_CONTRACT_ADDRESS.toLowerCase()) {
-            logger.info(
+    if (
+      info.event.address.toLowerCase() !==
+        module.exports.VOTING_CONTRACT_KOVAN_ADDRESS.toLowerCase() &&
+      info.event.address.toLowerCase() !==
+        module.exports.VOTING_CONTRACT_ADDRESS.toLowerCase() &&
+      // goerli uses batch polling contract for creating polls
+      info.event.address.toLowerCase() !==
+        module.exports.VOTING_CONTRACT_GOERLI_ADDRESS.toLowerCase()
+    ) {
+      logger.info(
         `Ignoring PollCreated event because ${info.event.address} is not the primary voting contract`,
       );
       return;
-    };
+    }
 
     const creator = info.event.params.creator.toLowerCase();
-    if (authorizedCreators.length > 0 && !authorizedCreators.includes(creator.toLowerCase())) {
+    if (
+      authorizedCreators.length > 0 &&
+      !authorizedCreators.includes(creator.toLowerCase())
+    ) {
       logger.info(
         `Ignoring PollCreated event because ${creator} is not in the whitelist ${authorizedCreators}`,
       );
@@ -77,13 +98,20 @@ const handlers = {
   },
 
   async PollWithdrawn(services, info) {
-    if (info.event.address.toLowerCase() !== module.exports.VOTING_CONTRACT_KOVAN_ADDRESS.toLowerCase() &&
-      info.event.address.toLowerCase() !== module.exports.VOTING_CONTRACT_ADDRESS.toLowerCase()) {
-            logger.info(
+    if (
+      info.event.address.toLowerCase() !==
+        module.exports.VOTING_CONTRACT_KOVAN_ADDRESS.toLowerCase() &&
+      info.event.address.toLowerCase() !==
+        module.exports.VOTING_CONTRACT_ADDRESS.toLowerCase() &&
+      // goerli uses batch polling contract for withdrawing polls
+      info.event.address.toLowerCase() !==
+        module.exports.VOTING_CONTRACT_GOERLI_ADDRESS.toLowerCase()
+    ) {
+      logger.info(
         `Ignoring PollWithdrawn event because ${info.event.address} is not the primary voting contract`,
       );
       return;
-    };
+    }
 
     const creator = info.event.params.creator.toLowerCase();
     if (authorizedCreators.length > 0 && !authorizedCreators.includes(creator))
@@ -115,9 +143,7 @@ const handlers = {
   },
 
   async Voted(services, info) {
-    if (
-      !isValidPositivePostgresIntegerValue(info.event.params.pollId)
-    ) {
+    if (!isValidPositivePostgresIntegerValue(info.event.params.pollId)) {
       logger.warn(
         `Ignoring Voted event from ${info.event.params.voter.toLowerCase()} because of failing validation.`,
       );
@@ -125,7 +151,10 @@ const handlers = {
     }
 
     let optionIdInt = null;
-    if(info.event.params.optionId && isValidPositivePostgresIntegerValue(info.event.params.optionId)){
+    if (
+      info.event.params.optionId &&
+      isValidPositivePostgresIntegerValue(info.event.params.optionId)
+    ) {
       optionIdInt = info.event.params.optionId.toNumber();
     }
 
@@ -146,7 +175,7 @@ const handlers = {
 };
 
 function isValidPositivePostgresIntegerValue(_input) {
-  const maxInt = new BigNumber("2147483647");
+  const maxInt = new BigNumber('2147483647');
   const input = new BigNumber(_input);
 
   return input.lt(maxInt) && input.gte(0);
