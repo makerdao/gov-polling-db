@@ -1,12 +1,18 @@
-const { getExtractorName } = require("spock-etl/lib/core/processors/extractors/instances/rawEventDataExtractor");
-const { handleEvents } = require("spock-etl/lib/core/processors/transformers/common");
+const {
+  getExtractorName,
+} = require('spock-etl/lib/core/processors/extractors/instances/rawEventDataExtractor');
+const {
+  handleEvents,
+} = require('spock-etl/lib/core/processors/transformers/common');
 // @ts-ignore
-const ESMAbi = require("../abis/esm_v2_abi.json");
-const { getTxByIdOrDie } = require("spock-etl/lib/core/processors/extractors/common");
-const BigNumber = require("bignumber.js").BigNumber;
+const ESMAbi = require('../abis/esm_v2_abi.json');
+const {
+  getTxByIdOrDie,
+} = require('spock-etl/lib/core/processors/extractors/common');
+const BigNumber = require('bignumber.js').BigNumber;
 
-module.exports = address => ({
-  name: "ESMTransformer",
+module.exports = (address) => ({
+  name: 'ESMV2Transformer',
   dependencies: [getExtractorName(address)],
   transform: async (services, logs) => {
     await handleEvents(services, ESMAbi, logs[0], handlers);
@@ -21,12 +27,12 @@ const handlers = {
       fromAddress: tx.from_address,
       immediateCaller: event.params.usr,
       joinAmount: new BigNumber(event.params.wad)
-        .div(new BigNumber("1e18"))
+        .div(new BigNumber('1e18'))
         .toString(),
       contractAddress: event.address,
       txId: log.tx_id,
       blockId: log.block_id,
-      logIndex: log.log_index
+      logIndex: log.log_index,
     });
   },
 };
