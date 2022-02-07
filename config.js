@@ -10,6 +10,7 @@ const pollingTransformer = pollingTransformerImport.default;
 const dsChiefTransformer = require("./transformers/DsChiefTransformer");
 const voteProxyFactoryTransformer = require("./transformers/VoteProxyFactoryTransformer");
 const esmTransformer = require("./transformers/EsmTransformer");
+const esmV2Transformer = require("./transformers/EsmV2Transformer");
 const voteDelegateFactoryTransformer = require("./transformers/VoteDelegateFactoryTransformer");
 
 //mainnet
@@ -19,6 +20,7 @@ const SECOND_VOTING_CONTRACT_ADDRESS = "0xD3A9FE267852281a1e6307a1C37CDfD76d39b1
 const DSCHIEF_ADDRESS = "0x9eF05f7F6deB616fd37aC3c959a2dDD25A54E4F5";
 const VOTE_PROXY_FACTORY_ADDRESS = "0x868ba9aeacA5B73c7C27F3B01588bf4F1339F2bC";
 const ESM_ADDRESS = "0x29CfBd381043D00a98fD9904a431015Fef07af2f";
+const ESM_V2_ADDRESS = "0x09e05fF6142F2f9de8B6B65855A1d56B6cfE4c58";
 const DSCHIEF_12_ADDRESS = "0x0a3f6849f78076aefaDf113F5BED87720274dDC0";
 const VOTE_PROXY_FACTORY_12_ADDRESS = "0x6FCD258af181B3221073A96dD90D1f7AE7eEc408";
 const VOTE_DELEGATE_FACTORY_ADDRESS = "0xD897F108670903D1d6070fcf818f9db3615AF272";
@@ -40,6 +42,7 @@ const VOTE_DELEGATE_FACTORY_KOVAN_ADDRESS = "0x1740F3bD55b1900C816A0071F8972C201
 const MKR_GOERLI_ADDRESS = "0xc5E4eaB513A7CD12b2335e8a0D57273e13D499f7";
 const BATCH_VOTING_CONTRACT_GOERLI_ADDRESS = "0xdbE5d00b2D8C13a77Fb03Ee50C87317dbC1B15fb";
 const ESM_ADDRESS_GOERLI = "0x105BF37e7D81917b6fEACd6171335B4838e53D5e";
+const ESM_V2_ADDRESS_GOERLI = "0x023A960cb9BE7eDE35B433256f4AfE9013334b55";
 const DSCHIEF_12_GOERLI_ADDRESS = '0x33Ed584fc655b08b2bca45E1C5b5f07c98053bC1';
 const VOTE_PROXY_FACTORY_12_GOERLI_ADDRESS = "0x1a7c1ee5eE2A3B67778ff1eA8c719A3fA1b02b6f";
 const VOTE_DELEGATE_FACTORY_GOERLI_ADDRESS = "0xE2d249AE3c156b132C40D07bd4d34e73c1712947";
@@ -51,6 +54,7 @@ const goerli = {
       BATCH_VOTING_CONTRACT_GOERLI_ADDRESS,
       MKR_GOERLI_ADDRESS,
       ESM_ADDRESS_GOERLI,
+      ESM_V2_ADDRESS_GOERLI,
       DSCHIEF_12_GOERLI_ADDRESS,
       VOTE_PROXY_FACTORY_12_GOERLI_ADDRESS,
       VOTE_DELEGATE_FACTORY_GOERLI_ADDRESS,
@@ -61,6 +65,7 @@ const goerli = {
     mkrTransformer(MKR_GOERLI_ADDRESS),
     mkrBalanceTransformer(MKR_GOERLI_ADDRESS),
     esmTransformer(ESM_ADDRESS_GOERLI),
+    esmV2Transformer(ESM_V2_ADDRESS_GOERLI),
     dsChiefTransformer(DSCHIEF_12_GOERLI_ADDRESS, '_v1.2'),
     chiefBalanceTransformer(DSCHIEF_12_GOERLI_ADDRESS, '_v1.2'),
     voteProxyFactoryTransformer(VOTE_PROXY_FACTORY_12_GOERLI_ADDRESS, '_v1.2'),
@@ -135,6 +140,7 @@ const mainnet = {
       DSCHIEF_12_ADDRESS,
       VOTE_PROXY_FACTORY_12_ADDRESS,
       ESM_ADDRESS,
+      ESM_V2_ADDRESS,
       VOTE_DELEGATE_FACTORY_ADDRESS,
     ]),
   ],
@@ -150,6 +156,7 @@ const mainnet = {
     chiefBalanceTransformer(DSCHIEF_12_ADDRESS, '_v1.2'),
     voteProxyFactoryTransformer(VOTE_PROXY_FACTORY_12_ADDRESS, '_v1.2'),
     esmTransformer(ESM_ADDRESS),
+    esmV2Transformer(ESM_V2_ADDRESS),
     voteDelegateFactoryTransformer(VOTE_DELEGATE_FACTORY_ADDRESS),
   ],
   migrations: {
