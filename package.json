@@ -5,15 +5,17 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "start-etl": "node -r ./loadenv.js ./node_modules/spock-etl/lib/core/runner.js etl ./config.js",
+    "start-etl": "node -r ./loadenv.js ./node_modules/@oasisdex/spock-etl/dist/bin/etl ./config.js",
     "start-sync": "yarn migrate",
-    "migrate": "node -r ./loadenv.js ./node_modules/spock-etl/lib/core/runner.js migrate ./config.js",
-    "start-api": "node -r ./loadenv.js ./node_modules/spock-etl/lib/core/runner.js api ./config.js",
+    "migrate": "node -r ./loadenv.js ./node_modules/@oasisdex/spock-etl/dist/bin/migrate ./config.js",
+    "start-api": "node -r ./loadenv.js ./node_modules/@oasisdex/spock-graphql-api/dist/index.js ./config.js",
     "test": "jest",
     "test:ci": "./tests/run-tests.sh",
     "repl": "node --experimental-repl-await -r ./loadenv.js ./repl"
   },
   "dependencies": {
+    "@oasisdex/spock-etl": "^0.1.5",
+    "@oasisdex/spock-graphql-api": "^0.1.2",
     "dotenv-flow": "^2.0.0",
     "spock-etl": "^0.0.59"
   },
