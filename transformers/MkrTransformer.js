@@ -1,17 +1,19 @@
 const {
   getExtractorName,
-} = require("spock-etl/lib/core/processors/extractors//instances/rawEventDataExtractor");
-const { handleEvents } = require("spock-etl/lib/core/processors/transformers/common");
-const { getLogger } = require("spock-etl/lib/core/utils/logger");
-const BigNumber = require("bignumber.js").BigNumber;
+} = require('@oasisdex/spock-utils/dist/extractors/rawEventDataExtractor');
+const {
+  handleEvents,
+} = require('@oasisdex/spock-utils/dist/transformers/common');
+const { getLogger } = require('@oasisdex/spock-etl/dist/utils/logger');
+const BigNumber = require('bignumber.js').BigNumber;
 
 // @ts-ignore
-const abi = require("../abis/mkr_abi.json");
+const abi = require('../abis/mkr_abi.json');
 
-const logger = getLogger("MKR");
+const logger = getLogger('MKR');
 
-module.exports = mkrAddress => ({
-  name: "MKR_Transformer",
+module.exports = (mkrAddress) => ({
+  name: 'MKR_Transformer',
   dependencies: [getExtractorName(mkrAddress)],
   transform: async (services, logs) => {
     await handleEvents(services, abi, logs[0], handlers);
@@ -27,7 +29,9 @@ const handlers = {
     await services.tx.none(sql, {
       sender: info.event.params.from.toLowerCase(),
       receiver: info.event.params.to.toLowerCase(),
-      value: new BigNumber(info.event.params.value).div(new BigNumber("1e18")).toString(),
+      value: new BigNumber(info.event.params.value)
+        .div(new BigNumber('1e18'))
+        .toString(),
 
       log_index: info.log.log_index,
       tx_id: info.log.tx_id,

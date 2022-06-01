@@ -16,8 +16,11 @@
   "dependencies": {
     "@oasisdex/spock-etl": "^0.1.5",
     "@oasisdex/spock-graphql-api": "^0.1.2",
+    "@oasisdex/spock-utils": "^0.1.0",
+    "bignumber.js": "^9.0.2",
+    "consola": "^2.15.3",
     "dotenv-flow": "^2.0.0",
-    "spock-etl": "^0.0.59"
+    "ethers": "krzkaczor/ethers.js#kk/get-logs-multiple-address-build"
   },
   "devDependencies": {
     "graphql-request": "^1.8.2",

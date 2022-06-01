@@ -1,18 +1,18 @@
 const {
   getExtractorName,
-} = require("spock-etl/lib/core/processors/extractors//instances/rawEventDataExtractor");
+} = require('@oasisdex/spock-utils/dist/extractors/rawEventDataExtractor');
 const {
   handleEvents,
-} = require("spock-etl/lib/core/processors/transformers/common");
-const { getLogger } = require("spock-etl/lib/core/utils/logger");
-const BigNumber = require("bignumber.js").BigNumber;
+} = require('@oasisdex/spock-utils/dist/transformers/common');
+const { getLogger } = require('@oasisdex/spock-etl/dist/utils/logger');
+const BigNumber = require('bignumber.js').BigNumber;
 
 // @ts-ignore
-const abi = require("../abis/mkr_abi.json");
+const abi = require('../abis/mkr_abi.json');
 
-const logger = getLogger("MKR");
+const logger = getLogger('MKR');
 
-const amountColumnType = "decimal(78,18)";
+const amountColumnType = 'decimal(78,18)';
 
 async function processRow(db, { from, to, value, tx_id, block_id }) {
   // update balances of both accounts involved in transfer
@@ -45,7 +45,7 @@ async function processRow(db, { from, to, value, tx_id, block_id }) {
   return db.none(sql, {
     sender: from.toLowerCase(),
     receiver: to.toLowerCase(),
-    amount: new BigNumber(value).div(new BigNumber("1e18")).toString(),
+    amount: new BigNumber(value).div(new BigNumber('1e18')).toString(),
     tx_id,
     block_id,
   });
@@ -64,7 +64,7 @@ const handlers = {
 };
 
 module.exports = (mkrAddress) => ({
-  name: "MKR_BalanceTransformer",
+  name: 'MKR_BalanceTransformer',
   dependencies: [getExtractorName(mkrAddress)],
   transform: async (services, logs) => {
     await handleEvents(services, abi, logs[0], handlers);

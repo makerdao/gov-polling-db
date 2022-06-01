@@ -1,9 +1,13 @@
-const { getExtractorName } = require("spock-etl/lib/core/processors/extractors/instances/rawEventDataExtractor");
+const {
+  getExtractorName,
+} = require('@oasisdex/spock-utils/dist/extractors/rawEventDataExtractor');
 
-const { handleEvents } = require("spock-etl/lib/core/processors/transformers/common");
+const {
+  handleEvents,
+} = require('@oasisdex/spock-utils/dist/transformers/common');
 
 // @ts-ignore
-const abi = require("../abis/vote_delegate_factory.json");
+const abi = require('../abis/vote_delegate_factory.json');
 
 module.exports = (voteDelegateFactoryAddress, nameSuffix = '') => ({
   name: `Vote_delegate_factory_transformer${nameSuffix}`,

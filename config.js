@@ -1,7 +1,6 @@
 const {
   makeRawLogExtractors,
-} = require('spock-etl/lib/core/processors/extractors/instances/rawEventDataExtractor');
-
+} = require('@oasisdex/spock-utils/dist/extractors/rawEventDataExtractor');
 const mkrTransformer = require('./transformers/MkrTransformer');
 const mkrBalanceTransformer = require('./transformers/MkrBalanceTransformer');
 const chiefBalanceTransformer = require('./transformers/ChiefBalanceTransformer');
