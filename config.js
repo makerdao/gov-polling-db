@@ -6,6 +6,7 @@ const mkrBalanceTransformer = require('./transformers/MkrBalanceTransformer');
 const chiefBalanceTransformer = require('./transformers/ChiefBalanceTransformer');
 const pollingTransformerImport = require('./transformers/PollingTransformer');
 const pollingTransformer = pollingTransformerImport.default;
+const arbitrumPollingTransformer = require('./transformers/ArbitrumPollingTransformer');
 const dsChiefTransformer = require('./transformers/DsChiefTransformer');
 const voteProxyFactoryTransformer = require('./transformers/VoteProxyFactoryTransformer');
 const esmTransformer = require('./transformers/EsmTransformer');
@@ -58,6 +59,30 @@ const VOTE_PROXY_FACTORY_12_GOERLI_ADDRESS =
 const VOTE_DELEGATE_FACTORY_GOERLI_ADDRESS =
   '0xE2d249AE3c156b132C40D07bd4d34e73c1712947';
 
+// arbitrum testnet
+const ARB_TESTNET_POLLING_ADDRESS =
+  '0xc9e7Cf814df8eD7688FAC215D50529242c35A046';
+
+const arbitrumTestnet = {
+  startingBlock: 12254300,
+  extractors: [...makeRawLogExtractors([ARB_TESTNET_POLLING_ADDRESS])],
+  transformers: [arbitrumPollingTransformer(ARB_TESTNET_POLLING_ADDRESS)],
+  migrations: {
+    mkr: './migrations',
+  },
+  api: {
+    whitelisting: {
+      enabled: false,
+    },
+    responseCaching: {
+      enabled: false,
+      duration: '15 seconds',
+    },
+  },
+  onStart: (services) =>
+    console.log(`Starting with these services: ${Object.keys(services)}`),
+};
+
 const goerli = {
   startingBlock: 5273000,
   extractors: [
@@ -94,6 +119,8 @@ const goerli = {
       duration: '15 seconds',
     },
   },
+  onStart: (services) =>
+    console.log(`Starting with these services: ${Object.keys(services)}`),
 };
 
 const kovan = {
@@ -137,6 +164,8 @@ const kovan = {
       duration: '15 seconds',
     },
   },
+  onStart: (services) =>
+    console.log(`Starting with these services: ${Object.keys(services)}`),
 };
 
 const mainnet = {
@@ -193,6 +222,9 @@ if (process.env.VL_CHAIN_NAME === 'mainnet') {
 } else if (process.env.VL_CHAIN_NAME === 'kovan') {
   console.log('Using kovan config');
   config = kovan;
+} else if (process.env.VL_CHAIN_NAME === 'arbitrumTestnet') {
+  console.log('Using arbitrumTestnet config');
+  config = arbitrumTestnet;
 } else {
   console.log('Using goerli config');
   config = goerli;
