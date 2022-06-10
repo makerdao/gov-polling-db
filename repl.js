@@ -1,6 +1,6 @@
 const repl = require('repl');
 const {
-  loadExternalConfig,
+  loadConfig,
   mergeConfig,
 } = require('@oasisdex/spock-etl/dist/services/configUtils');
 const {
@@ -9,7 +9,7 @@ const {
 const { withConnection } = require('@oasisdex/spock-etl/dist/db/db');
 
 async function main(connection) {
-  const config = mergeConfig(loadExternalConfig('./config.js'));
+  const config = mergeConfig(loadConfig('./config.js'));
   const services = await createServices(config);
 
   return withConnection(services.db, (connection) => {
