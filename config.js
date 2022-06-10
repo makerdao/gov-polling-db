@@ -169,6 +169,44 @@ const kovan = {
 };
 
 const mainnet = {
+  mainnet: {
+    startingBlock: 4620855,
+    extractors: [
+      ...makeRawLogExtractors([
+        VOTING_CONTRACT_ADDRESS,
+        SECOND_VOTING_CONTRACT_ADDRESS,
+        MKR_ADDRESS,
+        DSCHIEF_ADDRESS,
+        VOTE_PROXY_FACTORY_ADDRESS,
+        DSCHIEF_12_ADDRESS,
+        VOTE_PROXY_FACTORY_12_ADDRESS,
+        ESM_ADDRESS,
+        ESM_V2_ADDRESS,
+        VOTE_DELEGATE_FACTORY_ADDRESS,
+      ]),
+    ],
+    transformers: [
+      pollingTransformer(VOTING_CONTRACT_ADDRESS),
+      pollingTransformer(SECOND_VOTING_CONTRACT_ADDRESS),
+      mkrTransformer(MKR_ADDRESS),
+      mkrBalanceTransformer(MKR_ADDRESS),
+      dsChiefTransformer(DSCHIEF_ADDRESS),
+      chiefBalanceTransformer(DSCHIEF_ADDRESS),
+      voteProxyFactoryTransformer(VOTE_PROXY_FACTORY_ADDRESS),
+      dsChiefTransformer(DSCHIEF_12_ADDRESS, '_v1.2'),
+      chiefBalanceTransformer(DSCHIEF_12_ADDRESS, '_v1.2'),
+      voteProxyFactoryTransformer(VOTE_PROXY_FACTORY_12_ADDRESS, '_v1.2'),
+      esmTransformer(ESM_ADDRESS),
+      esmV2Transformer(ESM_V2_ADDRESS),
+      voteDelegateFactoryTransformer(VOTE_DELEGATE_FACTORY_ADDRESS),
+    ],
+  },
+  arbitrum: {
+    startingBlock: 12254300,
+    extractors: [...makeRawLogExtractors([ARB_TESTNET_POLLING_ADDRESS])],
+    transformers: [arbitrumPollingTransformer(ARB_TESTNET_POLLING_ADDRESS)],
+  },
+  // Temporarily have to put this section here to trick spock typescript parser:
   startingBlock: 4620855,
   extractors: [
     ...makeRawLogExtractors([
@@ -199,6 +237,7 @@ const mainnet = {
     esmV2Transformer(ESM_V2_ADDRESS),
     voteDelegateFactoryTransformer(VOTE_DELEGATE_FACTORY_ADDRESS),
   ],
+  // ...but we we'll use each chain's extractors/transformers defined in its own key above
   migrations: {
     mkr: './migrations',
   },
@@ -214,6 +253,52 @@ const mainnet = {
   onStart: (services) =>
     console.log(`Starting with these services: ${Object.keys(services)}`),
 };
+// const mainnet = {
+//   startingBlock: 4620855,
+//   extractors: [
+//     ...makeRawLogExtractors([
+//       VOTING_CONTRACT_ADDRESS,
+//       SECOND_VOTING_CONTRACT_ADDRESS,
+//       MKR_ADDRESS,
+//       DSCHIEF_ADDRESS,
+//       VOTE_PROXY_FACTORY_ADDRESS,
+//       DSCHIEF_12_ADDRESS,
+//       VOTE_PROXY_FACTORY_12_ADDRESS,
+//       ESM_ADDRESS,
+//       ESM_V2_ADDRESS,
+//       VOTE_DELEGATE_FACTORY_ADDRESS,
+//     ]),
+//   ],
+//   transformers: [
+//     pollingTransformer(VOTING_CONTRACT_ADDRESS),
+//     pollingTransformer(SECOND_VOTING_CONTRACT_ADDRESS),
+//     mkrTransformer(MKR_ADDRESS),
+//     mkrBalanceTransformer(MKR_ADDRESS),
+//     dsChiefTransformer(DSCHIEF_ADDRESS),
+//     chiefBalanceTransformer(DSCHIEF_ADDRESS),
+//     voteProxyFactoryTransformer(VOTE_PROXY_FACTORY_ADDRESS),
+//     dsChiefTransformer(DSCHIEF_12_ADDRESS, '_v1.2'),
+//     chiefBalanceTransformer(DSCHIEF_12_ADDRESS, '_v1.2'),
+//     voteProxyFactoryTransformer(VOTE_PROXY_FACTORY_12_ADDRESS, '_v1.2'),
+//     esmTransformer(ESM_ADDRESS),
+//     esmV2Transformer(ESM_V2_ADDRESS),
+//     voteDelegateFactoryTransformer(VOTE_DELEGATE_FACTORY_ADDRESS),
+//   ],
+//   migrations: {
+//     mkr: './migrations',
+//   },
+//   api: {
+//     whitelisting: {
+//       enabled: false,
+//     },
+//     responseCaching: {
+//       enabled: false,
+//       duration: '15 seconds',
+//     },
+//   },
+//   onStart: (services) =>
+//     console.log(`Starting with these services: ${Object.keys(services)}`),
+// };
 
 let config;
 if (process.env.VL_CHAIN_NAME === 'mainnet') {
