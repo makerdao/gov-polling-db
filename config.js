@@ -168,10 +168,14 @@ const kovan = {
     console.log(`Starting with these services: ${Object.keys(services)}`),
 };
 
-const mainnet = {
+const multiple = {
   chain: {
     mainnet: {
+      name: 'mainnet',
+      tableSchema: 'vulcan2x',
       startingBlock: 4620855,
+      host: '<ADD HOST FROM .ENV HERE>',
+      retries: 15,
       extractors: [
         ...makeRawLogExtractors([
           VOTING_CONTRACT_ADDRESS,
@@ -203,6 +207,10 @@ const mainnet = {
       ],
     },
     arbitrum: {
+      name: 'arbitrum',
+      tableSchema: 'vulcan2xarbitrum',
+      host: '<ADD HOST FROM .ENV HERE>',
+      retries: 15,
       startingBlock: 12254300,
       extractors: [...makeRawLogExtractors([ARB_TESTNET_POLLING_ADDRESS])],
       transformers: [arbitrumPollingTransformer(ARB_TESTNET_POLLING_ADDRESS)],
@@ -305,7 +313,7 @@ const mainnet = {
 let config;
 if (process.env.VL_CHAIN_NAME === 'mainnet') {
   console.log('Using mainnet config');
-  config = mainnet;
+  config = multiple;
 } else if (process.env.VL_CHAIN_NAME === 'kovan') {
   console.log('Using kovan config');
   config = kovan;
