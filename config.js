@@ -172,9 +172,10 @@ const multiple = {
   chain: {
     mainnet: {
       name: 'mainnet',
-      tableSchema: 'vulcan2x',
+      processorSchema: 'vulcan2x',
+      extractedSchema: 'extracted',
       startingBlock: 4620855,
-      host: '<ADD HOST FROM .ENV HERE>',
+      host: 'https://eth-mainnet.alchemyapi.io/jsonrpc/UHaa9ZvfSFjO18VREBbH7uTOIYQy02qL',
       retries: 15,
       extractors: [
         ...makeRawLogExtractors([
@@ -208,46 +209,15 @@ const multiple = {
     },
     arbitrum: {
       name: 'arbitrum',
-      tableSchema: 'vulcan2xarbitrum',
-      host: '<ADD HOST FROM .ENV HERE>',
+      processorSchema: 'vulcan2xarbitrum',
+      extractedSchema: 'extractedarbitrum',
+      host: 'https://arb-rinkeby.g.alchemy.com/v2/ZDNHnT1M-vYosQBYeGY7AUVwYMHpf6xq',
       retries: 15,
       startingBlock: 12254300,
       extractors: [...makeRawLogExtractors([ARB_TESTNET_POLLING_ADDRESS])],
       transformers: [arbitrumPollingTransformer(ARB_TESTNET_POLLING_ADDRESS)],
     },
   },
-  // Temporarily have to put this section here to trick spock typescript parser:
-  startingBlock: 4620855,
-  extractors: [
-    ...makeRawLogExtractors([
-      VOTING_CONTRACT_ADDRESS,
-      SECOND_VOTING_CONTRACT_ADDRESS,
-      MKR_ADDRESS,
-      DSCHIEF_ADDRESS,
-      VOTE_PROXY_FACTORY_ADDRESS,
-      DSCHIEF_12_ADDRESS,
-      VOTE_PROXY_FACTORY_12_ADDRESS,
-      ESM_ADDRESS,
-      ESM_V2_ADDRESS,
-      VOTE_DELEGATE_FACTORY_ADDRESS,
-    ]),
-  ],
-  transformers: [
-    pollingTransformer(VOTING_CONTRACT_ADDRESS),
-    pollingTransformer(SECOND_VOTING_CONTRACT_ADDRESS),
-    mkrTransformer(MKR_ADDRESS),
-    mkrBalanceTransformer(MKR_ADDRESS),
-    dsChiefTransformer(DSCHIEF_ADDRESS),
-    chiefBalanceTransformer(DSCHIEF_ADDRESS),
-    voteProxyFactoryTransformer(VOTE_PROXY_FACTORY_ADDRESS),
-    dsChiefTransformer(DSCHIEF_12_ADDRESS, '_v1.2'),
-    chiefBalanceTransformer(DSCHIEF_12_ADDRESS, '_v1.2'),
-    voteProxyFactoryTransformer(VOTE_PROXY_FACTORY_12_ADDRESS, '_v1.2'),
-    esmTransformer(ESM_ADDRESS),
-    esmV2Transformer(ESM_V2_ADDRESS),
-    voteDelegateFactoryTransformer(VOTE_DELEGATE_FACTORY_ADDRESS),
-  ],
-  // ...but we we'll use each chain's extractors/transformers defined in its own key above
   migrations: {
     mkr: './migrations',
   },
@@ -312,7 +282,7 @@ const multiple = {
 
 let config;
 if (process.env.VL_CHAIN_NAME === 'mainnet') {
-  console.log('Using mainnet config');
+  console.log('Using multi config');
   config = multiple;
 } else if (process.env.VL_CHAIN_NAME === 'kovan') {
   console.log('Using kovan config');

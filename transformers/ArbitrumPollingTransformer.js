@@ -8,13 +8,13 @@ const { getLogger } = require('@oasisdex/spock-etl/dist/utils/logger');
 const BigNumber = require('bignumber.js').BigNumber;
 
 // @ts-ignore
-const abi = require('../abis/polling_emitter.json');
+const abi = require('../abis/polling_emitter_arbitrum.json');
 
 const logger = getLogger('Polling');
 
 const authorizedCreators = process.env.AUTHORIZED_CREATORS
   ? process.env.AUTHORIZED_CREATORS.split(',').map((creator) =>
-      creator.toLowerCase(),
+      creator.toLowerCase()
     )
   : [];
 
@@ -38,7 +38,7 @@ const handlers = {
         module.exports.VOTING_CONTRACT_GOERLI_ADDRESS.toLowerCase()
     ) {
       logger.info(
-        `Ignoring PollCreated event because ${info.event.address} is not the primary voting contract`,
+        `Ignoring PollCreated event because ${info.event.address} is not the primary voting contract`
       );
       return;
     }
@@ -49,7 +49,7 @@ const handlers = {
       !authorizedCreators.includes(creator.toLowerCase())
     ) {
       logger.info(
-        `Ignoring PollCreated event because ${creator} is not in the whitelist ${authorizedCreators}`,
+        `Ignoring PollCreated event because ${creator} is not in the whitelist ${authorizedCreators}`
       );
       return;
     }
@@ -61,7 +61,7 @@ const handlers = {
       !isValidPositivePostgresIntegerValue(info.event.params.pollId)
     ) {
       logger.warn(
-        `Ignoring PollCreated event from ${creator} because of failing validation.`,
+        `Ignoring PollCreated event from ${creator} because of failing validation.`
       );
       return;
     }
@@ -95,7 +95,7 @@ const handlers = {
         module.exports.VOTING_CONTRACT_GOERLI_ADDRESS.toLowerCase()
     ) {
       logger.info(
-        `Ignoring PollWithdrawn event because ${info.event.address} is not the primary voting contract`,
+        `Ignoring PollWithdrawn event because ${info.event.address} is not the primary voting contract`
       );
       return;
     }
@@ -110,7 +110,7 @@ const handlers = {
     ) {
       logger.warn(
         // prettier-ignore
-        `Ignoring PollWithdrawn event from ${creator} because of failing validation.`,
+        `Ignoring PollWithdrawn event from ${creator} because of failing validation.`
       );
       return;
     }
@@ -132,7 +132,9 @@ const handlers = {
   async Votes(services, info) {
     if (!isValidPositivePostgresIntegerValue(info.event.params.pollId)) {
       logger.warn(
-        `Ignoring Votes event from ${info.event.params.voter.toLowerCase()} because of failing validation.`,
+        `Ignoring Votes event from ${info.event.params.voter.toLowerCase()} because of failing validation. ${
+          info.event.params.pollId
+        } is not a valid positive integer.`
       );
       return;
     }
