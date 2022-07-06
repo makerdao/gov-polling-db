@@ -18,6 +18,8 @@ const authorizedCreators = process.env.AUTHORIZED_CREATORS
     )
   : [];
 
+const ARBITRUM_TESTNET_CHAIN_ID = 421611;
+
 module.exports = (address) => ({
   name: 'Arbitrum_Polling_Transformer',
   dependencies: [getExtractorName(address)],
@@ -27,108 +29,6 @@ module.exports = (address) => ({
 });
 
 const handlers = {
-  async PollCreated(services, info) {
-    if (
-      info.event.address.toLowerCase() !==
-        module.exports.VOTING_CONTRACT_KOVAN_ADDRESS.toLowerCase() &&
-      info.event.address.toLowerCase() !==
-        module.exports.VOTING_CONTRACT_ADDRESS.toLowerCase() &&
-      // goerli uses batch polling contract for creating polls
-      info.event.address.toLowerCase() !==
-        module.exports.VOTING_CONTRACT_GOERLI_ADDRESS.toLowerCase()
-    ) {
-      logger.info(
-        `Ignoring PollCreated event because ${info.event.address} is not the primary voting contract`
-      );
-      return;
-    }
-
-    const creator = info.event.params.creator.toLowerCase();
-    if (
-      authorizedCreators.length > 0 &&
-      !authorizedCreators.includes(creator.toLowerCase())
-    ) {
-      logger.info(
-        `Ignoring PollCreated event because ${creator} is not in the whitelist ${authorizedCreators}`
-      );
-      return;
-    }
-
-    if (
-      !isValidPositivePostgresIntegerValue(info.event.params.startDate) ||
-      !isValidPositivePostgresIntegerValue(info.event.params.endDate) ||
-      !isValidPositivePostgresIntegerValue(info.event.params.blockCreated) ||
-      !isValidPositivePostgresIntegerValue(info.event.params.pollId)
-    ) {
-      logger.warn(
-        `Ignoring PollCreated event from ${creator} because of failing validation.`
-      );
-      return;
-    }
-
-    const sql = `INSERT INTO polling.poll_created_event
-    (creator,block_created,poll_id,start_date,end_date,multi_hash,url,log_index,tx_id,block_id) 
-    VALUES(\${creator}, \${block_created}, \${poll_id}, \${start_date}, \${end_date}, \${multi_hash}, \${url}, \${log_index}, \${tx_id}, \${block_id});`;
-    await services.tx.none(sql, {
-      creator,
-      block_created: info.event.params.blockCreated.toNumber(),
-      poll_id: info.event.params.pollId.toNumber(),
-      start_date: info.event.params.startDate.toNumber(),
-      end_date: info.event.params.endDate.toNumber(),
-      multi_hash: info.event.params.multiHash,
-      url: info.event.params.url,
-
-      log_index: info.log.log_index,
-      tx_id: info.log.tx_id,
-      block_id: info.log.block_id,
-    });
-  },
-
-  async PollWithdrawn(services, info) {
-    if (
-      info.event.address.toLowerCase() !==
-        module.exports.VOTING_CONTRACT_KOVAN_ADDRESS.toLowerCase() &&
-      info.event.address.toLowerCase() !==
-        module.exports.VOTING_CONTRACT_ADDRESS.toLowerCase() &&
-      // goerli uses batch polling contract for withdrawing polls
-      info.event.address.toLowerCase() !==
-        module.exports.VOTING_CONTRACT_GOERLI_ADDRESS.toLowerCase()
-    ) {
-      logger.info(
-        `Ignoring PollWithdrawn event because ${info.event.address} is not the primary voting contract`
-      );
-      return;
-    }
-
-    const creator = info.event.params.creator.toLowerCase();
-    if (authorizedCreators.length > 0 && !authorizedCreators.includes(creator))
-      return;
-
-    if (
-      !isValidPositivePostgresIntegerValue(info.event.params.blockWithdrawn) ||
-      !isValidPositivePostgresIntegerValue(info.event.params.pollId)
-    ) {
-      logger.warn(
-        // prettier-ignore
-        `Ignoring PollWithdrawn event from ${creator} because of failing validation.`
-      );
-      return;
-    }
-
-    const sql = `INSERT INTO polling.poll_withdrawn_event
-    (creator,block_withdrawn,poll_id,log_index,tx_id,block_id) 
-    VALUES(\${creator}, \${block_withdrawn}, \${poll_id}, \${log_index}, \${tx_id}, \${block_id});`;
-    await services.tx.none(sql, {
-      creator,
-      block_withdrawn: info.event.params.blockWithdrawn.toNumber(),
-      poll_id: info.event.params.pollId.toNumber(),
-
-      log_index: info.log.log_index,
-      tx_id: info.log.tx_id,
-      block_id: info.log.block_id,
-    });
-  },
-
   async Voted(services, info) {
     if (!isValidPositivePostgresIntegerValue(info.event.params.pollId)) {
       logger.warn(
@@ -149,9 +49,9 @@ const handlers = {
 
     logger.warn(`Inserting ${optionIdInt} into polling.voted_event`);
 
-    const sql = `INSERT INTO polling.voted_event
-    (voter,poll_id,option_id,option_id_raw,log_index,tx_id,block_id) 
-    VALUES(\${voter}, \${poll_id}, \${option_id}, \${option_id_raw}, \${log_index}, \${tx_id}, \${block_id});`;
+    const sql = `INSERT INTO polling.voted_event_arbitrum
+    (voter,poll_id,option_id,option_id_raw,log_index,tx_id,block_id,chain_id) 
+    VALUES(\${voter}, \${poll_id}, \${option_id}, \${option_id_raw}, \${log_index}, \${tx_id}, \${block_id}, \${chain_id});`;
     await services.tx.none(sql, {
       voter: info.event.params.voter.toLowerCase(),
       poll_id: info.event.params.pollId.toNumber(),
@@ -161,6 +61,7 @@ const handlers = {
       log_index: info.log.log_index,
       tx_id: info.log.tx_id,
       block_id: info.log.block_id,
+      chain_id: ARBITRUM_TESTNET_CHAIN_ID,
     });
   },
 };

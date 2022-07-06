@@ -18,6 +18,8 @@ const authorizedCreators = process.env.AUTHORIZED_CREATORS
     )
   : [];
 
+const MAINNET_CHAIN_ID = 1;
+
 // TODO
 module.exports.VOTING_CONTRACT_GOERLI_ADDRESS =
   '0xdbE5d00b2D8C13a77Fb03Ee50C87317dbC1B15fb';
@@ -159,8 +161,8 @@ const handlers = {
     }
 
     const sql = `INSERT INTO polling.voted_event
-    (voter,poll_id,option_id,option_id_raw,log_index,tx_id,block_id) 
-    VALUES(\${voter}, \${poll_id}, \${option_id}, \${option_id_raw}, \${log_index}, \${tx_id}, \${block_id});`;
+    (voter,poll_id,option_id,option_id_raw,log_index,tx_id,block_id,chain_id) 
+    VALUES(\${voter}, \${poll_id}, \${option_id}, \${option_id_raw}, \${log_index}, \${tx_id}, \${block_id}, \${chain_id});`;
     await services.tx.none(sql, {
       voter: info.event.params.voter.toLowerCase(),
       poll_id: info.event.params.pollId.toNumber(),
@@ -170,6 +172,7 @@ const handlers = {
       log_index: info.log.log_index,
       tx_id: info.log.tx_id,
       block_id: info.log.block_id,
+      chain_id: MAINNET_CHAIN_ID,
     });
   },
 };
