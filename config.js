@@ -61,7 +61,7 @@ const VOTE_DELEGATE_FACTORY_GOERLI_ADDRESS =
 
 // arbitrum testnet
 const ARB_TESTNET_POLLING_ADDRESS =
-  '0xc9e7Cf814df8eD7688FAC215D50529242c35A046';
+  '0x067Fc8812aEBa3f813D4DA49C7e2898E731d67d9';
 
 const arbitrumTestnet = {
   startingBlock: 12254300,
@@ -168,56 +168,76 @@ const kovan = {
     console.log(`Starting with these services: ${Object.keys(services)}`),
 };
 
-const multiple = {
+const mainnet_v2 = {
+  name: 'mainnet',
+  processorSchema: 'vulcan2x',
+  extractedSchema: 'extracted',
+  startingBlock: 4620855,
   chain: {
-    mainnet: {
-      name: 'mainnet',
-      processorSchema: 'vulcan2x',
-      extractedSchema: 'extracted',
-      startingBlock: 4620855,
-      host: 'https://eth-mainnet.alchemyapi.io/jsonrpc/UHaa9ZvfSFjO18VREBbH7uTOIYQy02qL',
-      retries: 15,
-      extractors: [
-        ...makeRawLogExtractors([
-          VOTING_CONTRACT_ADDRESS,
-          SECOND_VOTING_CONTRACT_ADDRESS,
-          MKR_ADDRESS,
-          DSCHIEF_ADDRESS,
-          VOTE_PROXY_FACTORY_ADDRESS,
-          DSCHIEF_12_ADDRESS,
-          VOTE_PROXY_FACTORY_12_ADDRESS,
-          ESM_ADDRESS,
-          ESM_V2_ADDRESS,
-          VOTE_DELEGATE_FACTORY_ADDRESS,
-        ]),
-      ],
-      transformers: [
-        pollingTransformer(VOTING_CONTRACT_ADDRESS),
-        pollingTransformer(SECOND_VOTING_CONTRACT_ADDRESS),
-        mkrTransformer(MKR_ADDRESS),
-        mkrBalanceTransformer(MKR_ADDRESS),
-        dsChiefTransformer(DSCHIEF_ADDRESS),
-        chiefBalanceTransformer(DSCHIEF_ADDRESS),
-        voteProxyFactoryTransformer(VOTE_PROXY_FACTORY_ADDRESS),
-        dsChiefTransformer(DSCHIEF_12_ADDRESS, '_v1.2'),
-        chiefBalanceTransformer(DSCHIEF_12_ADDRESS, '_v1.2'),
-        voteProxyFactoryTransformer(VOTE_PROXY_FACTORY_12_ADDRESS, '_v1.2'),
-        esmTransformer(ESM_ADDRESS),
-        esmV2Transformer(ESM_V2_ADDRESS),
-        voteDelegateFactoryTransformer(VOTE_DELEGATE_FACTORY_ADDRESS),
-      ],
+    name: 'mainnet',
+    host: 'https://eth-mainnet.alchemyapi.io/jsonrpc/UHaa9ZvfSFjO18VREBbH7uTOIYQy02qL',
+    retries: 15,
+  },
+  extractors: [
+    ...makeRawLogExtractors([
+      VOTING_CONTRACT_ADDRESS,
+      SECOND_VOTING_CONTRACT_ADDRESS,
+      MKR_ADDRESS,
+      DSCHIEF_ADDRESS,
+      VOTE_PROXY_FACTORY_ADDRESS,
+      DSCHIEF_12_ADDRESS,
+      VOTE_PROXY_FACTORY_12_ADDRESS,
+      ESM_ADDRESS,
+      ESM_V2_ADDRESS,
+      VOTE_DELEGATE_FACTORY_ADDRESS,
+    ]),
+  ],
+  transformers: [
+    pollingTransformer(VOTING_CONTRACT_ADDRESS),
+    pollingTransformer(SECOND_VOTING_CONTRACT_ADDRESS),
+    mkrTransformer(MKR_ADDRESS),
+    mkrBalanceTransformer(MKR_ADDRESS),
+    dsChiefTransformer(DSCHIEF_ADDRESS),
+    chiefBalanceTransformer(DSCHIEF_ADDRESS),
+    voteProxyFactoryTransformer(VOTE_PROXY_FACTORY_ADDRESS),
+    dsChiefTransformer(DSCHIEF_12_ADDRESS, '_v1.2'),
+    chiefBalanceTransformer(DSCHIEF_12_ADDRESS, '_v1.2'),
+    voteProxyFactoryTransformer(VOTE_PROXY_FACTORY_12_ADDRESS, '_v1.2'),
+    esmTransformer(ESM_ADDRESS),
+    esmV2Transformer(ESM_V2_ADDRESS),
+    voteDelegateFactoryTransformer(VOTE_DELEGATE_FACTORY_ADDRESS),
+  ],
+  migrations: {
+    mkr: './migrations',
+  },
+  api: {
+    whitelisting: {
+      enabled: false,
     },
-    arbitrum: {
-      name: 'arbitrum',
-      processorSchema: 'vulcan2xarbitrum',
-      extractedSchema: 'extractedarbitrum',
-      host: 'https://arb-rinkeby.g.alchemy.com/v2/ZDNHnT1M-vYosQBYeGY7AUVwYMHpf6xq',
-      retries: 15,
-      startingBlock: 12254300,
-      extractors: [...makeRawLogExtractors([ARB_TESTNET_POLLING_ADDRESS])],
-      transformers: [arbitrumPollingTransformer(ARB_TESTNET_POLLING_ADDRESS)],
+    responseCaching: {
+      enabled: false,
+      duration: '15 seconds',
     },
   },
+  onStart: (services) =>
+    console.log(
+      `Starting Mainnet config with these services: ${Object.keys(services)}`
+    ),
+};
+
+const arbitrum_v2 = {
+  name: 'arbitrum',
+  processorSchema: 'vulcan2xarbitrum',
+  extractedSchema: 'extractedarbitrum',
+
+  chain: {
+    name: 'arbitrum',
+    host: 'https://arb-rinkeby.g.alchemy.com/v2/ZDNHnT1M-vYosQBYeGY7AUVwYMHpf6xq',
+    retries: 15,
+  },
+  startingBlock: 13171000,
+  extractors: [...makeRawLogExtractors([ARB_TESTNET_POLLING_ADDRESS])],
+  transformers: [arbitrumPollingTransformer(ARB_TESTNET_POLLING_ADDRESS)],
   migrations: {
     mkr: './migrations',
   },
@@ -233,61 +253,15 @@ const multiple = {
   onStart: (services) =>
     console.log(`Starting with these services: ${Object.keys(services)}`),
 };
-// const mainnet = {
-//   startingBlock: 4620855,
-//   extractors: [
-//     ...makeRawLogExtractors([
-//       VOTING_CONTRACT_ADDRESS,
-//       SECOND_VOTING_CONTRACT_ADDRESS,
-//       MKR_ADDRESS,
-//       DSCHIEF_ADDRESS,
-//       VOTE_PROXY_FACTORY_ADDRESS,
-//       DSCHIEF_12_ADDRESS,
-//       VOTE_PROXY_FACTORY_12_ADDRESS,
-//       ESM_ADDRESS,
-//       ESM_V2_ADDRESS,
-//       VOTE_DELEGATE_FACTORY_ADDRESS,
-//     ]),
-//   ],
-//   transformers: [
-//     pollingTransformer(VOTING_CONTRACT_ADDRESS),
-//     pollingTransformer(SECOND_VOTING_CONTRACT_ADDRESS),
-//     mkrTransformer(MKR_ADDRESS),
-//     mkrBalanceTransformer(MKR_ADDRESS),
-//     dsChiefTransformer(DSCHIEF_ADDRESS),
-//     chiefBalanceTransformer(DSCHIEF_ADDRESS),
-//     voteProxyFactoryTransformer(VOTE_PROXY_FACTORY_ADDRESS),
-//     dsChiefTransformer(DSCHIEF_12_ADDRESS, '_v1.2'),
-//     chiefBalanceTransformer(DSCHIEF_12_ADDRESS, '_v1.2'),
-//     voteProxyFactoryTransformer(VOTE_PROXY_FACTORY_12_ADDRESS, '_v1.2'),
-//     esmTransformer(ESM_ADDRESS),
-//     esmV2Transformer(ESM_V2_ADDRESS),
-//     voteDelegateFactoryTransformer(VOTE_DELEGATE_FACTORY_ADDRESS),
-//   ],
-//   migrations: {
-//     mkr: './migrations',
-//   },
-//   api: {
-//     whitelisting: {
-//       enabled: false,
-//     },
-//     responseCaching: {
-//       enabled: false,
-//       duration: '15 seconds',
-//     },
-//   },
-//   onStart: (services) =>
-//     console.log(`Starting with these services: ${Object.keys(services)}`),
-// };
 
 let config;
-if (process.env.VL_CHAIN_NAME === 'mainnet') {
+if (process.env.VL_CONFIG_NAME === 'multiple') {
   console.log('Using multi config');
-  config = multiple;
-} else if (process.env.VL_CHAIN_NAME === 'kovan') {
+  config = [mainnet_v2, arbitrum_v2];
+} else if (process.env.VL_CONFIG_NAME === 'kovan') {
   console.log('Using kovan config');
   config = kovan;
-} else if (process.env.VL_CHAIN_NAME === 'arbitrumTestnet') {
+} else if (process.env.VL_CONFIG_NAME === 'arbitrumTestnet') {
   console.log('Using arbitrumTestnet config');
   config = arbitrumTestnet;
 } else {

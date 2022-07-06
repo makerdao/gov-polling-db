@@ -129,7 +129,7 @@ const handlers = {
     });
   },
 
-  async Votes(services, info) {
+  async Voted(services, info) {
     if (!isValidPositivePostgresIntegerValue(info.event.params.pollId)) {
       logger.warn(
         `Ignoring Votes event from ${info.event.params.voter.toLowerCase()} because of failing validation. ${
@@ -146,6 +146,8 @@ const handlers = {
     ) {
       optionIdInt = info.event.params.optionId.toNumber();
     }
+
+    logger.warn(`Inserting ${optionIdInt} into polling.voted_event`);
 
     const sql = `INSERT INTO polling.voted_event
     (voter,poll_id,option_id,option_id_raw,log_index,tx_id,block_id) 
