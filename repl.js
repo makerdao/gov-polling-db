@@ -2,11 +2,11 @@ const repl = require('repl');
 const {
   loadConfig,
   mergeConfig,
-} = require('@oasisdex/spock-etl/dist/services/configUtils');
+} = require('@makerdao-dux/spock-etl/dist/services/configUtils');
 const {
   createServices,
-} = require('@oasisdex/spock-etl/dist/services/services');
-const { withConnection } = require('@oasisdex/spock-etl/dist/db/db');
+} = require('@makerdao-dux/spock-etl/dist/services/services');
+const { withConnection } = require('@makerdao-dux/spock-etl/dist/db/db');
 
 async function main(connection) {
   const config = mergeConfig(loadConfig('./config.js'));

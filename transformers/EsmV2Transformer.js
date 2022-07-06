@@ -1,14 +1,14 @@
 const {
   getExtractorName,
-} = require('@oasisdex/spock-utils/dist/extractors/rawEventDataExtractor');
+} = require('@makerdao-dux/spock-utils/dist/extractors/rawEventDataExtractor');
 const {
   handleEvents,
-} = require('@oasisdex/spock-utils/dist/transformers/common');
+} = require('@makerdao-dux/spock-utils/dist/transformers/common');
 // @ts-ignore
 const ESMAbi = require('../abis/esm_v2_abi.json');
 const {
   getTxByIdOrDie,
-} = require('@oasisdex/spock-utils/dist/extractors/common');
+} = require('@makerdao-dux/spock-utils/dist/extractors/common');
 const BigNumber = require('bignumber.js').BigNumber;
 
 module.exports = (address) => ({

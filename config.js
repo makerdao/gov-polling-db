@@ -1,6 +1,6 @@
 const {
   makeRawLogExtractors,
-} = require('@oasisdex/spock-utils/dist/extractors/rawEventDataExtractor');
+} = require('@makerdao-dux/spock-utils/dist/extractors/rawEventDataExtractor');
 const mkrTransformer = require('./transformers/MkrTransformer');
 const mkrBalanceTransformer = require('./transformers/MkrBalanceTransformer');
 const chiefBalanceTransformer = require('./transformers/ChiefBalanceTransformer');

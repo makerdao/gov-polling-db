@@ -1,10 +1,10 @@
 const {
   getExtractorName,
-} = require('@oasisdex/spock-utils/dist/extractors/rawEventDataExtractor');
+} = require('@makerdao-dux/spock-utils/dist/extractors/rawEventDataExtractor');
 const {
   handleDsNoteEvents,
-} = require('@oasisdex/spock-utils/dist/transformers/common');
-const { getLogger } = require('@oasisdex/spock-etl/dist/utils/logger');
+} = require('@makerdao-dux/spock-utils/dist/transformers/common');
+const { getLogger } = require('@makerdao-dux/spock-etl/dist/utils/logger');
 const BigNumber = require('bignumber.js').BigNumber;
 // @ts-ignore
 const dsChiefAbi = require('../abis/ds_chief.json');
