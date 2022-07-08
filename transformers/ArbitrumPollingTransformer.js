@@ -47,7 +47,7 @@ const handlers = {
       optionIdInt = info.event.params.optionId.toNumber();
     }
 
-    logger.warn(`Inserting ${optionIdInt} into polling.voted_event`);
+    logger.warn(`Inserting ${optionIdInt} into polling.voted_event_arbitrum`);
 
     const sql = `INSERT INTO polling.voted_event_arbitrum
     (voter,poll_id,option_id,option_id_raw,log_index,tx_id,block_id,chain_id) 
