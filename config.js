@@ -61,7 +61,7 @@ const VOTE_DELEGATE_FACTORY_GOERLI_ADDRESS =
 
 // arbitrum testnet
 const ARB_TESTNET_POLLING_ADDRESS =
-  '0x067Fc8812aEBa3f813D4DA49C7e2898E731d67d9';
+  '0xc5C7bC9f0F54f2F6c441A774Ef93aCf06cE3DfA3';
 
 const arbitrumTestnet = {
   startingBlock: 12254300,
@@ -84,6 +84,14 @@ const arbitrumTestnet = {
 };
 
 const goerli = {
+  name: 'goerli',
+  processorSchema: 'vulcan2x',
+  extractedSchema: 'extracted',
+  chain: {
+    name: 'goerli',
+    host: 'https://eth-goerli.alchemyapi.io/v2/p7bY4ggxW60weHKPiAP7HXN2RNAAQZ8E',
+    retries: 15,
+  },
   startingBlock: 5273000,
   extractors: [
     ...makeRawLogExtractors([
@@ -123,50 +131,50 @@ const goerli = {
     console.log(`Starting with these services: ${Object.keys(services)}`),
 };
 
-const kovan = {
-  startingBlock: 5216304,
-  extractors: [
-    ...makeRawLogExtractors([
-      VOTING_CONTRACT_KOVAN_ADDRESS,
-      SECOND_VOTING_CONTRACT_KOVAN_ADDRESS,
-      MKR_KOVAN_ADDRESS,
-      DSCHIEF_KOVAN_ADDRESS,
-      VOTE_PROXY_FACTORY_KOVAN_ADDRESS,
-      DSCHIEF_12_KOVAN_ADDRESS,
-      VOTE_PROXY_FACTORY_12_KOVAN_ADDRESS,
-      ESM_ADDRESS_KOVAN,
-      VOTE_DELEGATE_FACTORY_KOVAN_ADDRESS,
-    ]),
-  ],
-  transformers: [
-    pollingTransformer(VOTING_CONTRACT_KOVAN_ADDRESS),
-    pollingTransformer(SECOND_VOTING_CONTRACT_KOVAN_ADDRESS),
-    mkrTransformer(MKR_KOVAN_ADDRESS),
-    mkrBalanceTransformer(MKR_KOVAN_ADDRESS),
-    dsChiefTransformer(DSCHIEF_KOVAN_ADDRESS),
-    chiefBalanceTransformer(DSCHIEF_KOVAN_ADDRESS),
-    voteProxyFactoryTransformer(VOTE_PROXY_FACTORY_KOVAN_ADDRESS),
-    dsChiefTransformer(DSCHIEF_12_KOVAN_ADDRESS, '_v1.2'),
-    chiefBalanceTransformer(DSCHIEF_12_KOVAN_ADDRESS, '_v1.2'),
-    voteProxyFactoryTransformer(VOTE_PROXY_FACTORY_12_KOVAN_ADDRESS, '_v1.2'),
-    esmTransformer(ESM_ADDRESS_KOVAN),
-    voteDelegateFactoryTransformer(VOTE_DELEGATE_FACTORY_KOVAN_ADDRESS),
-  ],
-  migrations: {
-    mkr: './migrations',
-  },
-  api: {
-    whitelisting: {
-      enabled: false,
-    },
-    responseCaching: {
-      enabled: false,
-      duration: '15 seconds',
-    },
-  },
-  onStart: (services) =>
-    console.log(`Starting with these services: ${Object.keys(services)}`),
-};
+// const kovan = {
+//   startingBlock: 5216304,
+//   extractors: [
+//     ...makeRawLogExtractors([
+//       VOTING_CONTRACT_KOVAN_ADDRESS,
+//       SECOND_VOTING_CONTRACT_KOVAN_ADDRESS,
+//       MKR_KOVAN_ADDRESS,
+//       DSCHIEF_KOVAN_ADDRESS,
+//       VOTE_PROXY_FACTORY_KOVAN_ADDRESS,
+//       DSCHIEF_12_KOVAN_ADDRESS,
+//       VOTE_PROXY_FACTORY_12_KOVAN_ADDRESS,
+//       ESM_ADDRESS_KOVAN,
+//       VOTE_DELEGATE_FACTORY_KOVAN_ADDRESS,
+//     ]),
+//   ],
+//   transformers: [
+//     pollingTransformer(VOTING_CONTRACT_KOVAN_ADDRESS),
+//     pollingTransformer(SECOND_VOTING_CONTRACT_KOVAN_ADDRESS),
+//     mkrTransformer(MKR_KOVAN_ADDRESS),
+//     mkrBalanceTransformer(MKR_KOVAN_ADDRESS),
+//     dsChiefTransformer(DSCHIEF_KOVAN_ADDRESS),
+//     chiefBalanceTransformer(DSCHIEF_KOVAN_ADDRESS),
+//     voteProxyFactoryTransformer(VOTE_PROXY_FACTORY_KOVAN_ADDRESS),
+//     dsChiefTransformer(DSCHIEF_12_KOVAN_ADDRESS, '_v1.2'),
+//     chiefBalanceTransformer(DSCHIEF_12_KOVAN_ADDRESS, '_v1.2'),
+//     voteProxyFactoryTransformer(VOTE_PROXY_FACTORY_12_KOVAN_ADDRESS, '_v1.2'),
+//     esmTransformer(ESM_ADDRESS_KOVAN),
+//     voteDelegateFactoryTransformer(VOTE_DELEGATE_FACTORY_KOVAN_ADDRESS),
+//   ],
+//   migrations: {
+//     mkr: './migrations',
+//   },
+//   api: {
+//     whitelisting: {
+//       enabled: false,
+//     },
+//     responseCaching: {
+//       enabled: false,
+//       duration: '15 seconds',
+//     },
+//   },
+//   onStart: (services) =>
+//     console.log(`Starting with these services: ${Object.keys(services)}`),
+// };
 
 const mainnet_v2 = {
   name: 'mainnet',
@@ -235,7 +243,7 @@ const arbitrum_v2 = {
     host: 'https://arb-rinkeby.g.alchemy.com/v2/ZDNHnT1M-vYosQBYeGY7AUVwYMHpf6xq',
     retries: 15,
   },
-  startingBlock: 13171000,
+  startingBlock: 13319552,
   extractors: [...makeRawLogExtractors([ARB_TESTNET_POLLING_ADDRESS])],
   transformers: [arbitrumPollingTransformer(ARB_TESTNET_POLLING_ADDRESS)],
   migrations: {
@@ -257,7 +265,8 @@ const arbitrum_v2 = {
 let config;
 if (process.env.VL_CONFIG_NAME === 'multiple') {
   console.log('Using multi config');
-  config = [mainnet_v2, arbitrum_v2];
+  config = [goerli, arbitrum_v2];
+  // config = [mainnet_v2, arbitrum_v2];
 } else if (process.env.VL_CONFIG_NAME === 'kovan') {
   console.log('Using kovan config');
   config = kovan;

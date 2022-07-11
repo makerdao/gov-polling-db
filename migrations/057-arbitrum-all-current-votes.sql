@@ -22,10 +22,12 @@ RETURNS TABLE (
 		WHERE b.timestamp >= to_timestamp(c.start_date) AND b.timestamp <= to_timestamp(c.end_date)
 	), 
 	all_valid_arbitrum_votes AS (
-		SELECT va.voter, va.option_id, va.option_id_raw, va.poll_id, va.block_id, b.timestamp as block_timestamp_arb, va.chain_id FROM polling.voted_event_arbitrum va
+		SELECT va.voter, va.option_id, va.option_id_raw, va.poll_id, 
+		-- va.block_id, b.timestamp as block_timestamp_arb, 
+		va.chain_id FROM polling.voted_event_arbitrum va
 		JOIN polling.poll_created_event c ON c.poll_id=va.poll_id
-		JOIN vulcan2xarbitrum.block b ON va.block_id = b.id
-		WHERE b.timestamp >= to_timestamp(c.start_date) AND b.timestamp <= to_timestamp(c.end_date)
+		-- JOIN vulcan2xarbitrum.block b ON va.block_id = b.id
+		-- WHERE b.timestamp >= to_timestamp(c.start_date) AND b.timestamp <= to_timestamp(c.end_date)
 	)
 	SELECT DISTINCT ON (mnv.poll_id) 
 		mnv.poll_id, 
@@ -37,7 +39,7 @@ RETURNS TABLE (
 		arbv.poll_id AS poll_id_arb, 
 		arbv.option_id_raw AS option_id_raw_arb, 
 		arbv.option_id AS option_id_arb, 
-		arbv.block_timestamp_arb AS block_timestamp_arb, 
+		-- arbv.block_timestamp_arb AS block_timestamp_arb, 
 		arbv.chain_id AS chain_id_arb
 			FROM all_valid_mainnet_votes mnv
 			JOIN all_valid_arbitrum_votes arbv ON arbv.poll_id = mnv.poll_id
