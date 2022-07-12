@@ -12,7 +12,7 @@ RETURNS TABLE (
 	poll_id_arb integer, 
 	option_id_raw_arb character, 
 	option_id_arb integer, 
-	block_timestamp_arb timestamp with time zone,
+	-- block_timestamp_arb timestamp with time zone,
 	chain_id_arb integer
 ) AS $$
 	WITH all_valid_mainnet_votes AS (
