@@ -1,15 +1,15 @@
 const repl = require('repl');
 const {
-  loadExternalConfig,
+  loadConfig,
   mergeConfig,
-} = require('@oasisdex/spock-etl/dist/services/configUtils');
+} = require('@makerdao-dux/spock-etl/dist/services/configUtils');
 const {
   createServices,
-} = require('@oasisdex/spock-etl/dist/services/services');
-const { withConnection } = require('@oasisdex/spock-etl/dist/db/db');
+} = require('@makerdao-dux/spock-etl/dist/services/services');
+const { withConnection } = require('@makerdao-dux/spock-etl/dist/db/db');
 
 async function main(connection) {
-  const config = mergeConfig(loadExternalConfig('./config.js'));
+  const config = mergeConfig(loadConfig('./config.js'));
   const services = await createServices(config);
 
   return withConnection(services.db, (connection) => {
