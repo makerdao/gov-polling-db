@@ -6,13 +6,13 @@
 UPDATE dschief.lock l
 SET from_address = '0xc0583df0d10c2e87ae1873b728a0bda04d8b660c'
 FROM vulcan2x.block b
-ON l.block_id = b.id
-WHERE b.number = 15256282
+WHERE l.block_id = b.id
+AND b.number = 15256282
 AND l.lock = -7610.756;
 
 UPDATE dschief.lock l
 SET from_address = '0xc0583df0d10c2e87ae1873b728a0bda04d8b660c'
 FROM vulcan2x.block b
-ON l.block_id = b.id
-WHERE b.number = 15256118
+WHERE l.block_id = b.id
+AND b.number = 15256118
 AND l.lock = -7.618;
