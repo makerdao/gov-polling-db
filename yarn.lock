@@ -434,10 +434,10 @@
     postgraphile-plugin-connection-filter "^1.0.0-rc.2"
     ts-essentials "^6.0.2"
 
-"@makerdao-dux/spock-utils@^0.1.1":
-  version "0.1.1"
-  resolved "https://registry.yarnpkg.com/@makerdao-dux/spock-utils/-/spock-utils-0.1.1.tgz#26ff6e83516ff23a2f0965ddce611cfffb83f55c"
-  integrity sha512-Oc4wI5Jy8RNDoqLUyng2r4aSVh5/bMfWZ2cbbDzPH1gM5fruJRkR9cDZDijYAr9zPysPxgQC6huKcVqwz3JkIQ==
+"@makerdao-dux/spock-utils@^0.1.2":
+  version "0.1.2"
+  resolved "https://registry.yarnpkg.com/@makerdao-dux/spock-utils/-/spock-utils-0.1.2.tgz#670cc84982dfb7d408200b41f0308d2e213fd71c"
+  integrity sha512-SBRpVMl7whEPFoqKzD/zomj/DeiRLghQGcWJAf/JLH/yb9Nt51GJXODkCkAXP6YGO4SNRcLsinS+dzHR2DZ31w==
 
 "@sentry/core@5.30.0":
   version "5.30.0"
