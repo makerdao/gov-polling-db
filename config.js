@@ -61,7 +61,7 @@ const VOTE_DELEGATE_FACTORY_GOERLI_ADDRESS =
 
 // arbitrum testnet
 const ARB_TESTNET_POLLING_ADDRESS =
-  '0xc5C7bC9f0F54f2F6c441A774Ef93aCf06cE3DfA3';
+  '0x4d196378e636D22766d6A9C6C6f4F32AD3ECB050';
 
 const arbitrumTestnet = {
   startingBlock: 12254300,
@@ -240,10 +240,10 @@ const arbitrum_v2 = {
 
   chain: {
     name: 'arbitrum',
-    host: 'https://arb-rinkeby.g.alchemy.com/v2/ZDNHnT1M-vYosQBYeGY7AUVwYMHpf6xq',
+    host: 'https://arb-goerli.g.alchemy.com/v2/rN1vSB6tSdjfWGno6SSZdjOB8m8LvM_0',
     retries: 15,
   },
-  startingBlock: 13319552,
+  startingBlock: 154800,
   extractors: [...makeRawLogExtractors([ARB_TESTNET_POLLING_ADDRESS])],
   transformers: [arbitrumPollingTransformer(ARB_TESTNET_POLLING_ADDRESS)],
   migrations: {
