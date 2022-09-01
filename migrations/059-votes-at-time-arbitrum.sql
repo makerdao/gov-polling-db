@@ -77,8 +77,8 @@ returns table (
     	where vv.block_id <= votes.block_id
 $$ language sql stable strict;
 
-drop function if exists votes_at_time;
-create function votes_at_time(poll_id integer, unixtime integer)
+drop function if exists polling.votes_at_time;
+create function polling.votes_at_time(poll_id integer, unixtime integer)
 returns table (
   voter character(42), -- if vote was sent by a hot or cold wallet, this is a proxy address
   option_id integer,
