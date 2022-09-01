@@ -1,6 +1,11 @@
 const {
   makeRawLogExtractors,
 } = require("spock-etl/lib/core/processors/extractors/instances/rawEventDataExtractor");
+const {
+  makeRawEventBasedOnTopicExtractor
+} = require("spock-etl/lib/core/processors/extractors/instances/rawEventBasedOnTopicExtractor");
+
+const delegateContractAbi = require("./abis/vote_delegate_contract.json");
 
 const mkrTransformer = require("./transformers/MkrTransformer");
 const mkrBalanceTransformer = require("./transformers/MkrBalanceTransformer");
@@ -59,6 +64,7 @@ const goerli = {
       VOTE_PROXY_FACTORY_12_GOERLI_ADDRESS,
       VOTE_DELEGATE_FACTORY_GOERLI_ADDRESS,
     ]),
+    ...makeRawEventBasedOnTopicExtractor([{abi: delegateContractAbi}])
   ],
   transformers: [
     pollingTransformer(BATCH_VOTING_CONTRACT_GOERLI_ADDRESS),
@@ -143,6 +149,7 @@ const mainnet = {
       ESM_V2_ADDRESS,
       VOTE_DELEGATE_FACTORY_ADDRESS,
     ]),
+    ...makeRawEventBasedOnTopicExtractor([{abi: delegateContractAbi}])
   ],
   transformers: [
     pollingTransformer(VOTING_CONTRACT_ADDRESS),
