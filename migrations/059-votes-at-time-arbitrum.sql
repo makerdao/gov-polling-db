@@ -92,20 +92,8 @@ returns table (
   )) 
 $$ language sql stable strict;
 
-create or replace function api.vote_option_mkr_weights_at_time(arg_poll_id INTEGER, arg_unix INTEGER)
-RETURNS TABLE (option_id INTEGER, mkr_support NUMERIC) AS $$
-  select option_id, sum(amount)
-  from polling.votes_at_time(arg_poll_id, arg_unix)
-  group by option_id
-$$ LANGUAGE sql STABLE STRICT;
-
-CREATE OR REPLACE FUNCTION api.vote_mkr_weights_at_time_ranked_choice(arg_poll_id INTEGER, arg_unix INTEGER)
-RETURNS TABLE (option_id_raw character, mkr_support NUMERIC) AS $$
-  select option_id_raw, amount
-  from polling.votes_at_time(arg_poll_id, arg_unix)
-$$ LANGUAGE sql STABLE STRICT;
-
-CREATE OR REPLACE FUNCTION api.vote_address_mkr_weights_at_time(arg_poll_id INTEGER, arg_unix INTEGER)
+DROP FUNCTION IF EXISTS api.vote_address_mkr_weights_at_time;
+CREATE FUNCTION api.vote_address_mkr_weights_at_time(arg_poll_id INTEGER, arg_unix INTEGER)
 RETURNS TABLE (voter CHARACTER, option_id INTEGER, option_id_raw CHARACTER, mkr_support NUMERIC, chain_id INTEGER) AS $$
   select voter, option_id, option_id_raw, amount, chain_id
   from polling.votes_at_time(arg_poll_id, arg_unix)
