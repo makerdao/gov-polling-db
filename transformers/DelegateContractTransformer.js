@@ -12,7 +12,8 @@ module.exports.default = () => ({
   name: `DelegateContractTransformer`,
   dependencies: [getExtractorName(extractor_name)],
   transform: async (services, logs) => {
-    await handleEvents(services, abi, logs[0], handlers);
+    const validData = logs[0].every(l => l.data && l.data !== '0x');
+    if (validData) await handleEvents(services, abi, logs[0], handlers);
   },
 });
 
