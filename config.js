@@ -140,7 +140,7 @@ const kovan = {
 };
 
 const mainnet = {
-  startingBlock: 4620855, //set to 15162381 for testing
+  startingBlock: 4620855,
   extractors: [
     ...makeRawLogExtractors([
       VOTING_CONTRACT_ADDRESS,

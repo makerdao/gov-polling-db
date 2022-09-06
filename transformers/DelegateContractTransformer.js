@@ -2,6 +2,8 @@ const { getExtractorName } = require("spock-etl/lib/core/processors/extractors/i
 const { handleEvents } = require("spock-etl/lib/core/processors/transformers/common");
 const { getTxByIdOrDie } = require("spock-etl/lib/core/processors/extractors/common");
 const BigNumber = require("bignumber.js").BigNumber;
+const ethers = require("ethers");
+
 // @ts-ignore
 const abi = require("../abis/vote_delegate_contract.json");
 
@@ -19,8 +21,16 @@ module.exports.default = () => ({
 
 const handlers = {
   async Lock(services, info) {
-    console.log('inside the Lock handler!!', info);
     const tx = await getTxByIdOrDie(services, info.log.tx_id);
+
+    const provider = ethers.getDefaultProvider(process.env.VL_CHAIN_HOST);
+    const delegateContract = new ethers.Contract(info.event.address, abi, provider);
+    try {
+      await delegateContract.chief();
+    } catch (e) {
+      console.warn("skipping Lock event that didn't come from delegate contract");
+      return;
+    }
 
     await insertLock(services, {
       fromAddress: tx.from_address,
@@ -33,8 +43,16 @@ const handlers = {
     });
   },
   async Free(services, info) {
-    console.log('inside the Free handler!!');
     const tx = await getTxByIdOrDie(services, info.log.tx_id);
+
+    const provider = ethers.getDefaultProvider(process.env.VL_CHAIN_HOST);
+    const delegateContract = new ethers.Contract(info.event.address, abi, provider);
+    try {
+      await delegateContract.chief();
+    } catch (e) {
+      console.warn("skipping Free event that didn't come from delegate contract");
+      return;
+    }
 
     await insertLock(services, {
       fromAddress: tx.from_address,
