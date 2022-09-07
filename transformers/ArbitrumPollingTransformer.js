@@ -47,13 +47,19 @@ const handlers = {
     let delegateContractAddress;
 
     try {
-      // TODO don't hardcode these
-      const url =
-        'https://eth-goerli.alchemyapi.io/v2/p7bY4ggxW60weHKPiAP7HXN2RNAAQZ8E';
-      const vdfAddress = '0xE2d249AE3c156b132C40D07bd4d34e73c1712947';
+      const chainId = services.networkState.networkName.chainId;
 
-      // The provider needs to be connected to the same network where the delegate contract was created.
-      const provider = new ethers.providers.JsonRpcProvider(url);
+      const vdfAddress =
+        chainId === 1
+          ? VOTE_DELEGATE_FACTORY_ADDRESS
+          : VOTE_DELEGATE_FACTORY_GOERLI_ADDRESS;
+      console.log('chain id', chainId);
+      console.log('vdfAddress', vdfAddress);
+
+      // The provider needs to be connected to the same L1 network where the delegate contract was created.
+      const provider = new ethers.providers.JsonRpcProvider(
+        process.env.VL_CHAIN_HOST
+      );
       const delegateFactoryContract = new ethers.Contract(
         vdfAddress,
         vdfAbi,
@@ -72,7 +78,7 @@ const handlers = {
     const voter =
       delegateContractAddress === ZERO_ADDRESS
         ? info.event.params.voter.toLowerCase()
-        : delegateContractAddress;
+        : delegateContractAddress.toLowerCase();
 
     logger.warn(`Inserting ${optionIdInt} into polling.voted_event_arbitrum`);
 

@@ -26,7 +26,7 @@ const ESM_V2_ADDRESS = '0x09e05fF6142F2f9de8B6B65855A1d56B6cfE4c58';
 const DSCHIEF_12_ADDRESS = '0x0a3f6849f78076aefaDf113F5BED87720274dDC0';
 const VOTE_PROXY_FACTORY_12_ADDRESS =
   '0x6FCD258af181B3221073A96dD90D1f7AE7eEc408';
-const VOTE_DELEGATE_FACTORY_ADDRESS =
+export const VOTE_DELEGATE_FACTORY_ADDRESS =
   '0xD897F108670903D1d6070fcf818f9db3615AF272';
 
 //kovan
@@ -56,12 +56,15 @@ const ESM_V2_ADDRESS_GOERLI = '0x023A960cb9BE7eDE35B433256f4AfE9013334b55';
 const DSCHIEF_12_GOERLI_ADDRESS = '0x33Ed584fc655b08b2bca45E1C5b5f07c98053bC1';
 const VOTE_PROXY_FACTORY_12_GOERLI_ADDRESS =
   '0x1a7c1ee5eE2A3B67778ff1eA8c719A3fA1b02b6f';
-const VOTE_DELEGATE_FACTORY_GOERLI_ADDRESS =
+export const VOTE_DELEGATE_FACTORY_GOERLI_ADDRESS =
   '0xE2d249AE3c156b132C40D07bd4d34e73c1712947';
 
 // arbitrum testnet
 const ARB_TESTNET_POLLING_ADDRESS =
   '0x4d196378e636D22766d6A9C6C6f4F32AD3ECB050';
+
+const CHAIN_HOST_L1 = process.env.VL_CHAIN_HOST;
+const CHAIN_HOST_L2 = process.env.VL_CHAIN_HOST_L2;
 
 const arbitrumTestnet = {
   startingBlock: 12254300,
@@ -89,7 +92,7 @@ const goerli = {
   extractedSchema: 'extracted',
   chain: {
     name: 'goerli',
-    host: 'https://eth-goerli.alchemyapi.io/v2/p7bY4ggxW60weHKPiAP7HXN2RNAAQZ8E',
+    host: CHAIN_HOST_L1,
     retries: 15,
   },
   startingBlock: 5273000,
@@ -183,7 +186,7 @@ const mainnet_v2 = {
   startingBlock: 4620855,
   chain: {
     name: 'mainnet',
-    host: 'https://eth-mainnet.alchemyapi.io/jsonrpc/UHaa9ZvfSFjO18VREBbH7uTOIYQy02qL',
+    host: CHAIN_HOST_L1,
     retries: 15,
   },
   extractors: [
@@ -240,7 +243,7 @@ const arbitrum_v2 = {
 
   chain: {
     name: 'arbitrum',
-    host: 'https://arb-goerli.g.alchemy.com/v2/rN1vSB6tSdjfWGno6SSZdjOB8m8LvM_0',
+    host: CHAIN_HOST_L2,
     retries: 15,
   },
   startingBlock: 154800,
