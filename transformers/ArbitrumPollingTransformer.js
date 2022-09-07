@@ -74,7 +74,6 @@ const handlers = {
       delegateContractAddress = await delegateFactoryContract.delegates(
         info.event.params.voter
       );
-      logger.warn(`Got delegate contract address: ${delegateContractAddress}`);
     } catch (e) {
       logger.error(
         `There was an error trying to find the delegate contract address for ${info.event.params.voter.toLowerCase()}, not Inserting 'Voted' event. ${e}`
