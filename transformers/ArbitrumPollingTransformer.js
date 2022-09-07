@@ -53,7 +53,7 @@ const handlers = {
       const vdfAddress = '0xE2d249AE3c156b132C40D07bd4d34e73c1712947';
 
       // The provider needs to be connected to the same network where the delegate contract was created.
-      const provider = ethers.getDefaultProvider(url);
+      const provider = new ethers.providers.JsonRpcProvider(url);
       const delegateFactoryContract = new ethers.Contract(
         vdfAddress,
         vdfAbi,
