@@ -14,8 +14,12 @@ module.exports.default = () => ({
   name: `DelegateContractTransformer`,
   dependencies: [getExtractorName(extractor_name)],
   transform: async (services, logs) => {
-    const validData = logs[0].every(l => l.data && l.data !== '0x');
-    if (validData) await handleEvents(services, abi, logs[0], handlers);
+    try {
+      await handleEvents(services, abi, logs[0], handlers);
+    } catch (e) {
+      console.warn("skipping event in delegate contract transformer because handleEvents threw an error");
+      return;
+    }
   },
 });
 
