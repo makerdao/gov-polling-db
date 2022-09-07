@@ -21,8 +21,6 @@ module.exports.default = () => ({
 
 const handlers = {
   async Lock(services, info) {
-    const tx = await getTxByIdOrDie(services, info.log.tx_id);
-
     const provider = ethers.getDefaultProvider(process.env.VL_CHAIN_HOST);
     const delegateContract = new ethers.Contract(info.event.address, abi, provider);
     try {
@@ -31,6 +29,8 @@ const handlers = {
       console.warn("skipping Lock event that didn't come from delegate contract");
       return;
     }
+
+    const tx = await getTxByIdOrDie(services, info.log.tx_id);
 
     await insertLock(services, {
       fromAddress: tx.from_address,
@@ -43,8 +43,6 @@ const handlers = {
     });
   },
   async Free(services, info) {
-    const tx = await getTxByIdOrDie(services, info.log.tx_id);
-
     const provider = ethers.getDefaultProvider(process.env.VL_CHAIN_HOST);
     const delegateContract = new ethers.Contract(info.event.address, abi, provider);
     try {
@@ -53,6 +51,8 @@ const handlers = {
       console.warn("skipping Free event that didn't come from delegate contract");
       return;
     }
+
+    const tx = await getTxByIdOrDie(services, info.log.tx_id);
 
     await insertLock(services, {
       fromAddress: tx.from_address,
