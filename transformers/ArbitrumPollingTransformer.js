@@ -21,6 +21,13 @@ const VOTE_DELEGATE_FACTORY_ADDRESS =
 const VOTE_DELEGATE_FACTORY_GOERLI_ADDRESS =
   '0xE2d249AE3c156b132C40D07bd4d34e73c1712947';
 
+const layer2ChainMap = {
+  // Arbitrum One
+  42161: VOTE_DELEGATE_FACTORY_ADDRESS,
+  // Goerli Arbitrum Testnet
+  421613: VOTE_DELEGATE_FACTORY_GOERLI_ADDRESS,
+};
+
 module.exports = (address) => ({
   name: 'Arbitrum_Polling_Transformer',
   dependencies: [getExtractorName(address)],
@@ -51,14 +58,9 @@ const handlers = {
     let delegateContractAddress;
 
     try {
-      const chainId = services.networkState.networkName.chainId;
-
+      // If we are on the L2 testnet, use the Goerli deployment of Vote Delegate Factory.
       const vdfAddress =
-        chainId === 1
-          ? VOTE_DELEGATE_FACTORY_ADDRESS
-          : VOTE_DELEGATE_FACTORY_GOERLI_ADDRESS;
-      console.log('chain id', chainId);
-      console.log('vdfAddress', vdfAddress);
+        layer2ChainMap[services.networkState.networkName.chainId];
 
       // The provider needs to be connected to the same L1 network where the delegate contract was created.
       const provider = new ethers.providers.JsonRpcProvider(
