@@ -15,6 +15,7 @@
   },
   "dependencies": {
     "dotenv-flow": "^2.0.0",
+    "ethers": "^5.7.0",
     "spock-etl": "^0.0.59"
   },
   "devDependencies": {
