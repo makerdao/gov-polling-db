@@ -6,19 +6,16 @@ const {
 } = require('@makerdao-dux/spock-utils/dist/extractors/rawEventDataExtractor');
 const { getLogger } = require('@makerdao-dux/spock-etl/dist/utils/logger');
 const BigNumber = require('bignumber.js').BigNumber;
+const ethers = require('ethers');
 
 // @ts-ignore
 const abi = require('../abis/polling_emitter_arbitrum.json');
+const vdfAbi = require('../abis/vote_delegate_factory.json');
 
 const logger = getLogger('Polling');
 
-const authorizedCreators = process.env.AUTHORIZED_CREATORS
-  ? process.env.AUTHORIZED_CREATORS.split(',').map((creator) =>
-      creator.toLowerCase()
-    )
-  : [];
-
 const ARBITRUM_TESTNET_CHAIN_ID = 421611;
+const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000';
 
 module.exports = (address) => ({
   name: 'Arbitrum_Polling_Transformer',
@@ -47,13 +44,43 @@ const handlers = {
       optionIdInt = info.event.params.optionId.toNumber();
     }
 
+    let delegateContractAddress;
+
+    try {
+      // TODO don't hardcode these
+      const url =
+        'https://eth-goerli.alchemyapi.io/v2/p7bY4ggxW60weHKPiAP7HXN2RNAAQZ8E';
+      const vdfAddress = '0xE2d249AE3c156b132C40D07bd4d34e73c1712947';
+
+      // The provider needs to be connected to the same network where the delegate contract was created.
+      const provider = ethers.getDefaultProvider(url);
+      const delegateFactoryContract = new ethers.Contract(
+        vdfAddress,
+        vdfAbi,
+        provider
+      );
+      delegateContractAddress = await delegateFactoryContract.delegates(
+        info.event.params.voter
+      );
+      logger.warn(`Got delegate contract address: ${delegateContractAddress}`);
+    } catch (e) {
+      logger.error(
+        `There was an error trying to find the delegate contract address for ${info.event.params.voter.toLowerCase()}, not Inserting 'Voted' event. ${e}`
+      );
+      return;
+    }
+    const voter =
+      delegateContractAddress === ZERO_ADDRESS
+        ? info.event.params.voter.toLowerCase()
+        : delegateContractAddress;
+
     logger.warn(`Inserting ${optionIdInt} into polling.voted_event_arbitrum`);
 
     const sql = `INSERT INTO polling.voted_event_arbitrum
     (voter,poll_id,option_id,option_id_raw,log_index,tx_id,block_id,chain_id) 
     VALUES(\${voter}, \${poll_id}, \${option_id}, \${option_id_raw}, \${log_index}, \${tx_id}, \${block_id}, \${chain_id});`;
     await services.tx.none(sql, {
-      voter: info.event.params.voter.toLowerCase(),
+      voter,
       poll_id: info.event.params.pollId.toNumber(),
       option_id: optionIdInt,
       option_id_raw: info.event.params.optionId.toString(),
