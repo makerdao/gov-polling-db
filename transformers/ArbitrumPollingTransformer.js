@@ -10,7 +10,6 @@ const ethers = require('ethers');
 
 // @ts-ignore
 const abi = require('../abis/polling_emitter_arbitrum.json');
-const vdfAbi = require('../abis/vote_delegate_factory.json');
 
 const logger = getLogger('Polling');
 
@@ -45,13 +44,14 @@ const handlers = {
 
     let voter = info.event.params.voter.toLowerCase();
 
+    console.log('^^voter pre/post', info.event.params.voter, voter);
     try {
       const vdQuery = `SELECT ce.vote_delegate as voter, (SELECT now() >= b.timestamp + interval '1 year') as expired 
       FROM dschief.vote_delegate_created_event ce
       JOIN vulcan2x.block b ON b.id = ce.block_id
-      WHERE ce.delegate = ${voter}`;
+      WHERE ce.delegate = $1`;
 
-      const row = await db.oneOrNone(vdQuery);
+      const row = await services.db.oneOrNone(vdQuery, [voter]);
 
       console.log('^^row', row);
 
