@@ -44,7 +44,6 @@ const handlers = {
 
     let voter = info.event.params.voter.toLowerCase();
 
-    console.log('^^voter pre/post', info.event.params.voter, voter);
     try {
       const vdQuery = `SELECT ce.vote_delegate as voter, (SELECT now() >= b.timestamp + interval '1 year') as expired 
       FROM dschief.vote_delegate_created_event ce
@@ -53,10 +52,8 @@ const handlers = {
 
       const row = await services.db.oneOrNone(vdQuery, [voter]);
 
-      console.log('^^row', row);
-
       if (row && row.expired === 'FALSE') {
-        voter = row.voter;
+        voter = row.voter.toLowerCase();
       }
     } catch (e) {
       logger.error(
