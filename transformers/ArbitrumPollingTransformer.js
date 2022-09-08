@@ -15,18 +15,6 @@ const vdfAbi = require('../abis/vote_delegate_factory.json');
 const logger = getLogger('Polling');
 
 const ARBITRUM_TESTNET_CHAIN_ID = 421611;
-const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000';
-const VOTE_DELEGATE_FACTORY_ADDRESS =
-  '0xD897F108670903D1d6070fcf818f9db3615AF272';
-const VOTE_DELEGATE_FACTORY_GOERLI_ADDRESS =
-  '0xE2d249AE3c156b132C40D07bd4d34e73c1712947';
-
-const layer2ChainMap = {
-  // Arbitrum One
-  42161: VOTE_DELEGATE_FACTORY_ADDRESS,
-  // Goerli Arbitrum Testnet
-  421613: VOTE_DELEGATE_FACTORY_GOERLI_ADDRESS,
-};
 
 module.exports = (address) => ({
   name: 'Arbitrum_Polling_Transformer',
@@ -55,35 +43,27 @@ const handlers = {
       optionIdInt = info.event.params.optionId.toNumber();
     }
 
-    let delegateContractAddress;
+    let voter = info.event.params.voter.toLowerCase();
 
     try {
-      // If we are on the L2 testnet, use the Goerli deployment of Vote Delegate Factory.
-      const vdfAddress =
-        layer2ChainMap[services.networkState.networkName.chainId];
+      const vdQuery = `SELECT ce.vote_delegate as voter, (SELECT now() >= b.timestamp + interval '1 year') as expired 
+      FROM dschief.vote_delegate_created_event ce
+      JOIN vulcan2x.block b ON b.id = ce.block_id
+      WHERE ce.delegate = ${voter}`;
 
-      // The provider needs to be connected to the same L1 network where the delegate contract was created.
-      const provider = new ethers.providers.JsonRpcProvider(
-        process.env.VL_CHAIN_HOST
-      );
-      const delegateFactoryContract = new ethers.Contract(
-        vdfAddress,
-        vdfAbi,
-        provider
-      );
-      delegateContractAddress = await delegateFactoryContract.delegates(
-        info.event.params.voter
-      );
+      const row = await db.oneOrNone(vdQuery);
+
+      console.log('^^row', row);
+
+      if (row && row.expired === 'FALSE') {
+        voter = row.voter;
+      }
     } catch (e) {
       logger.error(
-        `There was an error trying to find the delegate contract address for ${info.event.params.voter.toLowerCase()}, not Inserting 'Voted' event. ${e}`
+        `There was an error trying to find the delegate contract address in the database for ${info.event.params.voter.toLowerCase()}, not Inserting 'Voted' event. ${e}`
       );
       return;
     }
-    const voter =
-      delegateContractAddress === ZERO_ADDRESS
-        ? info.event.params.voter.toLowerCase()
-        : delegateContractAddress.toLowerCase();
 
     logger.warn(`Inserting ${optionIdInt} into polling.voted_event_arbitrum`);
 
