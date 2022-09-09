@@ -17,7 +17,7 @@ module.exports.default = () => ({
     try {
       await handleEvents(services, abi, logs[0], handlers);
     } catch (e) {
-      console.warn("skipping event in delegate contract transformer because handleEvents threw an error");
+      console.warn("skipping event in delegate contract transformer because handleEvents threw an error. Logs: ", logs[0]);
       return;
     }
   },
@@ -30,7 +30,7 @@ const handlers = {
     try {
       await delegateContract.chief();
     } catch (e) {
-      console.warn("skipping Lock event that didn't come from delegate contract");
+      console.warn("skipping Lock event that didn't come from delegate contract. Address: ", info.event.address);
       return;
     }
 
@@ -52,7 +52,7 @@ const handlers = {
     try {
       await delegateContract.chief();
     } catch (e) {
-      console.warn("skipping Free event that didn't come from delegate contract");
+      console.warn("skipping Free event that didn't come from delegate contract. Address: ", info.event.address);
       return;
     }
 
@@ -72,7 +72,6 @@ const handlers = {
 };
 
 const insertLock = (s, values) => {
-  //idea: maybe check to see if address is a delegate contract, before inserting the event into the table
   return s.tx.none(
     `
 INSERT INTO dschief.delegate_lock(contract_address, from_address, immediate_caller, lock, log_index, tx_id, block_id) VALUES (\${contractAddress}, \${fromAddress}, \${immediateCaller}, \${lock}, \${logIndex}, \${txId}, \${blockId})`,
