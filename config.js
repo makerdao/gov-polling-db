@@ -63,6 +63,9 @@ const VOTE_DELEGATE_FACTORY_GOERLI_ADDRESS =
 const ARB_TESTNET_POLLING_ADDRESS =
   '0x4d196378e636D22766d6A9C6C6f4F32AD3ECB050';
 
+const CHAIN_HOST_L1 = process.env.VL_CHAIN_HOST;
+const CHAIN_HOST_L2 = process.env.VL_CHAIN_HOST_L2;
+
 const arbitrumTestnet = {
   startingBlock: 12254300,
   extractors: [...makeRawLogExtractors([ARB_TESTNET_POLLING_ADDRESS])],
@@ -89,7 +92,7 @@ const goerli = {
   extractedSchema: 'extracted',
   chain: {
     name: 'goerli',
-    host: 'https://eth-goerli.alchemyapi.io/v2/p7bY4ggxW60weHKPiAP7HXN2RNAAQZ8E',
+    host: CHAIN_HOST_L1,
     retries: 15,
   },
   startingBlock: 5273000,
@@ -183,7 +186,7 @@ const mainnet_v2 = {
   startingBlock: 4620855,
   chain: {
     name: 'mainnet',
-    host: 'https://eth-mainnet.alchemyapi.io/jsonrpc/UHaa9ZvfSFjO18VREBbH7uTOIYQy02qL',
+    host: CHAIN_HOST_L1,
     retries: 15,
   },
   extractors: [
@@ -240,7 +243,7 @@ const arbitrum_v2 = {
 
   chain: {
     name: 'arbitrum',
-    host: 'https://arb-goerli.g.alchemy.com/v2/rN1vSB6tSdjfWGno6SSZdjOB8m8LvM_0',
+    host: CHAIN_HOST_L2,
     retries: 15,
   },
   startingBlock: 154800,

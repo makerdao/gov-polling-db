@@ -12,12 +12,6 @@ const abi = require('../abis/polling_emitter_arbitrum.json');
 
 const logger = getLogger('Polling');
 
-const authorizedCreators = process.env.AUTHORIZED_CREATORS
-  ? process.env.AUTHORIZED_CREATORS.split(',').map((creator) =>
-      creator.toLowerCase()
-    )
-  : [];
-
 const ARBITRUM_TESTNET_CHAIN_ID = 421611;
 
 module.exports = (address) => ({
@@ -47,13 +41,33 @@ const handlers = {
       optionIdInt = info.event.params.optionId.toNumber();
     }
 
+    let voter = info.event.params.voter.toLowerCase();
+
+    try {
+      const vdQuery = `SELECT ce.vote_delegate as voter, (SELECT now() >= b.timestamp + interval '1 year') as expired 
+      FROM dschief.vote_delegate_created_event ce
+      JOIN vulcan2x.block b ON b.id = ce.block_id
+      WHERE ce.delegate = $1`;
+
+      const row = await services.db.oneOrNone(vdQuery, [voter]);
+
+      if (row && row.expired === 'FALSE') {
+        voter = row.voter.toLowerCase();
+      }
+    } catch (e) {
+      logger.error(
+        `There was an error trying to find the delegate contract address in the database for ${info.event.params.voter.toLowerCase()}, not Inserting 'Voted' event. ${e}`
+      );
+      return;
+    }
+
     logger.warn(`Inserting ${optionIdInt} into polling.voted_event_arbitrum`);
 
     const sql = `INSERT INTO polling.voted_event_arbitrum
     (voter,poll_id,option_id,option_id_raw,log_index,tx_id,block_id,chain_id) 
     VALUES(\${voter}, \${poll_id}, \${option_id}, \${option_id_raw}, \${log_index}, \${tx_id}, \${block_id}, \${chain_id});`;
     await services.tx.none(sql, {
-      voter: info.event.params.voter.toLowerCase(),
+      voter,
       poll_id: info.event.params.pollId.toNumber(),
       option_id: optionIdInt,
       option_id_raw: info.event.params.optionId.toString(),
