@@ -6,7 +6,6 @@ const {
 } = require('@makerdao-dux/spock-utils/dist/extractors/rawEventDataExtractor');
 const { getLogger } = require('@makerdao-dux/spock-etl/dist/utils/logger');
 const BigNumber = require('bignumber.js').BigNumber;
-const ethers = require('ethers');
 
 // @ts-ignore
 const abi = require('../abis/polling_emitter_arbitrum.json');
