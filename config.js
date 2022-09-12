@@ -1,11 +1,6 @@
 const {
   makeRawLogExtractors,
 } = require("spock-etl/lib/core/processors/extractors/instances/rawEventDataExtractor");
-const {
-  makeRawEventBasedOnTopicExtractor
-} = require("spock-etl/lib/core/processors/extractors/instances/rawEventBasedOnTopicExtractor");
-
-const delegateContractAbi = require("./abis/vote_delegate_contract.json");
 
 const mkrTransformer = require("./transformers/MkrTransformer");
 const mkrBalanceTransformer = require("./transformers/MkrBalanceTransformer");
@@ -17,8 +12,6 @@ const voteProxyFactoryTransformer = require("./transformers/VoteProxyFactoryTran
 const esmTransformer = require("./transformers/EsmTransformer");
 const esmV2Transformer = require("./transformers/EsmV2Transformer");
 const voteDelegateFactoryTransformer = require("./transformers/VoteDelegateFactoryTransformer");
-const delegateContractTransformerImport = require("./transformers/DelegateContractTransformer");
-const delegateContractTransformer = delegateContractTransformerImport.default;
 
 //mainnet
 const MKR_ADDRESS = "0x9f8f72aa9304c8b593d555f12ef6589cc3a579a2";
@@ -54,8 +47,6 @@ const DSCHIEF_12_GOERLI_ADDRESS = '0x33Ed584fc655b08b2bca45E1C5b5f07c98053bC1';
 const VOTE_PROXY_FACTORY_12_GOERLI_ADDRESS = "0x1a7c1ee5eE2A3B67778ff1eA8c719A3fA1b02b6f";
 const VOTE_DELEGATE_FACTORY_GOERLI_ADDRESS = "0xE2d249AE3c156b132C40D07bd4d34e73c1712947";
 
-const DELEGATE_EXTRACTOR_NAME = delegateContractTransformerImport.DELEGATE_EXTRACTOR_NAME;
-
 const goerli = {
   startingBlock: 5273000,
   extractors: [
@@ -67,8 +58,7 @@ const goerli = {
       DSCHIEF_12_GOERLI_ADDRESS,
       VOTE_PROXY_FACTORY_12_GOERLI_ADDRESS,
       VOTE_DELEGATE_FACTORY_GOERLI_ADDRESS,
-    ]),
-    ...makeRawEventBasedOnTopicExtractor([{name: DELEGATE_EXTRACTOR_NAME, abi: delegateContractAbi}])
+    ])
   ],
   transformers: [
     pollingTransformer(BATCH_VOTING_CONTRACT_GOERLI_ADDRESS),
@@ -79,8 +69,7 @@ const goerli = {
     dsChiefTransformer(DSCHIEF_12_GOERLI_ADDRESS, '_v1.2'),
     chiefBalanceTransformer(DSCHIEF_12_GOERLI_ADDRESS, '_v1.2'),
     voteProxyFactoryTransformer(VOTE_PROXY_FACTORY_12_GOERLI_ADDRESS, '_v1.2'),
-    voteDelegateFactoryTransformer(VOTE_DELEGATE_FACTORY_GOERLI_ADDRESS),
-    delegateContractTransformer()
+    voteDelegateFactoryTransformer(VOTE_DELEGATE_FACTORY_GOERLI_ADDRESS)
   ],
   migrations: {
     mkr: "./migrations",
@@ -153,8 +142,7 @@ const mainnet = {
       ESM_ADDRESS,
       ESM_V2_ADDRESS,
       VOTE_DELEGATE_FACTORY_ADDRESS,
-    ]),
-    ...makeRawEventBasedOnTopicExtractor([{name: DELEGATE_EXTRACTOR_NAME, abi: delegateContractAbi}])
+    ])
   ],
   transformers: [
     pollingTransformer(VOTING_CONTRACT_ADDRESS),
@@ -169,8 +157,7 @@ const mainnet = {
     voteProxyFactoryTransformer(VOTE_PROXY_FACTORY_12_ADDRESS, '_v1.2'),
     esmTransformer(ESM_ADDRESS),
     esmV2Transformer(ESM_V2_ADDRESS),
-    voteDelegateFactoryTransformer(VOTE_DELEGATE_FACTORY_ADDRESS),
-    delegateContractTransformer()
+    voteDelegateFactoryTransformer(VOTE_DELEGATE_FACTORY_ADDRESS)
   ],
   migrations: {
     mkr: "./migrations",
