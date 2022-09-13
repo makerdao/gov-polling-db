@@ -51,11 +51,11 @@ const handlers = {
 
       const row = await services.db.oneOrNone(vdQuery, [voter]);
 
-      console.log('row', row);
-      console.log('row.expired === FALSE', row.expired === false);
-
       if (row && row.expired === false) {
         voter = row.voter.toLowerCase();
+        logger.info(
+          `Found delegate contract: ${voter}. Created by: ${info.event.params.voter.toLowerCase()}`
+        );
       }
     } catch (e) {
       logger.error(
