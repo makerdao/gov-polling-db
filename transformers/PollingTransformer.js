@@ -18,8 +18,6 @@ const authorizedCreators = process.env.AUTHORIZED_CREATORS
     )
   : [];
 
-const MAINNET_CHAIN_ID = 1;
-
 // TODO
 module.exports.VOTING_CONTRACT_GOERLI_ADDRESS =
   '0xdbE5d00b2D8C13a77Fb03Ee50C87317dbC1B15fb';
@@ -172,7 +170,7 @@ const handlers = {
       log_index: info.log.log_index,
       tx_id: info.log.tx_id,
       block_id: info.log.block_id,
-      chain_id: MAINNET_CHAIN_ID,
+      chain_id: services.networkState.networkName.chainId,
     });
   },
 };

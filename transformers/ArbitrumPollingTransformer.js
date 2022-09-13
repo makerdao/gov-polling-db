@@ -12,8 +12,6 @@ const abi = require('../abis/polling_emitter_arbitrum.json');
 
 const logger = getLogger('Polling');
 
-const ARBITRUM_TESTNET_CHAIN_ID = 421611;
-
 module.exports = (address) => ({
   name: 'Arbitrum_Polling_Transformer',
   dependencies: [getExtractorName(address)],
@@ -78,7 +76,7 @@ const handlers = {
       log_index: info.log.log_index,
       tx_id: info.log.tx_id,
       block_id: info.log.block_id,
-      chain_id: ARBITRUM_TESTNET_CHAIN_ID,
+      chain_id: services.networkState.networkName.chainId,
     });
   },
 };
