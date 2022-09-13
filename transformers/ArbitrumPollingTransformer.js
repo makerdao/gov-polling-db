@@ -51,6 +51,9 @@ const handlers = {
 
       const row = await services.db.oneOrNone(vdQuery, [voter]);
 
+      console.log('row', row);
+      console.log('row.expired === FALSE', row.expired === 'FALSE');
+
       if (row && row.expired === 'FALSE') {
         voter = row.voter.toLowerCase();
       }
