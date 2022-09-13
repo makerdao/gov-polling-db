@@ -19,21 +19,27 @@ module.exports = (address, nameSuffix = '') => ({
   },
 });
 
+const vdQuery = `SELECT *
+    FROM dschief.lock
+    WHERE tx_id = $1
+    AND log_index = $2`;
+
 const handlers = {
   "free(uint256)": async (services, { log, note }) => {
     const tx = await getTxByIdOrDie(services, log.tx_id);
 
+    
     try {
       const provider = ethers.getDefaultProvider(process.env.VL_CHAIN_HOST);
       const transaction = await provider.getTransaction(tx.hash);
       const { logs } = await transaction.wait();
-      const logInfo = logs.find(l => l.topics[0] = FreeTopic);
+      const logInfo = logs.find(l => l.topics[0] === FreeTopic);
       if (logInfo) {
         await insertDelegateLock(services, {
           fromAddress: tx.from_address,
           immediateCaller: '0x' + logInfo.topics[1].slice(-40),
           lock: new BigNumber(logInfo.data).div(new BigNumber("1e18")).negated().toString(),
-          contractAddress: '0x' + logInfo.topics[2].slice(-40),
+          contractAddress: logInfo.address,
           txId: log.tx_id,
           blockId: log.block_id,
         });
@@ -41,6 +47,11 @@ const handlers = {
     } catch (e) {
       console.log('error trying to find delegate free event', e);
     }
+
+    //don't add if already exists in DB
+    const row = await services.db.oneOrNone(vdQuery, [log.tx_id, log.log_index]);
+    console.log('skipping chief.lock event since it\'s already in the DB', row);
+    if (row) return;
 
     await insertLock(services, {
       fromAddress: tx.from_address,
@@ -62,13 +73,13 @@ const handlers = {
       const provider = ethers.getDefaultProvider(process.env.VL_CHAIN_HOST);
       const transaction = await provider.getTransaction(tx.hash);
       const { logs } = await transaction.wait();
-      const logInfo = logs.find(l => l.topics[0] = LockTopic);
+      const logInfo = logs.find(l => l.topics[0] === LockTopic);
       if (logInfo) {
         await insertDelegateLock(services, {
           fromAddress: tx.from_address,
           immediateCaller: '0x' + logInfo.topics[1].slice(-40),
           lock: new BigNumber(logInfo.data).div(new BigNumber("1e18")).toString(),
-          contractAddress: '0x' + logInfo.topics[2].slice(-40),
+          contractAddress: logInfo.address,
           txId: log.tx_id,
           blockId: log.block_id,
         });
@@ -76,6 +87,11 @@ const handlers = {
     } catch (e) {
       console.log('error trying to find delegate lock event', e);
     }
+
+    //don't add if already exists in DB
+    const row = await services.db.oneOrNone(vdQuery, [log.tx_id, log.log_index]);
+    console.log('skipping chief.lock event since it\'s already in the DB', row);
+    if (row) return;
 
     await insertLock(services, {
       fromAddress: tx.from_address,
