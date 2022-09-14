@@ -6,7 +6,6 @@ const { handleDsNoteEvents } = require("spock-etl/lib/core/processors/transforme
 const dsChiefAbi = require("../abis/ds_chief.json");
 const { getTxByIdOrDie } = require("spock-etl/lib/core/processors/extractors/common");
 const BigNumber = require("bignumber.js").BigNumber;
-const ethers = require("ethers");
 
 const LockTopic = `0x625fed9875dada8643f2418b838ae0bc78d9a148a18eee4ee1979ff0f3f5d427`;
 const FreeTopic = `0xce6c5af8fd109993cb40da4d5dc9e4dd8e61bc2e48f1e3901472141e4f56f293`;
@@ -30,9 +29,7 @@ const handlers = {
 
     //get delegate event
     try {
-      //TODO: use RetryProvider
-      const provider = ethers.getDefaultProvider(process.env.VL_CHAIN_HOST);
-      const transaction = await provider.getTransaction(tx.hash);
+      const transaction = await services.provider.getTransaction(tx.hash);
       //get transaction receipt
       const { logs } = await transaction.wait();
       //get event(s) from Delegate contract. Usually only one per transaction
@@ -54,7 +51,7 @@ const handlers = {
 
     const row = await services.db.oneOrNone(vdQuery, [log.tx_id, log.log_index]);
     if (row) {
-      console.log('skipping chief.lock event since it\'s already in the DB', row);
+      console.log('skipping chief.free event since it\'s already in the DB', row);
       return;
     }
 
@@ -76,9 +73,7 @@ const handlers = {
 
     //get delegate event
     try {
-      //TODO: use RetryProvider
-      const provider = ethers.getDefaultProvider(process.env.VL_CHAIN_HOST);
-      const transaction = await provider.getTransaction(tx.hash);
+      const transaction = await services.provider.getTransaction(tx.hash);
       //get transaction receipt
       const { logs } = await transaction.wait();
       //get event(s) from Delegate contract. Usually only one per transaction
