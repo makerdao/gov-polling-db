@@ -1632,7 +1632,6 @@ etag@~1.8.1:
 
 ethers@krzkaczor/ethers.js#kk/get-logs-multiple-address-build:
   version "4.0.37"
-  uid "48c8dfad90b2c3699a122ff64b09e40a42880c7f"
   resolved "https://codeload.github.com/krzkaczor/ethers.js/tar.gz/48c8dfad90b2c3699a122ff64b09e40a42880c7f"
   dependencies:
     "@types/node" "^10.3.2"
