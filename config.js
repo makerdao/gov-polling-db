@@ -29,24 +29,7 @@ const VOTE_PROXY_FACTORY_12_ADDRESS =
 const VOTE_DELEGATE_FACTORY_ADDRESS =
   '0xD897F108670903D1d6070fcf818f9db3615AF272';
 
-//kovan
-const MKR_KOVAN_ADDRESS = '0xaaf64bfcc32d0f15873a02163e7e500671a4ffcd';
-const VOTING_CONTRACT_KOVAN_ADDRESS =
-  pollingTransformerImport.VOTING_CONTRACT_KOVAN_ADDRESS;
-const SECOND_VOTING_CONTRACT_KOVAN_ADDRESS =
-  '0xD931E7c869618dB6FD30cfE4e89248CAA091Ea5f';
-const DSCHIEF_KOVAN_ADDRESS = '0xbbffc76e94b34f72d96d054b31f6424249c1337d';
-const VOTE_PROXY_FACTORY_KOVAN_ADDRESS =
-  '0x3e08741a68c2d964d172793cd0ad14292f658cd8';
-const ESM_ADDRESS_KOVAN = '0xD5D728446275B0A12E4a4038527974b92353B4a9';
-const DSCHIEF_12_KOVAN_ADDRESS = '0x27E0c9567729Ea6e3241DE74B3dE499b7ddd3fe6';
-const VOTE_PROXY_FACTORY_12_KOVAN_ADDRESS =
-  '0x1400798AA746457E467A1eb9b3F3f72C25314429';
-const VOTE_DELEGATE_FACTORY_KOVAN_ADDRESS =
-  '0x1740F3bD55b1900C816A0071F8972C201566e3a3';
-
 //goerli
-// note: VOTING_CONTRACT_KOVAN_ADDRESS and SECOND_VOTING_CONTRACT_KOVAN_ADDRESS are the same contract on goerli
 // note: there is no v1 of DSCHIEF or VOTE_PROXY_FACTORY deployed to goerli, only the newer versions
 const MKR_GOERLI_ADDRESS = '0xc5E4eaB513A7CD12b2335e8a0D57273e13D499f7';
 const BATCH_VOTING_CONTRACT_GOERLI_ADDRESS =
@@ -65,26 +48,6 @@ const ARB_TESTNET_POLLING_ADDRESS =
 
 const CHAIN_HOST_L1 = process.env.VL_CHAIN_HOST;
 const CHAIN_HOST_L2 = process.env.VL_CHAIN_HOST_L2;
-
-const arbitrumTestnet = {
-  startingBlock: 12254300,
-  extractors: [...makeRawLogExtractors([ARB_TESTNET_POLLING_ADDRESS])],
-  transformers: [arbitrumPollingTransformer(ARB_TESTNET_POLLING_ADDRESS)],
-  migrations: {
-    mkr: './migrations',
-  },
-  api: {
-    whitelisting: {
-      enabled: false,
-    },
-    responseCaching: {
-      enabled: false,
-      duration: '15 seconds',
-    },
-  },
-  onStart: (services) =>
-    console.log(`Starting with these services: ${Object.keys(services)}`),
-};
 
 const goerli = {
   name: 'goerli',
@@ -134,52 +97,7 @@ const goerli = {
     console.log(`Starting with these services: ${Object.keys(services)}`),
 };
 
-// const kovan = {
-//   startingBlock: 5216304,
-//   extractors: [
-//     ...makeRawLogExtractors([
-//       VOTING_CONTRACT_KOVAN_ADDRESS,
-//       SECOND_VOTING_CONTRACT_KOVAN_ADDRESS,
-//       MKR_KOVAN_ADDRESS,
-//       DSCHIEF_KOVAN_ADDRESS,
-//       VOTE_PROXY_FACTORY_KOVAN_ADDRESS,
-//       DSCHIEF_12_KOVAN_ADDRESS,
-//       VOTE_PROXY_FACTORY_12_KOVAN_ADDRESS,
-//       ESM_ADDRESS_KOVAN,
-//       VOTE_DELEGATE_FACTORY_KOVAN_ADDRESS,
-//     ]),
-//   ],
-//   transformers: [
-//     pollingTransformer(VOTING_CONTRACT_KOVAN_ADDRESS),
-//     pollingTransformer(SECOND_VOTING_CONTRACT_KOVAN_ADDRESS),
-//     mkrTransformer(MKR_KOVAN_ADDRESS),
-//     mkrBalanceTransformer(MKR_KOVAN_ADDRESS),
-//     dsChiefTransformer(DSCHIEF_KOVAN_ADDRESS),
-//     chiefBalanceTransformer(DSCHIEF_KOVAN_ADDRESS),
-//     voteProxyFactoryTransformer(VOTE_PROXY_FACTORY_KOVAN_ADDRESS),
-//     dsChiefTransformer(DSCHIEF_12_KOVAN_ADDRESS, '_v1.2'),
-//     chiefBalanceTransformer(DSCHIEF_12_KOVAN_ADDRESS, '_v1.2'),
-//     voteProxyFactoryTransformer(VOTE_PROXY_FACTORY_12_KOVAN_ADDRESS, '_v1.2'),
-//     esmTransformer(ESM_ADDRESS_KOVAN),
-//     voteDelegateFactoryTransformer(VOTE_DELEGATE_FACTORY_KOVAN_ADDRESS),
-//   ],
-//   migrations: {
-//     mkr: './migrations',
-//   },
-//   api: {
-//     whitelisting: {
-//       enabled: false,
-//     },
-//     responseCaching: {
-//       enabled: false,
-//       duration: '15 seconds',
-//     },
-//   },
-//   onStart: (services) =>
-//     console.log(`Starting with these services: ${Object.keys(services)}`),
-// };
-
-const mainnet_v2 = {
+const mainnet = {
   name: 'mainnet',
   processorSchema: 'vulcan2x',
   extractedSchema: 'extracted',
@@ -236,13 +154,43 @@ const mainnet_v2 = {
     ),
 };
 
-const arbitrum_v2 = {
+// TODO: update commented properties after we deploy to Arbitrum mainnet
+const arbitrum = {
   name: 'arbitrum',
   processorSchema: 'vulcan2xarbitrum',
   extractedSchema: 'extractedarbitrum',
 
   chain: {
     name: 'arbitrum',
+    host: CHAIN_HOST_L2,
+    retries: 15,
+  },
+  // startingBlock: 154800,
+  // extractors: [...makeRawLogExtractors([ARB_TESTNET_POLLING_ADDRESS])],
+  // transformers: [arbitrumPollingTransformer(ARB_TESTNET_POLLING_ADDRESS)],
+  migrations: {
+    mkr: './migrations',
+  },
+  api: {
+    whitelisting: {
+      enabled: false,
+    },
+    responseCaching: {
+      enabled: false,
+      duration: '15 seconds',
+    },
+  },
+  onStart: (services) =>
+    console.log(`Starting with these services: ${Object.keys(services)}`),
+};
+
+const arbitrumTestnet = {
+  name: 'arbitrumTestnet',
+  processorSchema: 'vulcan2xarbitrum',
+  extractedSchema: 'extractedarbitrum',
+
+  chain: {
+    name: 'arbitrumTestnet',
     host: CHAIN_HOST_L2,
     retries: 15,
   },
@@ -266,19 +214,12 @@ const arbitrum_v2 = {
 };
 
 let config;
-if (process.env.VL_CONFIG_NAME === 'multiple') {
-  console.log('Using multi config');
-  config = [goerli, arbitrum_v2];
-  // config = [mainnet_v2, arbitrum_v2];
-} else if (process.env.VL_CONFIG_NAME === 'kovan') {
-  console.log('Using kovan config');
-  config = kovan;
-} else if (process.env.VL_CONFIG_NAME === 'arbitrumTestnet') {
-  console.log('Using arbitrumTestnet config');
-  config = arbitrumTestnet;
-} else {
-  console.log('Using goerli config');
-  config = goerli;
+if (process.env.VL_CONFIG_NAME === 'multi') {
+  console.log('Using Mainnet multi-chain config');
+  config = [mainnet, arbitrum];
+} else if (process.env.VL_CONFIG_NAME === 'multi_goerli') {
+  console.log('Using Goerli multi-chain config');
+  config = [goerli, arbitrumTestnet];
 }
 
 module.exports.default = config;
