@@ -16,3 +16,5 @@ CREATE TABLE polling.voted_event_arbitrum (
   chain_id   integer not null,
   unique (log_index, tx_id)
 );
+
+CREATE INDEX arbitrum_poll_id_index ON polling.voted_event_arbitrum (poll_id);
