@@ -42,6 +42,9 @@ const VOTE_PROXY_FACTORY_12_GOERLI_ADDRESS =
 const VOTE_DELEGATE_FACTORY_GOERLI_ADDRESS =
   '0xE2d249AE3c156b132C40D07bd4d34e73c1712947';
 
+//Arbitrum mainnet
+const ARB_POLLING_ADDRESS = '0x4f4e551b4920a5417F8d4e7f8f099660dAdadcEC';
+
 // arbitrum testnet
 const ARB_TESTNET_POLLING_ADDRESS =
   '0x4d196378e636D22766d6A9C6C6f4F32AD3ECB050';
@@ -165,9 +168,9 @@ const arbitrum = {
     host: CHAIN_HOST_L2,
     retries: 15,
   },
-  // startingBlock: 154800,
-  // extractors: [...makeRawLogExtractors([ARB_TESTNET_POLLING_ADDRESS])],
-  // transformers: [arbitrumPollingTransformer(ARB_TESTNET_POLLING_ADDRESS)],
+  startingBlock: 24755800,
+  extractors: [...makeRawLogExtractors([ARB_TESTNET_POLLING_ADDRESS])],
+  transformers: [arbitrumPollingTransformer(ARB_POLLING_ADDRESS)],
   migrations: {
     mkr: './migrations',
   },
