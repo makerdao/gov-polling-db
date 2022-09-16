@@ -437,10 +437,10 @@
     "@jridgewell/resolve-uri" "^3.0.3"
     "@jridgewell/sourcemap-codec" "^1.4.10"
 
-"@makerdao-dux/spock-etl@^0.1.6":
-  version "0.1.6"
-  resolved "https://registry.yarnpkg.com/@makerdao-dux/spock-etl/-/spock-etl-0.1.6.tgz#f45cce94587e873cca22b5b52845b066fe34159d"
-  integrity sha512-eP4bdw/CQUMV20IA7haePDr25l1CbtBWYPUNxq+MvXf2tiWfWSrELGkc3CeUrooiEzXUZSDBhGHYgzxNWy+myQ==
+"@makerdao-dux/spock-etl@^0.2.0":
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/@makerdao-dux/spock-etl/-/spock-etl-0.2.0.tgz#13502b04428067276b50f8b780110a36a8c5f367"
+  integrity sha512-OPKtJ66I/6N1vCXr/z1xxO6526vtd7I0dAFyjajG0RZzpJgyFC3x8VLRZ8SJwmyHCm0OpudnGeY9V1HN8nT6nw==
   dependencies:
     "@sentry/node" "^5.15.0"
     convert-hrtime "^3.0.0"
@@ -453,10 +453,10 @@
     ts-essentials "^6.0.2"
     zod "^2.0.0-beta.16"
 
-"@makerdao-dux/spock-graphql-api@^0.1.3":
-  version "0.1.3"
-  resolved "https://registry.yarnpkg.com/@makerdao-dux/spock-graphql-api/-/spock-graphql-api-0.1.3.tgz#925084c9f32059fb746f677ea8550527cee2d56c"
-  integrity sha512-N384ye0ZUnJL5xkelcXTvPlwiM6gOXPIVb7WlhpU8Ps6YcKqJtoJwQjY/Nvc8tvf0uPyVsJ0xK9YvK+65aXTVw==
+"@makerdao-dux/spock-graphql-api@^0.2.0":
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/@makerdao-dux/spock-graphql-api/-/spock-graphql-api-0.2.0.tgz#b6ee28b34ae8a2748fa8e77c672bf84f32ce45bb"
+  integrity sha512-kSZo/X4ZsghQ1k3U4Ky0TXKGsiadPYYhL7SiGhtEnCaI2CkbnBdavdQEp7zFyzFKxgiFWRir3eIM0s2JGdOFWw==
   dependencies:
     "@types/apicache" "^1.2.0"
     "@types/body-parser" "^1.17.0"
@@ -473,10 +473,10 @@
     postgraphile-plugin-connection-filter "^1.0.0-rc.2"
     ts-essentials "^6.0.2"
 
-"@makerdao-dux/spock-utils@^0.1.2":
-  version "0.1.2"
-  resolved "https://registry.yarnpkg.com/@makerdao-dux/spock-utils/-/spock-utils-0.1.2.tgz#670cc84982dfb7d408200b41f0308d2e213fd71c"
-  integrity sha512-SBRpVMl7whEPFoqKzD/zomj/DeiRLghQGcWJAf/JLH/yb9Nt51GJXODkCkAXP6YGO4SNRcLsinS+dzHR2DZ31w==
+"@makerdao-dux/spock-utils@^0.2.0":
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/@makerdao-dux/spock-utils/-/spock-utils-0.2.0.tgz#a1b7cf37f8e37716db83ea06f30e25a1abb07bb7"
+  integrity sha512-v/4eL87zxT7K6So01c4q/mfy1ScfQE5IOH517sAjp4fgKBqqH0OGMjZhbqRmWJFoGwf184Ijdwm396gmEt8MZA==
 
 "@nodelib/fs.scandir@2.1.5":
   version "2.1.5"
