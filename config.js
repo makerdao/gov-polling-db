@@ -157,7 +157,6 @@ const mainnet = {
     ),
 };
 
-// TODO: update commented properties after we deploy to Arbitrum mainnet
 const arbitrum = {
   name: 'arbitrum',
   processorSchema: 'vulcan2xarbitrum',
@@ -169,7 +168,7 @@ const arbitrum = {
     retries: 15,
   },
   startingBlock: 24755800,
-  extractors: [...makeRawLogExtractors([ARB_TESTNET_POLLING_ADDRESS])],
+  extractors: [...makeRawLogExtractors([ARB_POLLING_ADDRESS])],
   transformers: [arbitrumPollingTransformer(ARB_POLLING_ADDRESS)],
   migrations: {
     mkr: './migrations',
