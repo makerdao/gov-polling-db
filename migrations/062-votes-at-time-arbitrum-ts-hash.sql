@@ -3,20 +3,21 @@ create function voted_events_merged(arg_proxy_block_id_mn integer)
 returns table (
 	poll_id 		integer,	
 	address 		character(42),
+  option_id integer,
 	option_id_raw   character varying(66),
 	block_id   		integer,
 	chain_id  		integer,
 	block_timestamp	timestamp with time zone,
 	hash 			character varying(66)
 ) AS $$
-	SELECT DISTINCT (poll_id) poll_id, address, option_id_raw, block_id, chain_id, timestamp, hash 
+	SELECT DISTINCT (poll_id) poll_id, address, option_id, option_id_raw, block_id, chain_id, timestamp, hash 
     FROM (
-		SELECT polling.unique_voter_address(voter, arg_proxy_block_id_mn) address, option_id_raw, ve.block_id, poll_id, chain_id, b.timestamp, tx.hash
+		SELECT polling.unique_voter_address(voter, arg_proxy_block_id_mn) address, option_id, option_id_raw, ve.block_id, poll_id, chain_id, b.timestamp, tx.hash
 		FROM polling.voted_event ve
 		JOIN vulcan2x.block b ON ve.block_id = b.id
 		JOIN vulcan2x.transaction tx ON ve.tx_id = tx.id
 			UNION
-		SELECT polling.unique_voter_address(voter, arg_proxy_block_id_mn) address, option_id_raw, vea.block_id, poll_id, chain_id, ba.timestamp, txa.hash
+		SELECT polling.unique_voter_address(voter, arg_proxy_block_id_mn) address, option_id, option_id_raw, vea.block_id, poll_id, chain_id, ba.timestamp, txa.hash
 		FROM polling.voted_event_arbitrum vea
 		JOIN vulcan2xarbitrum.block ba ON vea.block_id = ba.id
 		JOIN vulcan2xarbitrum.transaction txa ON vea.tx_id = txa.id
@@ -27,17 +28,19 @@ drop function if exists unique_votes;
 CREATE OR REPLACE FUNCTION unique_votes(arg_poll_id INTEGER, arg_proxy_block_id_mn INTEGER)
 RETURNS TABLE (
   voter character(42), -- if vote was sent by a hot or cold wallet, this is a proxy address
+  option_id integer,
   option_id_raw character,
   block_id integer,
   chain_id integer,
   block_timestamp	timestamp with time zone,
   hash 			character varying(66)
 ) AS $$
-  select address, option_id_raw, block_id, chain_id, block_timestamp, hash
+  select address, option_id, option_id_raw, block_id, chain_id, block_timestamp, hash
   from (
     -- middle query removes duplicates by unique address
     select 
       address,
+      option_id,
       option_id_raw,
       block_id,
       chain_id,
@@ -47,6 +50,7 @@ RETURNS TABLE (
       -- innermost query looks up unique address
       select
       	address address,
+        option_id,
         option_id_raw, 
         v.block_id,
         v.chain_id,
@@ -65,6 +69,7 @@ drop function if exists polling.votes; -- must drop because return value changed
 create function polling.votes(poll_id integer, block_id integer)
 returns table (
   voter character(42), -- if vote was sent by a hot or cold wallet, this is a proxy address
+  option_id integer,
   option_id_raw character,
   amount decimal(78,18),
   chain_id integer,
@@ -73,6 +78,7 @@ returns table (
 ) as $$
   select 
     voter,
+    option_id,
     option_id_raw,
     polling.reverse_voter_weight(voter, votes.block_id),
     chain_id,
@@ -86,6 +92,7 @@ drop function if exists polling.votes_at_time;
 create function polling.votes_at_time(poll_id integer, unixtime integer)
 returns table (
   voter character(42), -- if vote was sent by a hot or cold wallet, this is a proxy address
+  option_id integer,
   option_id_raw character,
   amount decimal(78,18),
   chain_id integer,
@@ -101,7 +108,8 @@ $$ language sql stable strict;
 DROP FUNCTION IF EXISTS api.vote_address_mkr_weights_at_time;
 CREATE FUNCTION api.vote_address_mkr_weights_at_time(arg_poll_id INTEGER, arg_unix INTEGER)
 RETURNS TABLE (
-	voter CHARACTER, 
+	voter CHARACTER,
+  option_id INTEGER,
 	option_id_raw CHARACTER, 
 	mkr_support NUMERIC, 
 	chain_id INTEGER,

@@ -3,6 +3,7 @@ drop function if exists api.all_current_votes;
 CREATE OR REPLACE FUNCTION api.all_current_votes(arg_address CHAR)
 RETURNS TABLE (
 	poll_id integer,
+	option_id integer,
 	option_id_raw character,
 	block_timestamp timestamp with time zone,
 	chain_id integer,
@@ -12,7 +13,8 @@ RETURNS TABLE (
 	-- Results in all the votes between the start and end date of each poll voted by arg_address (per chain)
 	WITH all_valid_mainnet_votes AS (
 		SELECT 
-			v.voter, 
+			v.voter,
+			v.option_id,
 			v.option_id_raw, 
 			v.poll_id, 
 			v.block_id, 
@@ -31,7 +33,8 @@ RETURNS TABLE (
 	), 
 	all_valid_arbitrum_votes AS (
 		SELECT 
-			va.voter, 
+			va.voter,
+			va.option_id, 
 			va.option_id_raw, 
 			va.poll_id, 
 			va.block_id, 
@@ -70,6 +73,7 @@ RETURNS TABLE (
 -- Results in 1 distinct vote for only one chain (the latest vote)
 SELECT DISTINCT ON (poll_id) 
 	cv.poll_id,
+	cv.option_id,
 	cv.option_id_raw, 
 	cv.block_timestamp, 
 	cv.chain_id,
