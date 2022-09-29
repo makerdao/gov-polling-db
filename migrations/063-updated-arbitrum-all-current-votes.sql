@@ -26,9 +26,6 @@ RETURNS TABLE (
     JOIN vulcan2x.block b ON v.block_id = b.id
     JOIN vulcan2x.transaction t ON v.tx_id = t.id
     WHERE b.timestamp >= to_timestamp(c.start_date) AND b.timestamp <= to_timestamp(c.end_date)
-    AND v.voter = (SELECT hot FROM dschief.all_active_vote_proxies(2147483647) WHERE cold = arg_address)
-    OR v.voter = (SELECT cold FROM dschief.all_active_vote_proxies(2147483647) WHERE hot = arg_address)
-    OR v.voter = arg_address
   ), 
   all_valid_arbitrum_votes AS (
     SELECT 
@@ -46,22 +43,25 @@ RETURNS TABLE (
     JOIN vulcan2xarbitrum.block b ON va.block_id = b.id
     JOIN vulcan2xarbitrum.transaction t ON va.tx_id = t.id
     WHERE b.timestamp >= to_timestamp(c.start_date) AND b.timestamp <= to_timestamp(c.end_date)
-    AND va.voter = (SELECT hot FROM dschief.all_active_vote_proxies(2147483647) WHERE cold = arg_address)
-    OR va.voter = (SELECT cold FROM dschief.all_active_vote_proxies(2147483647) WHERE hot = arg_address)
-    OR va.voter = arg_address
   ),
   -- Results in the most recent vote for each poll for an address (per chain)
   distinct_mn_votes AS (
     SELECT DISTINCT ON (mnv.poll_id) *
     FROM all_valid_mainnet_votes mnv
-    ORDER BY mnv.poll_id DESC,
-    mnv.block_timestamp DESC
+    WHERE voter = (SELECT hot FROM dschief.all_active_vote_proxies(2147483647) WHERE cold = arg_address)
+    OR voter = (SELECT cold FROM dschief.all_active_vote_proxies(2147483647) WHERE hot = arg_address)
+    OR voter = arg_address
+    ORDER BY poll_id DESC,
+    block_id DESC
   ),
   distinct_arb_votes AS (
     SELECT DISTINCT ON (arbv.poll_id) *
     FROM all_valid_arbitrum_votes arbv
-    ORDER BY arbv.poll_id DESC,
-    arbv.block_timestamp DESC
+    WHERE voter = (SELECT hot FROM dschief.all_active_vote_proxies(2147483647) WHERE cold = arg_address)
+    OR voter = (SELECT cold FROM dschief.all_active_vote_proxies(2147483647) WHERE hot = arg_address)
+    OR voter = arg_address
+    ORDER BY poll_id DESC,
+    block_id DESC
   ),
   -- Results in 1 distinct vote for both chains (if exists)
   combined_votes AS (
