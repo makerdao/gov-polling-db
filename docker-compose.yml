@@ -17,7 +17,7 @@ services:
     healthcheck:
       test: pg_isready -p 5432 -h localhost -U user -d database
   spock:
-    image: spock-test
+    image: makerdaodux/govpolldb-app
     container_name: spock-test-container
     command: ['yarn', 'start-all']
     depends_on:
