@@ -5,11 +5,11 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "start-etl": "node -r ./loadenv.js ./node_modules/@makerdao-dux/spock-etl/dist/bin/etl ./config.js &",
+    "start-etl": "node -r ./loadenv.js ./node_modules/@makerdao-dux/spock-etl/dist/bin/etl ./config.js",
     "start-sync": "yarn migrate",
     "migrate": "node -r ./loadenv.js ./node_modules/@makerdao-dux/spock-etl/dist/bin/migrate ./config.js",
-    "start-api": "node -r ./loadenv.js ./node_modules/@makerdao-dux/spock-graphql-api/dist/index.js ./config.js",
-    "start-all": "yarn migrate && yarn start-etl && yarn start-api",
+    "start-api": "node -r ./loadenv.js ./node_modules/@makerdao-dux/spock-graphql-api/dist/index.js ./config.js &",
+    "start-all": "yarn migrate && yarn start-api && yarn start-etl",
     "test": "jest",
     "test:ci": "./tests/run-tests.sh",
     "repl": "node --experimental-repl-await -r ./loadenv.js ./repl"

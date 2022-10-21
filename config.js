@@ -61,7 +61,7 @@ const goerli = {
     host: CHAIN_HOST_L1,
     retries: 15,
   },
-  startingBlock: 7792488,
+  startingBlock: 7810360,
   extractors: [
     ...makeRawLogExtractors([
       BATCH_VOTING_CONTRACT_GOERLI_ADDRESS,
@@ -196,7 +196,7 @@ const arbitrumTestnet = {
     host: CHAIN_HOST_L2,
     retries: 15,
   },
-  startingBlock: 734893,
+  startingBlock: 793560,
   extractors: [...makeRawLogExtractors([ARB_TESTNET_POLLING_ADDRESS])],
   transformers: [arbitrumPollingTransformer(ARB_TESTNET_POLLING_ADDRESS)],
   migrations: {
