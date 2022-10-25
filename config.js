@@ -52,6 +52,11 @@ const ARB_TESTNET_POLLING_ADDRESS =
 const CHAIN_HOST_L1 = process.env.VL_CHAIN_HOST;
 const CHAIN_HOST_L2 = process.env.VL_CHAIN_HOST_L2;
 
+const STARTING_BLOCK_GOERLI = parseInt(process.env.STARTING_BLOCK_GOERLI);
+const STARTING_BLOCK_ARB_TESTNET = parseInt(
+  process.env.STARTING_BLOCK_ARB_TESTNET
+);
+
 const goerli = {
   name: 'goerli',
   processorSchema: 'vulcan2x',
@@ -61,7 +66,7 @@ const goerli = {
     host: CHAIN_HOST_L1,
     retries: 15,
   },
-  startingBlock: 7810360,
+  startingBlock: STARTING_BLOCK_GOERLI,
   extractors: [
     ...makeRawLogExtractors([
       BATCH_VOTING_CONTRACT_GOERLI_ADDRESS,
@@ -196,7 +201,7 @@ const arbitrumTestnet = {
     host: CHAIN_HOST_L2,
     retries: 15,
   },
-  startingBlock: 793560,
+  startingBlock: STARTING_BLOCK_ARB_TESTNET,
   extractors: [...makeRawLogExtractors([ARB_TESTNET_POLLING_ADDRESS])],
   transformers: [arbitrumPollingTransformer(ARB_TESTNET_POLLING_ADDRESS)],
   migrations: {

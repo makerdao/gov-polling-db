@@ -12,16 +12,3 @@ services:
       - POSTGRES_DB=database
     ports:
       - '5432:5432'
-    expose:
-      - '5432'
-    healthcheck:
-      test: pg_isready -p 5432 -h localhost -U user -d database
-  spock:
-    image: makerdaodux/govpolldb-app:latest
-    container_name: spock-test-container
-    command: ['yarn', 'start-all']
-    depends_on:
-      postgres:
-        condition: service_healthy
-    ports:
-      - '3001:3001'
