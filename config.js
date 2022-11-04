@@ -69,7 +69,7 @@ const goerli = {
     host: CHAIN_HOST_L1,
     retries: 15,
   },
-  startingBlock: STARTING_BLOCK_GOERLI,
+  startingBlock: 5273000,
   extractors: [
     ...makeRawLogExtractors([
       BATCH_VOTING_CONTRACT_GOERLI_ADDRESS,
@@ -204,10 +204,9 @@ const arbitrumTestnet = {
     host: CHAIN_HOST_L2,
     retries: 15,
   },
-  startingBlock: STARTING_BLOCK_ARB_TESTNET,
+  startingBlock: 154800,
   extractors: [...makeRawLogExtractors([ARB_TESTNET_POLLING_ADDRESS])],
   transformers: [arbitrumPollingTransformer(ARB_TESTNET_POLLING_ADDRESS)],
-  // TODO: I think don't need to run the migrations a second time, remove this:
   migrations: {
     mkr: './migrations',
   },
@@ -261,7 +260,7 @@ const dockerConfig = [
       }
     },
   },
-  arbitrumTestnet,
+  { ...arbitrumTestnet, startingBlock: STARTING_BLOCK_ARB_TESTNET },
 ];
 
 let config;
