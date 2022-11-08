@@ -89,7 +89,9 @@ const goerli = {
   },
   api: {
     whitelisting: {
-      enabled: false,
+      enabled: true,
+      whitelistedQueriesDir: './queries',
+      bypassSecret: process.env.BYPASS_SECRET,
     },
     responseCaching: {
       enabled: false,
@@ -144,7 +146,9 @@ const mainnet = {
   },
   api: {
     whitelisting: {
-      enabled: false,
+      enabled: true,
+      whitelistedQueriesDir: './queries',
+      bypassSecret: process.env.BYPASS_SECRET,
     },
     responseCaching: {
       enabled: false,
@@ -175,7 +179,9 @@ const arbitrum = {
   },
   api: {
     whitelisting: {
-      enabled: false,
+      enabled: true,
+      whitelistedQueriesDir: './queries',
+      bypassSecret: process.env.BYPASS_SECRET,
     },
     responseCaching: {
       enabled: false,
@@ -204,7 +210,9 @@ const arbitrumTestnet = {
   },
   api: {
     whitelisting: {
-      enabled: false,
+      enabled: true,
+      whitelistedQueriesDir: './queries',
+      bypassSecret: process.env.BYPASS_SECRET,
     },
     responseCaching: {
       enabled: false,
