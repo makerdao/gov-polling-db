@@ -453,10 +453,10 @@
     ts-essentials "^6.0.2"
     zod "^2.0.0-beta.16"
 
-"@makerdao-dux/spock-graphql-api@^0.2.0":
-  version "0.2.0"
-  resolved "https://registry.yarnpkg.com/@makerdao-dux/spock-graphql-api/-/spock-graphql-api-0.2.0.tgz#b6ee28b34ae8a2748fa8e77c672bf84f32ce45bb"
-  integrity sha512-kSZo/X4ZsghQ1k3U4Ky0TXKGsiadPYYhL7SiGhtEnCaI2CkbnBdavdQEp7zFyzFKxgiFWRir3eIM0s2JGdOFWw==
+"@makerdao-dux/spock-graphql-api@^0.2.1":
+  version "0.2.1"
+  resolved "https://registry.yarnpkg.com/@makerdao-dux/spock-graphql-api/-/spock-graphql-api-0.2.1.tgz#531fb89d44842527010b227f6e6c683c5d0b193a"
+  integrity sha512-HHhjCzQmsBf+dTpude6dv/12tZqbJkCllgPQr/pfoCdy2LjXc/96hSeRTGpRICZi7tPCrEjN1Q5gJbWfMTfmjw==
   dependencies:
     "@types/apicache" "^1.2.0"
     "@types/body-parser" "^1.17.0"

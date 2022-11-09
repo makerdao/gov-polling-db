@@ -15,7 +15,7 @@
   },
   "dependencies": {
     "@makerdao-dux/spock-etl": "^0.2.0",
-    "@makerdao-dux/spock-graphql-api": "^0.2.0",
+    "@makerdao-dux/spock-graphql-api": "^0.2.1",
     "@makerdao-dux/spock-utils": "^0.2.0",
     "bignumber.js": "^9.0.2",
     "consola": "^2.15.3",
