@@ -12,6 +12,9 @@ const voteProxyFactoryTransformer = require('./transformers/VoteProxyFactoryTran
 const esmTransformer = require('./transformers/EsmTransformer');
 const esmV2Transformer = require('./transformers/EsmV2Transformer');
 const voteDelegateFactoryTransformer = require('./transformers/VoteDelegateFactoryTransformer');
+const {
+  BlockGenerator,
+} = require('@makerdao-dux/spock-etl/dist/blockGenerator/blockGenerator');
 
 //mainnet
 const MKR_ADDRESS = '0x9f8f72aa9304c8b593d555f12ef6589cc3a579a2';
@@ -51,6 +54,11 @@ const ARB_TESTNET_POLLING_ADDRESS =
 
 const CHAIN_HOST_L1 = process.env.VL_CHAIN_HOST;
 const CHAIN_HOST_L2 = process.env.VL_CHAIN_HOST_L2;
+
+const STARTING_BLOCK_GOERLI = parseInt(process.env.STARTING_BLOCK_GOERLI);
+const STARTING_BLOCK_ARB_TESTNET = parseInt(
+  process.env.STARTING_BLOCK_ARB_TESTNET
+);
 
 const goerli = {
   name: 'goerli',
@@ -223,6 +231,46 @@ const arbitrumTestnet = {
     console.log(`Starting with these services: ${Object.keys(services)}`),
 };
 
+const dockerConfig = [
+  {
+    ...goerli,
+    onStart: async (services) => {
+      console.log(
+        `Starting Goerli config with these services: ${Object.keys(services)}`
+      );
+
+      // Blocknumbers can be provided to add certain events to the test database on an adhoc basis
+      if (process.env.SEED_BLOCKS) {
+        const blocks = process.env.SEED_BLOCKS.split(',');
+
+        console.log(`Initial seed blocks to scrape: ${blocks}`);
+
+        // Set the batch size to 1 so we only extract the single block we want
+        const modServices = {
+          ...services,
+          config: {
+            ...services.config,
+            blockGenerator: {
+              batch: 1,
+            },
+          },
+        };
+
+        const b = new BlockGenerator(modServices);
+        await b.init();
+        await Promise.all(
+          blocks.map((blockNumber) =>
+            b.run(parseInt(blockNumber), parseInt(blockNumber))
+          )
+        );
+
+        await b.deinit();
+      }
+    },
+  },
+  { ...arbitrumTestnet, startingBlock: STARTING_BLOCK_ARB_TESTNET },
+];
+
 let config;
 if (process.env.VL_CONFIG_NAME === 'multi') {
   console.log('Using Mainnet multi-chain config');
@@ -230,6 +278,9 @@ if (process.env.VL_CONFIG_NAME === 'multi') {
 } else if (process.env.VL_CONFIG_NAME === 'multi_goerli') {
   console.log('Using Goerli multi-chain config');
   config = [goerli, arbitrumTestnet];
+} else if (process.env.VL_CONFIG_NAME === 'docker_config') {
+  console.log('Using Docker multi-chain config');
+  config = dockerConfig;
 }
 
 module.exports.default = config;
