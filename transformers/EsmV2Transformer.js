@@ -1,14 +1,14 @@
 const {
   getExtractorName,
-} = require('spock-etl/lib/core/processors/extractors/instances/rawEventDataExtractor');
+} = require('@makerdao-dux/spock-utils/dist/extractors/rawEventDataExtractor');
 const {
   handleEvents,
-} = require('spock-etl/lib/core/processors/transformers/common');
+} = require('@makerdao-dux/spock-utils/dist/transformers/common');
 // @ts-ignore
 const ESMAbi = require('../abis/esm_v2_abi.json');
 const {
   getTxByIdOrDie,
-} = require('spock-etl/lib/core/processors/extractors/common');
+} = require('@makerdao-dux/spock-utils/dist/extractors/common');
 const BigNumber = require('bignumber.js').BigNumber;
 
 module.exports = (address) => ({
@@ -41,6 +41,6 @@ const insertJoin = (s, values) => {
   return s.tx.none(
     `
 INSERT INTO esmV2.mkr_joins(contract_address, from_address, immediate_caller, join_amount, log_index, tx_id, block_id) VALUES (\${contractAddress}, \${fromAddress}, \${immediateCaller}, \${joinAmount}, \${logIndex}, \${txId}, \${blockId})`,
-    values,
+    values
   );
 };

@@ -3,7 +3,7 @@ on:
     branches:
       - master
 
-name: Deploy to AWS Prod
+name: Deploy polling-db2 to AWS Prod
 
 jobs:
   deploy:
@@ -11,10 +11,10 @@ jobs:
     runs-on: ubuntu-latest
     env:
       AWS_REGION: us-east-1
-      ECR_REPO_NAME: polling-db-mainnet-prod
-      ETL_SERVICE_NAME: polling-db-mainnet-prod-etl
-      API_SERVICE_NAME: polling-db-mainnet-prod-api
-      CLUSTER_NAME: polling-db-mainnet-prod
+      ECR_REPO_NAME: polling-db2-mainnet-prod
+      ETL_SERVICE_NAME: polling-db2-mainnet-prod-etl
+      API_SERVICE_NAME: polling-db2-mainnet-prod-api
+      CLUSTER_NAME: polling-db2-mainnet-prod
 
     steps:
     - name: Checkout
@@ -23,8 +23,8 @@ jobs:
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v1
       with:
-        aws-access-key-id: ${{ secrets.PROD_AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.PROD_AWS_SECRET_ACCESS_KEY }}
+        aws-access-key-id: ${{ secrets.POLLINGDB2_PROD_AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.POLLINGDB2_PROD_AWS_SECRET_ACCESS_KEY }}
         aws-region: ${{ env.AWS_REGION }}
 
     - name: Login to Amazon ECR

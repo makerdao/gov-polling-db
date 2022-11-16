@@ -1,0 +1,9 @@
+query allDelegates {
+  allDelegates {
+    nodes {
+      delegate
+      voteDelegate
+      blockTimestamp
+    }
+  }
+}

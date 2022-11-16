@@ -1,0 +1,10 @@
+query allEsmV2Joins {
+  allEsmV2Joins {
+    nodes {
+      txFrom
+      txHash
+      joinAmount
+      blockTimestamp
+    }
+  }
+}
