@@ -1,5 +1,17 @@
-query allDelegates {
-  allDelegates {
+query allDelegates(
+  $first: Int
+  $before: Cursor
+  $last: Int
+  $after: Cursor
+  $offset: Int
+) {
+  allDelegates (
+    first: $first
+    before: $before
+    last: $last
+    after: $after
+    offset: $offset
+  ) {
     nodes {
       delegate
       voteDelegate
