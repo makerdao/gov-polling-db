@@ -1,5 +1,5 @@
--- Same code than 064 but with pagination
-CREATE OR REPLACE FUNCTION api.all_current_votes(arg_address CHAR, start integer default 0, limit integer default 10)
+-- Same code than 064 but without address
+CREATE OR REPLACE FUNCTION api.all_current_votes()
 RETURNS TABLE (
   poll_id integer,
   option_id integer,
@@ -9,7 +9,7 @@ RETURNS TABLE (
   mkr_support decimal(78,18),
   hash character varying(66)
 ) AS $$
-  -- Results in all the votes between the start and end date of each poll voted by arg_address (per chain)
+  -- Results in all the votes between the start and end date of each poll (per chain)
   WITH all_valid_mainnet_votes AS (
     SELECT 
       v.voter,
@@ -44,24 +44,20 @@ RETURNS TABLE (
     JOIN vulcan2xarbitrum.transaction t ON va.tx_id = t.id
     WHERE b.timestamp >= to_timestamp(c.start_date) AND b.timestamp <= to_timestamp(c.end_date)
   ),
-  -- Results in the most recent vote for each poll for an address (per chain)
+  -- Results have to be unique on the combination of pollId / address
   distinct_mn_votes AS (
-    SELECT DISTINCT ON (mnv.poll_id) *
+    SELECT *
     FROM all_valid_mainnet_votes mnv
-    WHERE voter = (SELECT hot FROM dschief.all_active_vote_proxies(2147483647) WHERE cold = arg_address)
-    OR voter = (SELECT cold FROM dschief.all_active_vote_proxies(2147483647) WHERE hot = arg_address)
-    OR voter = arg_address
     ORDER BY poll_id DESC,
     block_id DESC
+    UNIQUE (mnv.poll_id, mnv.voter)
   ),
   distinct_arb_votes AS (
-    SELECT DISTINCT ON (arbv.poll_id) *
+    SELECT *
     FROM all_valid_arbitrum_votes arbv
-    WHERE voter = (SELECT hot FROM dschief.all_active_vote_proxies(2147483647) WHERE cold = arg_address)
-    OR voter = (SELECT cold FROM dschief.all_active_vote_proxies(2147483647) WHERE hot = arg_address)
-    OR voter = arg_address
     ORDER BY poll_id DESC,
     block_id DESC
+    UNIQUE (arbv.poll_id, arbv.voter)
   ),
   -- Results in 1 distinct vote for both chains (if exists)
   combined_votes AS (
@@ -70,7 +66,7 @@ RETURNS TABLE (
   select * from distinct_arb_votes cva
   )
 -- Results in 1 distinct vote for only one chain (the latest vote)
-SELECT DISTINCT ON (poll_id) 
+SELECT
   cv.poll_id,
   cv.option_id,
   cv.option_id_raw, 
@@ -78,7 +74,7 @@ SELECT DISTINCT ON (poll_id)
   cv.chain_id,
   -- Gets the mkr support at the end of the poll, or at current time if poll has not ended
   -- need to pass in a vote proxy address if address has a vote proxy
-  polling.reverse_voter_weight(polling.unique_voter_address(arg_address, (
+  polling.reverse_voter_weight(polling.unique_voter_address(cv.voter, (
     select id
     from vulcan2x.block 
     where timestamp <= (SELECT LEAST (CURRENT_TIMESTAMP, cv.end_timestamp))
@@ -92,6 +88,5 @@ SELECT DISTINCT ON (poll_id)
   ORDER BY 
     cv.poll_id DESC, 
     cv.block_timestamp DESC
-  OFFSET start
-  LIMIT limit
+  UNIQUE (cv.poll_id, cv.voter)
 $$ LANGUAGE sql STABLE STRICT;
