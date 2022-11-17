@@ -46,18 +46,16 @@ RETURNS TABLE (
   ),
   -- Results have to be unique on the combination of pollId / address
   distinct_mn_votes AS (
-    SELECT *
+    SELECT DISTINCT ON (mnv.poll_id, mnv.voter) *
     FROM all_valid_mainnet_votes mnv
     ORDER BY poll_id DESC,
     block_id DESC
-    UNIQUE (mnv.poll_id, mnv.voter)
   ),
   distinct_arb_votes AS (
-    SELECT *
+    SELECT DISTINCT ON (arbv.poll_id, arbv.voter) *
     FROM all_valid_arbitrum_votes arbv
     ORDER BY poll_id DESC,
     block_id DESC
-    UNIQUE (arbv.poll_id, arbv.voter)
   ),
   -- Results in 1 distinct vote for both chains (if exists)
   combined_votes AS (
@@ -66,7 +64,7 @@ RETURNS TABLE (
   select * from distinct_arb_votes cva
   )
 -- Results in 1 distinct vote for only one chain (the latest vote)
-SELECT
+SELECT DISTINCT ON (cv.poll_id, cv.voter) 
   cv.poll_id,
   cv.option_id,
   cv.option_id_raw, 
@@ -88,5 +86,4 @@ SELECT
   ORDER BY 
     cv.poll_id DESC, 
     cv.block_timestamp DESC
-  UNIQUE (cv.poll_id, cv.voter)
 $$ LANGUAGE sql STABLE STRICT;
