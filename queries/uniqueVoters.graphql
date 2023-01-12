@@ -1,0 +1,19 @@
+query uniqueVoters(
+  $after: Cursor
+  $argPollId: Int!
+  $before: Cursor
+  $first: Int
+  $last: Int
+  $offset: Int
+) {
+  uniqueVoters (
+    after: $after
+    argPollId: $argPollId
+    before: $before
+    first: $first
+    last: $last
+    offset: $offset
+  ) {
+    nodes
+  }
+}
