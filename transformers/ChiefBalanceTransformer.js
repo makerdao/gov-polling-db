@@ -1,15 +1,15 @@
 const {
   getExtractorName,
-} = require("spock-etl/lib/core/processors/extractors//instances/rawEventDataExtractor");
+} = require('@makerdao-dux/spock-utils/dist/extractors/rawEventDataExtractor');
 const {
   handleDsNoteEvents,
-} = require("spock-etl/lib/core/processors/transformers/common");
-const { getLogger } = require("spock-etl/lib/core/utils/logger");
-const BigNumber = require("bignumber.js").BigNumber;
+} = require('@makerdao-dux/spock-utils/dist/transformers/common');
+const { getLogger } = require('@makerdao-dux/spock-etl/dist/utils/logger');
+const BigNumber = require('bignumber.js').BigNumber;
 // @ts-ignore
-const dsChiefAbi = require("../abis/ds_chief.json");
+const dsChiefAbi = require('../abis/ds_chief.json');
 
-const amountColumnType = "decimal(78,18)";
+const amountColumnType = 'decimal(78,18)';
 
 async function processRow(db, { caller, wad, tx_id, block_id }) {
   const sql = `
@@ -28,14 +28,14 @@ async function processRow(db, { caller, wad, tx_id, block_id }) {
 
   return db.none(sql, {
     address: caller,
-    amount: new BigNumber(wad).div(new BigNumber("1e18")).toString(),
+    amount: new BigNumber(wad).div(new BigNumber('1e18')).toString(),
     tx_id,
     block_id,
   });
 }
 
 const handlers = {
-  "free(uint256)": (
+  'free(uint256)': (
     services,
     {
       note: {
@@ -45,7 +45,7 @@ const handlers = {
       log: { tx_id, block_id },
     }
   ) => processRow(services.tx, { caller, wad: `-${wad}`, tx_id, block_id }),
-  "lock(uint256)": (
+  'lock(uint256)': (
     services,
     {
       note: {

@@ -5,19 +5,26 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "start-etl": "node -r ./loadenv.js ./node_modules/spock-etl/lib/core/runner.js etl ./config.js",
+    "start-etl": "node -r ./loadenv.js ./node_modules/@makerdao-dux/spock-etl/dist/bin/etl ./config.js",
     "start-sync": "yarn migrate",
-    "migrate": "node -r ./loadenv.js ./node_modules/spock-etl/lib/core/runner.js migrate ./config.js",
-    "start-api": "node -r ./loadenv.js ./node_modules/spock-etl/lib/core/runner.js api ./config.js",
+    "migrate": "node -r ./loadenv.js ./node_modules/@makerdao-dux/spock-etl/dist/bin/migrate ./config.js",
+    "start-api": "node -r ./loadenv.js ./node_modules/@makerdao-dux/spock-graphql-api/dist/index.js ./config.js",
     "test": "jest",
     "test:ci": "./tests/run-tests.sh",
     "repl": "node --experimental-repl-await -r ./loadenv.js ./repl"
   },
   "dependencies": {
+    "@makerdao-dux/spock-etl": "^0.2.0",
+    "@makerdao-dux/spock-graphql-api": "^0.2.1",
+    "@makerdao-dux/spock-utils": "^0.2.0",
+    "bignumber.js": "^9.0.2",
+    "consola": "^2.15.3",
     "dotenv-flow": "^2.0.0",
-    "spock-etl": "^0.0.59"
+    "ethers": "krzkaczor/ethers.js#kk/get-logs-multiple-address-build"
   },
   "devDependencies": {
+    "eslint": "^8.23.1",
+    "eslint-plugin-prettier": "^4.2.1",
     "graphql-request": "^1.8.2",
     "jest": "^24.8.0",
     "pg-promise": "^8.7.2"
