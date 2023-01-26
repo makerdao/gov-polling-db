@@ -1,0 +1,20 @@
+query delegatesByDelegators(
+  $after: Cursor
+  $orderDirection: OrderDirectionType
+) {
+  delegatesByDelegators(
+    first: 30
+    after: $after
+    orderDirection: $orderDirection
+  ) {
+    totalCount
+    pageInfo {
+      hasNextPage
+      endCursor
+    }
+    nodes {
+      delegate
+      voteDelegate
+    }
+  }
+}
