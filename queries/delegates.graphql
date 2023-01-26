@@ -1,11 +1,17 @@
-query delegatesByDelegators(
+query delegates(
+  $first: Int = 20
   $after: Cursor
+  $orderBy: OrderByType
   $orderDirection: OrderDirectionType
+  $includeExpired: Boolean
 ) {
-  delegatesByDelegators(
-    first: 30
+  delegates(
+    first: $first
+    _first: $first
     after: $after
+    orderBy: $orderBy
     orderDirection: $orderDirection
+    includeExpired: $includeExpired
   ) {
     totalCount
     pageInfo {
