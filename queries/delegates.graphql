@@ -21,6 +21,11 @@ query delegates(
     nodes {
       delegate
       voteDelegate
+      creationDate
+      expirationDate
+      expired
+      delegatorCount
+      totalMkr
     }
   }
 }
