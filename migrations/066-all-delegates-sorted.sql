@@ -1,5 +1,5 @@
 create type order_direction_type as enum ('ASC', 'DESC');
-create type order_by_type as enum ('DATE', 'MKR', 'DELEGATORS');
+create type delegate_order_by_type as enum ('DATE', 'MKR', 'DELEGATORS');
 create type delegate_entry as (
   delegate character varying(66),
   vote_delegate character varying(66),
@@ -17,7 +17,7 @@ returns int as $$
 select 30
 $$ language sql stable strict;
 
-create or replace function api.delegates(_first int, order_by order_by_type default 'DATE', order_direction order_direction_type default 'DESC', include_expired boolean default false)
+create or replace function api.delegates(_first int, order_by delegate_order_by_type default 'DATE', order_direction order_direction_type default 'DESC', include_expired boolean default false)
 returns setof delegate_entry as $$
 declare
   max_page_size_value int := (select api.max_page_size());

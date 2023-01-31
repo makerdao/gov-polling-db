@@ -1,7 +1,7 @@
 query delegates(
   $first: Int = 20
   $after: Cursor
-  $orderBy: OrderByType
+  $orderBy: DelegateOrderByType
   $orderDirection: OrderDirectionType
   $includeExpired: Boolean
 ) {
