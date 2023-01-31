@@ -24,6 +24,7 @@ query delegates(
       creationDate
       expirationDate
       expired
+      lastVoted
       delegatorCount
       totalMkr
     }
