@@ -1,0 +1,5 @@
+query livePollCount {
+  livePollCount {
+    nodes
+  }
+}
