@@ -1,3 +1,4 @@
+drop function if exists api.live_poll_count; -- must drop because return type changed
 create or replace function api.live_poll_count()
 returns bigint as $$
   select count(*)
