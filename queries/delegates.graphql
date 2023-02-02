@@ -4,6 +4,7 @@ query delegates(
   $orderBy: DelegateOrderByType
   $orderDirection: OrderDirectionType
   $includeExpired: Boolean
+  $filter: DelegateEntryFilter
 ) {
   delegates(
     first: $first
@@ -12,6 +13,7 @@ query delegates(
     orderBy: $orderBy
     orderDirection: $orderDirection
     includeExpired: $includeExpired
+    filter: $filter
   ) {
     totalCount
     pageInfo {
