@@ -1,5 +1,6 @@
 query delegates(
   $first: Int = 20
+  $offset: Int
   $after: Cursor
   $orderBy: DelegateOrderByType
   $orderDirection: OrderDirectionType
@@ -9,6 +10,7 @@ query delegates(
   delegates(
     first: $first
     _first: $first
+    offset: $offset
     after: $after
     orderBy: $orderBy
     orderDirection: $orderDirection
@@ -18,6 +20,7 @@ query delegates(
     totalCount
     pageInfo {
       hasNextPage
+      startCursor
       endCursor
     }
     nodes {
