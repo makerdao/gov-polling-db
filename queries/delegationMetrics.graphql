@@ -1,0 +1,6 @@
+query delegationMetrics {
+  delegationMetrics {
+    delegatorCount
+    totalMkrDelegated
+  }
+}
