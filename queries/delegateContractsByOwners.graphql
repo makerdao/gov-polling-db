@@ -1,8 +1,0 @@
-query delegateContractsByOwners($owners: [String!]) {
-  allDelegates(filter: { delegate: { in: $owners } }) {
-    nodes {
-      delegate
-      voteDelegate
-    }
-  }
-}
