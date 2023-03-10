@@ -5,6 +5,7 @@ query delegates(
   $orderBy: DelegateOrderByType
   $orderDirection: OrderDirectionType
   $includeExpired: Boolean
+  $seed: Float
   $filter: DelegateEntryFilter
 ) {
   delegates(
@@ -15,6 +16,7 @@ query delegates(
     orderBy: $orderBy
     orderDirection: $orderDirection
     includeExpired: $includeExpired
+    seed: $seed
     filter: $filter
   ) {
     totalCount
