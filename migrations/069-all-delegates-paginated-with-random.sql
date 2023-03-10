@@ -59,6 +59,8 @@ begin
       )
       select delegate::character varying(66), vote_delegate::character varying(66), creation_date, expiration_date, expired, last_voted, coalesce(delegators, 0)::int as delegator_count, coalesce(delegations, 0)::numeric(78,18) as total_mkr
       from (
+        -- We call setseed here to make sure it's executed before the main select statement and the order by random clause.
+        -- By appending it to the delegates_with_last_vote table and then removing the row with offset 1, we make sure the table remains unmodified.
         select setseed(seed), null delegate, null vote_delegate, null creation_date, null expiration_date, null expired, null last_voted
         union all
         select null, delegate, vote_delegate, creation_date, expiration_date, expired, last_voted from delegates_with_last_vote
