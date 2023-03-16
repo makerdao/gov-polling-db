@@ -1,0 +1,36 @@
+query polls(
+  $first: Int = 20
+  $offset: Int
+  $orderBy: PollOrderByType
+  $filter: PollEntryFilter
+) {
+  pollingStats {
+    activePolls
+    finishedPolls
+    totalPolls
+  }
+
+  polls(
+    first: $first
+    _first: $first
+    offset: $offset
+    orderBy: $orderBy
+    filter: $filter
+  ) {
+    totalCount
+    pageInfo {
+      hasNextPage
+      startCursor
+      endCursor
+    }
+    nodes {
+      creator
+      pollId
+      createdAt
+      startDate
+      endDate
+      multiHash
+      url
+    }
+  }
+}
