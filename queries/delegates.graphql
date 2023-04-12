@@ -7,6 +7,7 @@ query delegates(
   $includeExpired: Boolean
   $seed: Float
   $filter: DelegateEntryFilter
+  $constitutionalDelegates: [String]
 ) {
   delegates(
     first: $first
@@ -18,6 +19,7 @@ query delegates(
     includeExpired: $includeExpired
     seed: $seed
     filter: $filter
+    constitutionalDelegates: $constitutionalDelegates
   ) {
     totalCount
     pageInfo {
