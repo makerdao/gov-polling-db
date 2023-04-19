@@ -1,5 +1,7 @@
 # Blockchain ETL for Maker Governance
 
+Copyright [Dai Foundation](https://daifoundation.org/) 2022.
+
 Backend that uses the [spock SDK](https://github.com/oasisdex/spock) to:
 
 1. Extract: listen for events from specified contracts. Extractors are defined in the ./config.js file.
@@ -26,9 +28,10 @@ yarn start-api     # starts GraphQL API
 
 ```
 
-## Environment 
+## Environment
 
-Create the connection details for the database by setting the following environment variables.  A default .env file is provided, which uses the following values:
+Create the connection details for the database by setting the following environment variables. A default .env file is provided, which uses the following values:
+
 ```
 VL_DB_DATABASE=database
 VL_DB_USER=user
@@ -37,7 +40,7 @@ VL_DB_HOST=localhost
 VL_DB_PORT=5433
 ```
 
-You'll also need to set a `VL_CHAIN_HOST` env variable that points to an ethereum node.  Alchemy is recommended, Infura is not.  See the [spock readme](https://github.com/oasisdex/spock) for more information, and also for information about the `VL_LOGGING_LEVEL` env variable.  
+You'll also need to set a `VL_CHAIN_HOST` env variable that points to an ethereum node. Alchemy is recommended, Infura is not. See the [spock readme](https://github.com/oasisdex/spock) for more information, and also for information about the `VL_LOGGING_LEVEL` env variable.
 
 ## Using Postico (optional)
 
