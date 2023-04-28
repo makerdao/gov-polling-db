@@ -1,0 +1,9 @@
+query pollsVoteBreakdown($paramPollIds: [Int]!) {
+  pollsVoteBreakdown(paramPollIds: $paramPollIds) {
+    nodes {
+      pollId
+      optionId
+      mkrSupport
+    }
+  }
+}
