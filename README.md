@@ -28,6 +28,10 @@ yarn start-api     # starts GraphQL API
 
 ```
 
+### To Build the services in a docker container (optional)
+
+`docker build -t makerdaodux/govpolldb-app:latest .`
+
 ## Environment
 
 Create the connection details for the database by setting the following environment variables. A default .env file is provided, which uses the following values:
