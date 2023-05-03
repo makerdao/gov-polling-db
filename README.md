@@ -32,6 +32,12 @@ yarn start-api     # starts GraphQL API
 
 `docker build -t makerdaodux/govpolldb-app:latest .`
 
+or 
+
+`docker buildx build --platform linux/amd64,linux/arm64 -t makerdaodux/govpolldb-app:latest --push .`
+
+to build for both linux/arm64 and linux/amd64 platforms, the latter is what github actions uses. This command also pushes the images to dockerhub. You may need to switch your docker drive to buildx first to run this command.
+
 ## Environment
 
 Create the connection details for the database by setting the following environment variables. A default .env file is provided, which uses the following values:
