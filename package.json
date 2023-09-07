@@ -7,7 +7,8 @@
   "scripts": {
     "start-etl": "node -r ./loadenv.js ./node_modules/@makerdao-dux/spock-etl/dist/bin/etl ./config.js",
     "start-sync": "yarn migrate",
-    "migrate": "node -r ./loadenv.js ./node_modules/@makerdao-dux/spock-etl/dist/bin/migrate ./config.js",
+    "migrate:only": "node -r ./loadenv.js ./node_modules/@makerdao-dux/spock-etl/dist/bin/migrate ./config.js",
+    "migrate": "yarn migrate:only && yarn insert-poll-creators",
     "start-api": "node -r ./loadenv.js ./node_modules/@makerdao-dux/spock-graphql-api/dist/index.js ./config.js",
     "test": "jest",
     "test:ci": "./tests/run-tests.sh",
