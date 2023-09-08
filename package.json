@@ -23,7 +23,7 @@
     "consola": "^2.15.3",
     "dotenv-flow": "^2.0.0",
     "ethers": "krzkaczor/ethers.js#kk/get-logs-multiple-address-build",
-    "pg-promise": "10.4.4"
+    "pg-promise": "10.11.1"
   },
   "devDependencies": {
     "eslint": "^8.23.1",
