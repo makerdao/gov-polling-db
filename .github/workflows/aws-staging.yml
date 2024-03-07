@@ -15,9 +15,9 @@ jobs:
       MAINNET_ETL_SERVICE_NAME: polling-db2-mainnet-staging-etl
       MAINNET_API_SERVICE_NAME: polling-db2-mainnet-staging-api
       MAINNET_CLUSTER_NAME: polling-db2-mainnet-staging
-      GOERLI_ETL_SERVICE_NAME: polling-db2-goerli-staging-etl
-      GOERLI_API_SERVICE_NAME: polling-db2-goerli-staging-api
-      GOERLI_CLUSTER_NAME: polling-db2-goerli-staging
+      TENDERLY_ETL_SERVICE_NAME: polling-db2-tenderly-staging-etl
+      TENDERLY_API_SERVICE_NAME: polling-db2-tenderly-staging-api
+      TENDERLY_CLUSTER_NAME: polling-db2-tenderly-staging
 
     steps:
     - name: Checkout
@@ -69,17 +69,17 @@ jobs:
       run: |
         aws ecs update-service --cluster $MAINNET_CLUSTER_NAME  --service ${{ env.MAINNET_API_SERVICE_NAME }} --force-new-deployment --region $AWS_REGION
 
-      # ETL goerli
-    - name: Update ${{ env.GOERLI_ETL_SERVICE_NAME }} ECS service with latest Docker image
-      id: service-update-etl-goerli
+      # ETL tenderly
+    - name: Update ${{ env.TENDERLY_ETL_SERVICE_NAME }} ECS service with latest Docker image
+      id: service-update-etl-tenderly
       run: |
-        aws ecs update-service --cluster $GOERLI_CLUSTER_NAME  --service ${{ env.GOERLI_ETL_SERVICE_NAME }} --force-new-deployment --region $AWS_REGION
+        aws ecs update-service --cluster $TENDERLY_CLUSTER_NAME  --service ${{ env.TENDERLY_ETL_SERVICE_NAME }} --force-new-deployment --region $AWS_REGION
 
-      # API goerli
-    - name: Update ${{ env.GOERLI_API_SERVICE_NAME }} ECS service with latest Docker image
-      id: service-update-api-goerli
+      # API tenderly
+    - name: Update ${{ env.TENDERLY_API_SERVICE_NAME }} ECS service with latest Docker image
+      id: service-update-api-tenderly
       run: |
-        aws ecs update-service --cluster $GOERLI_CLUSTER_NAME  --service ${{ env.GOERLI_API_SERVICE_NAME }} --force-new-deployment --region $AWS_REGION
+        aws ecs update-service --cluster $TENDERLY_CLUSTER_NAME  --service ${{ env.TENDERLY_API_SERVICE_NAME }} --force-new-deployment --region $AWS_REGION
 
       # Wait for all containers
     - name: Wait for all services to become stable on ${{ env.MAINNET_CLUSTER_NAME }} cluster
@@ -88,8 +88,8 @@ jobs:
         ecs-cluster: ${{ env.MAINNET_CLUSTER_NAME }}
         ecs-services: '["${{ env.MAINNET_ETL_SERVICE_NAME }}", "${{ env.MAINNET_API_SERVICE_NAME }}"]'
 
-    - name: Wait for all services to become stable on ${{ env.GOERLI_CLUSTER_NAME }} cluster
+    - name: Wait for all services to become stable on ${{ env.TENDERLY_CLUSTER_NAME }} cluster
       uses: oryanmoshe/ecs-wait-action@v1.3
       with:
-        ecs-cluster: ${{ env.GOERLI_CLUSTER_NAME }}
-        ecs-services: '["${{ env.GOERLI_ETL_SERVICE_NAME }}", "${{ env.GOERLI_API_SERVICE_NAME }}"]'
+        ecs-cluster: ${{ env.TENDERLY_CLUSTER_NAME }}
+        ecs-services: '["${{ env.TENDERLY_ETL_SERVICE_NAME }}", "${{ env.TENDERLY_API_SERVICE_NAME }}"]'
