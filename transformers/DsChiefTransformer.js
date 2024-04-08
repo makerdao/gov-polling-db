@@ -10,9 +10,12 @@ const {
   getTxByIdOrDie,
 } = require('@makerdao-dux/spock-utils/dist/extractors/common');
 const BigNumber = require('bignumber.js').BigNumber;
+const { getLogger } = require('@makerdao-dux/spock-etl/dist/utils/logger');
 
 const LockTopic = `0x625fed9875dada8643f2418b838ae0bc78d9a148a18eee4ee1979ff0f3f5d427`;
 const FreeTopic = `0xce6c5af8fd109993cb40da4d5dc9e4dd8e61bc2e48f1e3901472141e4f56f293`;
+
+const logger = getLogger('Chief');
 
 module.exports = (address, nameSuffix = '') => ({
   name: `DsChiefTransformer${nameSuffix}`,
@@ -38,18 +41,18 @@ const handlers = {
 
     //get delegate event
     try {
-      const delegateRow = await services.db.oneOrNone(delegateQuery, [log.tx_id, log.log_index]);
-      if (delegateRow) {
-        console.log('skipping delegate_lock event in free handler since it\'s already in the DB', row);
-        return;
-      } else {
-        const transaction = await services.provider.getTransaction(tx.hash);
-        //get transaction receipt
-        const { logs } = await transaction.wait();
-        //get event(s) from Delegate contract. Usually only one per transaction
-        const delegateLogArray = logs.filter(l => l.topics[0] === FreeTopic);
-        await Promise.all(delegateLogArray.map(delegateLog => 
-          insertDelegateLock(services, {
+      const transaction = await services.provider.getTransaction(tx.hash);
+      //get transaction receipt
+      const { logs } = await transaction.wait();
+      //get event(s) from Delegate contract. Usually only one per transaction
+      const delegateLogArray = logs.filter(l => l.topics[0] === FreeTopic);
+      await Promise.all(delegateLogArray.map(async delegateLog => {
+        const delegateRow = await services.db.oneOrNone(delegateQuery, [log.tx_id, delegateLog.logIndex]);
+        if (delegateRow) {
+          logger.warn('skipping delegate_lock event in free handler since it\'s already in the DB', delegateRow);
+          return;
+        } else {
+          return insertDelegateLock(services, {
             fromAddress: tx.from_address,
             immediateCaller: '0x' + delegateLog.topics[1].slice(-40),
             lock: new BigNumber(delegateLog.data).div(new BigNumber("1e18")).negated().toString(),
@@ -57,16 +60,16 @@ const handlers = {
             txId: log.tx_id,
             blockId: log.block_id,
             logIndex: delegateLog.logIndex,
-          })
-        ));
-      }
+          });
+        }
+      }));
     } catch (e) {
-      console.log('error trying to find delegate free event', e);
+      logger.error('error trying to find delegate free event', e);
     }
 
     const chiefRow = await services.db.oneOrNone(chiefQuery, [log.tx_id, log.log_index]);
     if (chiefRow) {
-      console.log('skipping chief.free event since it\'s already in the DB', row);
+      logger.warn('skipping chief.free event since it\'s already in the DB', chiefRow);
       return;
     }
 
@@ -88,18 +91,18 @@ const handlers = {
 
     //get delegate event
     try {
-      const delegateRow = await services.db.oneOrNone(delegateQuery, [log.tx_id, log.log_index]);
-      if (delegateRow) {
-        console.log('skipping delegate_lock event in lock handler since it\'s already in the DB', row);
-        return;
-      } else {
-        const transaction = await services.provider.getTransaction(tx.hash);
-        //get transaction receipt
-        const { logs } = await transaction.wait();
-        //get event(s) from Delegate contract. Usually only one per transaction
-        const delegateLogArray = logs.filter(l => l.topics[0] === LockTopic);
-        await Promise.all(delegateLogArray.map(delegateLog => 
-          insertDelegateLock(services, {
+      const transaction = await services.provider.getTransaction(tx.hash);
+      //get transaction receipt
+      const { logs } = await transaction.wait();
+      //get event(s) from Delegate contract. Usually only one per transaction
+      const delegateLogArray = logs.filter(l => l.topics[0] === LockTopic);
+      await Promise.all(delegateLogArray.map(async delegateLog => {
+        const delegateRow = await services.db.oneOrNone(delegateQuery, [log.tx_id, delegateLog.logIndex]);
+        if (delegateRow) {
+          logger.warn('skipping delegate_lock event in lock handler since it\'s already in the DB', delegateRow);
+          return;
+        } else {
+          return insertDelegateLock(services, {
             fromAddress: tx.from_address,
             immediateCaller: '0x' + delegateLog.topics[1].slice(-40),
             lock: new BigNumber(delegateLog.data).div(new BigNumber("1e18")).toString(),
@@ -107,16 +110,16 @@ const handlers = {
             txId: log.tx_id,
             blockId: log.block_id,
             logIndex: delegateLog.logIndex,
-          })
-        ));
-      }
+          });
+        }
+      }));
     } catch (e) {
-      console.log('error trying to find delegate lock event', e);
+      logger.error('error trying to find delegate lock event', e);
     }
 
     const chiefRow = await services.db.oneOrNone(chiefQuery, [log.tx_id, log.log_index]);
     if (chiefRow) {
-      console.log('skipping chief.lock event since it\'s already in the DB', row);
+      logger.warn('skipping chief.lock event since it\'s already in the DB', chiefRow);
       return;
     }
 
