@@ -22,8 +22,13 @@ module.exports = (address, nameSuffix = '') => ({
   },
 });
 
-const vdQuery = `SELECT *
+const chiefQuery = `SELECT *
     FROM dschief.lock
+    WHERE tx_id = $1
+    AND log_index = $2`;
+
+const delegateQuery = `SELECT *
+    FROM dschief.delegate_lock
     WHERE tx_id = $1
     AND log_index = $2`;
 
@@ -33,28 +38,34 @@ const handlers = {
 
     //get delegate event
     try {
-      const transaction = await services.provider.getTransaction(tx.hash);
-      //get transaction receipt
-      const { logs } = await transaction.wait();
-      //get event(s) from Delegate contract. Usually only one per transaction
-      const delegateLogArray = logs.filter(l => l.topics[0] === FreeTopic);
-      delegateLogArray.forEach(async delegateLog => {
-        await insertDelegateLock(services, {
-          fromAddress: tx.from_address,
-          immediateCaller: '0x' + delegateLog.topics[1].slice(-40),
-          lock: new BigNumber(delegateLog.data).div(new BigNumber("1e18")).negated().toString(),
-          contractAddress: delegateLog.address.toLowerCase(),
-          txId: log.tx_id,
-          blockId: log.block_id,
-          logIndex: delegateLog.logIndex,
-        });
-      });
+      const delegateRow = await services.db.oneOrNone(delegateQuery, [log.tx_id, log.log_index]);
+      if (delegateRow) {
+        console.log('skipping delegate_lock event in free handler since it\'s already in the DB', row);
+        return;
+      } else {
+        const transaction = await services.provider.getTransaction(tx.hash);
+        //get transaction receipt
+        const { logs } = await transaction.wait();
+        //get event(s) from Delegate contract. Usually only one per transaction
+        const delegateLogArray = logs.filter(l => l.topics[0] === FreeTopic);
+        await Promise.all(delegateLogArray.map(delegateLog => 
+          insertDelegateLock(services, {
+            fromAddress: tx.from_address,
+            immediateCaller: '0x' + delegateLog.topics[1].slice(-40),
+            lock: new BigNumber(delegateLog.data).div(new BigNumber("1e18")).negated().toString(),
+            contractAddress: delegateLog.address.toLowerCase(),
+            txId: log.tx_id,
+            blockId: log.block_id,
+            logIndex: delegateLog.logIndex,
+          })
+        ));
+      }
     } catch (e) {
       console.log('error trying to find delegate free event', e);
     }
 
-    const row = await services.db.oneOrNone(vdQuery, [log.tx_id, log.log_index]);
-    if (row) {
+    const chiefRow = await services.db.oneOrNone(chiefQuery, [log.tx_id, log.log_index]);
+    if (chiefRow) {
       console.log('skipping chief.free event since it\'s already in the DB', row);
       return;
     }
@@ -77,28 +88,34 @@ const handlers = {
 
     //get delegate event
     try {
-      const transaction = await services.provider.getTransaction(tx.hash);
-      //get transaction receipt
-      const { logs } = await transaction.wait();
-      //get event(s) from Delegate contract. Usually only one per transaction
-      const delegateLogArray = logs.filter(l => l.topics[0] === LockTopic);
-      delegateLogArray.forEach(async delegateLog => {
-        await insertDelegateLock(services, {
-          fromAddress: tx.from_address,
-          immediateCaller: '0x' + delegateLog.topics[1].slice(-40),
-          lock: new BigNumber(delegateLog.data).div(new BigNumber("1e18")).toString(),
-          contractAddress: delegateLog.address.toLowerCase(),
-          txId: log.tx_id,
-          blockId: log.block_id,
-          logIndex: delegateLog.logIndex,
-        });
-      });
+      const delegateRow = await services.db.oneOrNone(delegateQuery, [log.tx_id, log.log_index]);
+      if (delegateRow) {
+        console.log('skipping delegate_lock event in lock handler since it\'s already in the DB', row);
+        return;
+      } else {
+        const transaction = await services.provider.getTransaction(tx.hash);
+        //get transaction receipt
+        const { logs } = await transaction.wait();
+        //get event(s) from Delegate contract. Usually only one per transaction
+        const delegateLogArray = logs.filter(l => l.topics[0] === LockTopic);
+        await Promise.all(delegateLogArray.map(delegateLog => 
+          insertDelegateLock(services, {
+            fromAddress: tx.from_address,
+            immediateCaller: '0x' + delegateLog.topics[1].slice(-40),
+            lock: new BigNumber(delegateLog.data).div(new BigNumber("1e18")).toString(),
+            contractAddress: delegateLog.address.toLowerCase(),
+            txId: log.tx_id,
+            blockId: log.block_id,
+            logIndex: delegateLog.logIndex,
+          })
+        ));
+      }
     } catch (e) {
       console.log('error trying to find delegate lock event', e);
     }
 
-    const row = await services.db.oneOrNone(vdQuery, [log.tx_id, log.log_index]);
-    if (row) {
+    const chiefRow = await services.db.oneOrNone(chiefQuery, [log.tx_id, log.log_index]);
+    if (chiefRow) {
       console.log('skipping chief.lock event since it\'s already in the DB', row);
       return;
     }
