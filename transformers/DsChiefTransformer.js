@@ -10,9 +10,12 @@ const {
   getTxByIdOrDie,
 } = require('@makerdao-dux/spock-utils/dist/extractors/common');
 const BigNumber = require('bignumber.js').BigNumber;
+const { getLogger } = require('@makerdao-dux/spock-etl/dist/utils/logger');
 
 const LockTopic = `0x625fed9875dada8643f2418b838ae0bc78d9a148a18eee4ee1979ff0f3f5d427`;
 const FreeTopic = `0xce6c5af8fd109993cb40da4d5dc9e4dd8e61bc2e48f1e3901472141e4f56f293`;
+
+const logger = getLogger('DSChief');
 
 module.exports = (address, nameSuffix = '') => ({
   name: `DsChiefTransformer${nameSuffix}`,
@@ -50,12 +53,12 @@ const handlers = {
         });
       });
     } catch (e) {
-      console.log('error trying to find delegate free event', e);
+      logger.error('error trying to find delegate free event', e);
     }
 
     const row = await services.db.oneOrNone(vdQuery, [log.tx_id, log.log_index]);
     if (row) {
-      console.log('skipping chief.free event since it\'s already in the DB', row);
+      logger.warn('skipping chief.free event since it\'s already in the DB', row);
       return;
     }
 
@@ -94,12 +97,12 @@ const handlers = {
         });
       });
     } catch (e) {
-      console.log('error trying to find delegate lock event', e);
+      logger.error('error trying to find delegate lock event', e);
     }
 
     const row = await services.db.oneOrNone(vdQuery, [log.tx_id, log.log_index]);
     if (row) {
-      console.log('skipping chief.lock event since it\'s already in the DB', row);
+      logger.warn('skipping chief.lock event since it\'s already in the DB', row);
       return;
     }
 
@@ -128,7 +131,7 @@ INSERT INTO dschief.lock(contract_address, from_address, immediate_caller, lock,
 const insertDelegateLock = (s, values) => {
   return s.tx.none(
     `
-INSERT INTO dschief.delegate_lock(contract_address, from_address, immediate_caller, lock, log_index, tx_id, block_id) VALUES (\${contractAddress}, \${fromAddress}, \${immediateCaller}, \${lock}, \${logIndex}, \${txId}, \${blockId})`,
+INSERT INTO dschief.delegate_lock(contract_address, from_address, immediate_caller, lock, log_index, tx_id, block_id) VALUES (\${contractAddress}, \${fromAddress}, \${immediateCaller}, \${lock}, \${logIndex}, \${txId}, \${blockId}) ON CONFLICT (log_index, tx_id) DO NOTHING`,
     values,
   );
 };
