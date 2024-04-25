@@ -45,9 +45,9 @@ const VOTE_DELEGATE_FACTORY_GOERLI_ADDRESS =
 //Arbitrum mainnet
 const ARB_POLLING_ADDRESS = '0x4f4e551b4920a5417F8d4e7f8f099660dAdadcEC';
 
-// arbitrum testnet
+// arbitrum testnet (sepolia)
 const ARB_TESTNET_POLLING_ADDRESS =
-  '0x4d196378e636D22766d6A9C6C6f4F32AD3ECB050';
+  '0xceaB5Bb248A9237128943BbC9d38fd02A4440B10';
 
 const CHAIN_HOST_L1 = process.env.VL_CHAIN_HOST;
 const CHAIN_HOST_L2 = process.env.VL_CHAIN_HOST_L2;
@@ -157,7 +157,7 @@ const mainnet = {
   },
   onStart: (services) =>
     console.log(
-      `Starting Mainnet config with these services: ${Object.keys(services)}`
+      `Starting Mainnet config with these services: ${Object.keys(services)}`,
     ),
 };
 
@@ -202,7 +202,7 @@ const arbitrumTestnet = {
     host: CHAIN_HOST_L2,
     retries: 15,
   },
-  startingBlock: 154800,
+  startingBlock: 37261050,
   extractors: [...makeRawLogExtractors([ARB_TESTNET_POLLING_ADDRESS])],
   transformers: [arbitrumPollingTransformer(ARB_TESTNET_POLLING_ADDRESS)],
   migrations: {
