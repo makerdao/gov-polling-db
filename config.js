@@ -227,9 +227,9 @@ let config;
 if (process.env.VL_CONFIG_NAME === 'multi') {
   console.log('Using Mainnet multi-chain config');
   config = [mainnet, arbitrum];
-} else if (process.env.VL_CONFIG_NAME === 'multi_goerli') {
-  console.log('Using Goerli multi-chain config');
-  config = [goerli, arbitrumTestnet];
+} else if (process.env.VL_CONFIG_NAME === 'multi_tenderly') {
+  console.log('Using Tenderly multi-chain config');
+  config = [mainnet, arbitrumTestnet];
 }
 
 module.exports.default = config;
