@@ -12,6 +12,7 @@ const voteProxyFactoryTransformer = require('./transformers/VoteProxyFactoryTran
 const esmTransformer = require('./transformers/EsmTransformer');
 const esmV2Transformer = require('./transformers/EsmV2Transformer');
 const voteDelegateFactoryTransformer = require('./transformers/VoteDelegateFactoryTransformer');
+const v2VoteDelegateFactoryTransformer = require('./transformers/V2VoteDelegateFactoryTransformer');
 
 //mainnet
 const MKR_ADDRESS = '0x9f8f72aa9304c8b593d555f12ef6589cc3a579a2';
@@ -29,6 +30,9 @@ const VOTE_PROXY_FACTORY_12_ADDRESS =
 const VOTE_DELEGATE_FACTORY_ADDRESS =
   '0xD897F108670903D1d6070fcf818f9db3615AF272';
 
+const USE_TENDERLY_CONFIG = process.env.USE_TENDERLY_CONFIG;
+const V2_VOTE_DELEGATE_FACTORY_ADDRESS = USE_TENDERLY_CONFIG ? '0xc1dc7a8379885676a6ea08e67b7defd9a235de71' : ''; //TODO: add mainnet address
+
 //Arbitrum mainnet
 const ARB_POLLING_ADDRESS = '0x4f4e551b4920a5417F8d4e7f8f099660dAdadcEC';
 
@@ -43,7 +47,7 @@ const mainnet = {
   name: 'mainnet',
   processorSchema: 'vulcan2x',
   extractedSchema: 'extracted',
-  startingBlock: 4620855,
+  startingBlock: USE_TENDERLY_CONFIG ? 20627170 : 4620855, //TODO: update tenderly starting block once done testing
   chain: {
     name: 'mainnet',
     host: CHAIN_HOST_L1,
@@ -61,6 +65,7 @@ const mainnet = {
       ESM_ADDRESS,
       ESM_V2_ADDRESS,
       VOTE_DELEGATE_FACTORY_ADDRESS,
+      V2_VOTE_DELEGATE_FACTORY_ADDRESS,
     ]),
   ],
   transformers: [
@@ -77,6 +82,7 @@ const mainnet = {
     esmTransformer(ESM_ADDRESS),
     esmV2Transformer(ESM_V2_ADDRESS),
     voteDelegateFactoryTransformer(VOTE_DELEGATE_FACTORY_ADDRESS),
+    v2VoteDelegateFactoryTransformer(V2_VOTE_DELEGATE_FACTORY_ADDRESS),
   ],
   migrations: {
     mkr: './migrations',
