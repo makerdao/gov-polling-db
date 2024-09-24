@@ -29,19 +29,6 @@ const VOTE_PROXY_FACTORY_12_ADDRESS =
 const VOTE_DELEGATE_FACTORY_ADDRESS =
   '0xD897F108670903D1d6070fcf818f9db3615AF272';
 
-//goerli
-// note: there is no v1 of DSCHIEF or VOTE_PROXY_FACTORY deployed to goerli, only the newer versions
-const MKR_GOERLI_ADDRESS = '0xc5E4eaB513A7CD12b2335e8a0D57273e13D499f7';
-const BATCH_VOTING_CONTRACT_GOERLI_ADDRESS =
-  '0xdbE5d00b2D8C13a77Fb03Ee50C87317dbC1B15fb';
-const ESM_ADDRESS_GOERLI = '0x105BF37e7D81917b6fEACd6171335B4838e53D5e';
-const ESM_V2_ADDRESS_GOERLI = '0x023A960cb9BE7eDE35B433256f4AfE9013334b55';
-const DSCHIEF_12_GOERLI_ADDRESS = '0x33Ed584fc655b08b2bca45E1C5b5f07c98053bC1';
-const VOTE_PROXY_FACTORY_12_GOERLI_ADDRESS =
-  '0x1a7c1ee5eE2A3B67778ff1eA8c719A3fA1b02b6f';
-const VOTE_DELEGATE_FACTORY_GOERLI_ADDRESS =
-  '0xE2d249AE3c156b132C40D07bd4d34e73c1712947';
-
 //Arbitrum mainnet
 const ARB_POLLING_ADDRESS = '0x4f4e551b4920a5417F8d4e7f8f099660dAdadcEC';
 
@@ -51,56 +38,6 @@ const ARB_TESTNET_POLLING_ADDRESS =
 
 const CHAIN_HOST_L1 = process.env.VL_CHAIN_HOST;
 const CHAIN_HOST_L2 = process.env.VL_CHAIN_HOST_L2;
-
-const goerli = {
-  name: 'goerli',
-  processorSchema: 'vulcan2x',
-  extractedSchema: 'extracted',
-  chain: {
-    name: 'goerli',
-    host: CHAIN_HOST_L1,
-    retries: 15,
-  },
-  startingBlock: 5273000,
-  extractors: [
-    ...makeRawLogExtractors([
-      BATCH_VOTING_CONTRACT_GOERLI_ADDRESS,
-      MKR_GOERLI_ADDRESS,
-      ESM_ADDRESS_GOERLI,
-      ESM_V2_ADDRESS_GOERLI,
-      DSCHIEF_12_GOERLI_ADDRESS,
-      VOTE_PROXY_FACTORY_12_GOERLI_ADDRESS,
-      VOTE_DELEGATE_FACTORY_GOERLI_ADDRESS,
-    ]),
-  ],
-  transformers: [
-    pollingTransformer(BATCH_VOTING_CONTRACT_GOERLI_ADDRESS),
-    mkrTransformer(MKR_GOERLI_ADDRESS),
-    mkrBalanceTransformer(MKR_GOERLI_ADDRESS),
-    esmTransformer(ESM_ADDRESS_GOERLI),
-    esmV2Transformer(ESM_V2_ADDRESS_GOERLI),
-    dsChiefTransformer(DSCHIEF_12_GOERLI_ADDRESS, '_v1.2'),
-    chiefBalanceTransformer(DSCHIEF_12_GOERLI_ADDRESS, '_v1.2'),
-    voteProxyFactoryTransformer(VOTE_PROXY_FACTORY_12_GOERLI_ADDRESS, '_v1.2'),
-    voteDelegateFactoryTransformer(VOTE_DELEGATE_FACTORY_GOERLI_ADDRESS),
-  ],
-  migrations: {
-    mkr: './migrations',
-  },
-  api: {
-    whitelisting: {
-      enabled: true,
-      whitelistedQueriesDir: './queries',
-      bypassSecret: process.env.BYPASS_SECRET,
-    },
-    responseCaching: {
-      enabled: false,
-      duration: '15 seconds',
-    },
-  },
-  onStart: (services) =>
-    console.log(`Starting with these services: ${Object.keys(services)}`),
-};
 
 const mainnet = {
   name: 'mainnet',
