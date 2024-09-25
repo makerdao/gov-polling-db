@@ -23,8 +23,10 @@ const handlers = {
     (delegate, vote_delegate, log_index, tx_id, block_id, version) 
     VALUES(\${delegate}, \${vote_delegate}, \${log_index}, \${tx_id}, \${block_id}, \${version});`;
 
+    const delegate = info.event.params.usr || info.event.params.delegate; //TODO: why isn't it just usr?
+
     await services.tx.none(sql, {
-      delegate: info.event.params.delegate.toLowerCase(),
+      delegate: delegate.toLowerCase(),
       vote_delegate: info.event.params.voteDelegate.toLowerCase(),
       log_index: info.log.log_index,
       tx_id: info.log.tx_id,
