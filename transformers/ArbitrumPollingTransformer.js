@@ -45,7 +45,9 @@ const handlers = {
       const vdQuery = `SELECT ce.vote_delegate as voter, (SELECT now() >= b.timestamp + interval '1 year') as expired 
       FROM dschief.vote_delegate_created_event ce
       JOIN vulcan2x.block b ON b.id = ce.block_id
-      WHERE ce.delegate = $1`;
+      WHERE ce.delegate = $1
+      ORDER BY ce.version DESC
+      LIMIT 1`; //get latest version if there are multiple
 
       const row = await services.db.oneOrNone(vdQuery, [voter]);
 
