@@ -29,9 +29,7 @@ const VOTE_PROXY_FACTORY_12_ADDRESS =
   '0x6FCD258af181B3221073A96dD90D1f7AE7eEc408';
 const VOTE_DELEGATE_FACTORY_ADDRESS =
   '0xD897F108670903D1d6070fcf818f9db3615AF272';
-
-const USE_TENDERLY_CONFIG = process.env.USE_TENDERLY_CONFIG === 'true';
-const V2_VOTE_DELEGATE_FACTORY_ADDRESS = USE_TENDERLY_CONFIG ? '0xc1dc7a8379885676a6ea08e67b7defd9a235de71' : ''; //TODO: add mainnet address
+const V2_VOTE_DELEGATE_FACTORY_ADDRESS = '0xc1dc7a8379885676a6ea08e67b7defd9a235de71';
 
 //Arbitrum mainnet
 const ARB_POLLING_ADDRESS = '0x4f4e551b4920a5417F8d4e7f8f099660dAdadcEC';
@@ -47,7 +45,7 @@ const mainnet = {
   name: 'mainnet',
   processorSchema: 'vulcan2x',
   extractedSchema: 'extracted',
-  startingBlock: USE_TENDERLY_CONFIG ? 20628384 : 4620855, //TODO: update tenderly starting block once done testing
+  startingBlock: 4620855,
   chain: {
     name: 'mainnet',
     host: CHAIN_HOST_L1,
