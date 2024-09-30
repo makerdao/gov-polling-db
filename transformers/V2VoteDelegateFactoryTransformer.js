@@ -20,8 +20,8 @@ module.exports = (voteDelegateFactoryAddress, nameSuffix = '') => ({
 const handlers = {
   async CreateVoteDelegate(services, info) {
     const sql = `INSERT INTO dschief.vote_delegate_created_event
-    (delegate, vote_delegate, log_index, tx_id, block_id, version) 
-    VALUES(\${delegate}, \${vote_delegate}, \${log_index}, \${tx_id}, \${block_id}, \${version});`;
+    (delegate, vote_delegate, log_index, tx_id, block_id, delegate_version) 
+    VALUES(\${delegate}, \${vote_delegate}, \${log_index}, \${tx_id}, \${block_id}, \${delegate_version});`;
 
     const delegate = info.event.params.usr || info.event.params.delegate; //TODO: why isn't it just usr?
 
@@ -31,7 +31,7 @@ const handlers = {
       log_index: info.log.log_index,
       tx_id: info.log.tx_id,
       block_id: info.log.block_id,
-      version: 2,
+      delegate_version: 2,
     });
   },
 };

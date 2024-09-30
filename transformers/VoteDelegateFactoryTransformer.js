@@ -20,8 +20,8 @@ module.exports = (voteDelegateFactoryAddress, nameSuffix = '') => ({
 const handlers = {
   async CreateVoteDelegate(services, info) {
     const sql = `INSERT INTO dschief.vote_delegate_created_event
-    (delegate, vote_delegate, log_index, tx_id, block_id, version) 
-    VALUES(\${delegate}, \${vote_delegate}, \${log_index}, \${tx_id}, \${block_id}, \${version});`;
+    (delegate, vote_delegate, log_index, tx_id, block_id, delegate_version) 
+    VALUES(\${delegate}, \${vote_delegate}, \${log_index}, \${tx_id}, \${block_id}, \${delegate_version});`;
 
     await services.tx.none(sql, {
       delegate: info.event.params.delegate.toLowerCase(),
@@ -29,7 +29,7 @@ const handlers = {
       log_index: info.log.log_index,
       tx_id: info.log.tx_id,
       block_id: info.log.block_id,
-      version: 1,
+      delegate_version: 1,
     });
   },
 };
