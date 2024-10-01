@@ -46,7 +46,7 @@ const handlers = {
       FROM dschief.vote_delegate_created_event ce
       JOIN vulcan2x.block b ON b.id = ce.block_id
       WHERE ce.delegate = $1
-      ORDER BY ce.version DESC
+      ORDER BY ce.delegate_version DESC
       LIMIT 1`; //get latest version if there are multiple
 
       const row = await services.db.oneOrNone(vdQuery, [voter]);

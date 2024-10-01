@@ -36,6 +36,7 @@ query delegates(
       lastVoted
       delegatorCount
       totalMkr
+      delegateVersion
     }
   }
 }
