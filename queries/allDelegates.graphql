@@ -4,6 +4,7 @@ query allDelegates {
       delegate
       voteDelegate
       blockTimestamp
+      delegateVersion
     }
   }
 }
