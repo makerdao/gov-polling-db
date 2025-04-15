@@ -13,6 +13,8 @@ const esmTransformer = require('./transformers/EsmTransformer');
 const esmV2Transformer = require('./transformers/EsmV2Transformer');
 const voteDelegateFactoryTransformer = require('./transformers/VoteDelegateFactoryTransformer');
 const v2VoteDelegateFactoryTransformer = require('./transformers/V2VoteDelegateFactoryTransformer');
+const mkrCombinedTransformer = require('./transformers/MkrCombinedTransformer');
+const mkrBalanceV2Transformer = require('./transformers/MkrBalanceV2Transformer');
 
 //mainnet
 const MKR_ADDRESS = '0x9f8f72aa9304c8b593d555f12ef6589cc3a579a2';
@@ -74,6 +76,8 @@ const mainnet = {
     pollingTransformer(SECOND_VOTING_CONTRACT_ADDRESS),
     mkrTransformer(MKR_ADDRESS),
     mkrBalanceTransformer(MKR_ADDRESS),
+    mkrCombinedTransformer(MKR_ADDRESS),
+    mkrBalanceV2Transformer(MKR_ADDRESS),
     dsChiefTransformer(DSCHIEF_ADDRESS),
     chiefBalanceTransformer(DSCHIEF_ADDRESS),
     voteProxyFactoryTransformer(VOTE_PROXY_FACTORY_ADDRESS),
