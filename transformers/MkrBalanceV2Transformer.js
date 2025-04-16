@@ -24,7 +24,7 @@ async function processRow(db, { event_type, sender, receiver, value, tx_id, bloc
         $(amount)::${amountColumnType} + coalesce((
           select amount from mkr.balances_v2
           where address = $(receiver)
-          order by id desc limit 1
+          order by block_id desc, tx_id desc limit 1
         ), 0), 
         $(tx_id), 
         $(block_id)
@@ -35,7 +35,7 @@ async function processRow(db, { event_type, sender, receiver, value, tx_id, bloc
         -1 * $(amount)::${amountColumnType} + coalesce((
           select amount from mkr.balances_v2
           where address = $(sender)
-          order by id desc limit 1
+          order by block_id desc, tx_id desc limit 1
         ), 0), 
         $(tx_id), 
         $(block_id)
@@ -59,7 +59,7 @@ async function processRow(db, { event_type, sender, receiver, value, tx_id, bloc
         $(amount)::${amountColumnType} + coalesce((
           select amount from mkr.balances_v2
           where address = $(receiver)
-          order by id desc limit 1
+          order by block_id desc, tx_id desc limit 1
         ), 0), 
         $(tx_id), 
         $(block_id)
@@ -158,4 +158,4 @@ module.exports = (mkrAddress) => ({
   test: {
     processRow,
   },
-}); 
+});
